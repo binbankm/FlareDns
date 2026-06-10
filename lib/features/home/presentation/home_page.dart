@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../zones/presentation/zones_list_page.dart';
 import '../../workers/presentation/workers_list_page.dart';
 import '../../pages/presentation/pages_list_page.dart';
+import '../../storage/presentation/storage_page.dart';
+import '../../settings/presentation/settings_page.dart';
 
 
 class HomePage extends ConsumerStatefulWidget {
@@ -19,6 +21,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     const ZonesListPage(),
     const WorkersListPage(),
     const PagesListPage(),
+    const StoragePage(),
+    const SettingsPage(),
   ];
 
   @override
@@ -50,6 +54,16 @@ class _HomePageState extends ConsumerState<HomePage> {
             icon: Icon(Icons.web_outlined),
             selectedIcon: Icon(Icons.web),
             label: 'Pages',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.storage_outlined),
+            selectedIcon: Icon(Icons.storage),
+            label: 'Storage',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
       ),

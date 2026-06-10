@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/zones_provider.dart';
-import '../../auth/providers/auth_provider.dart';
-import '../../../core/theme/theme_provider.dart';
 
 class ZonesListPage extends ConsumerStatefulWidget {
   const ZonesListPage({super.key});
@@ -24,23 +22,11 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
         title: const Text('Domains'),
         actions: [
           IconButton(
-            icon: Icon(ref.watch(themeProvider) == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode),
-            onPressed: () {
-              ref.read(themeProvider.notifier).toggleTheme();
-            },
-          ),
-          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
               ref.invalidate(zonesProvider);
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              ref.read(authProvider.notifier).logout();
-            },
-          )
         ],
       ),
       body: Column(

@@ -7,7 +7,7 @@ final themeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(() {
 });
 
 class ThemeNotifier extends Notifier<ThemeMode> {
-  static const _themeKey = 'app_theme_mode';
+  static const _themeKey = 'app_theme_mode_string';
 
   @override
   ThemeMode build() {
@@ -17,16 +17,27 @@ class ThemeNotifier extends Notifier<ThemeMode> {
 
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final isDark = prefs.getBool(_themeKey);
-    if (isDark != null) {
-      state = isDark ? ThemeMode.dark : ThemeMode.light;
+    final themeString = prefs.getString(_themeKey);
+    if (themeString != null) {
+      if (themeString == 'light') {
+        state = ThemeMode.light;
+      } else if (themeString == 'dark') {
+        state = ThemeMode.dark;
+      } else {
+        state = ThemeMode.system;
+      }
     }
   }
 
-  Future<void> toggleTheme() async {
-    final isCurrentlyDark = state == ThemeMode.dark;
+  Future<void> setThemeMode(ThemeMode mode) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_themeKey, !isCurrentlyDark);
-    state = !isCurrentlyDark ? ThemeMode.dark : ThemeMode.light;
+    String themeString = 'system';
+    if (mode == ThemeMode.light) {
+      themeString = 'light';
+    } else if (mode == ThemeMode.dark) {
+      themeString = 'dark';
+    }
+    await prefs.setString(_themeKey, themeString);
+    state = mode;
   }
 }

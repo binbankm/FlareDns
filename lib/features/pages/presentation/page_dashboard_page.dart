@@ -183,12 +183,6 @@ class _DeploymentsTab extends ConsumerWidget {
     } catch (_) {}
 
     return Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: color.withValues(alpha: 0.3)),
-      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         child: Row(
@@ -363,12 +357,6 @@ class _DomainsTab extends ConsumerWidget {
               ...domains.map((d) {
                 final color = _domainStatusColor(d.status);
                 return Card(
-                  elevation: 0,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(color: color.withValues(alpha: 0.3)),
-                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
@@ -503,35 +491,40 @@ class _DomainsTab extends ConsumerWidget {
                     .read(pagesRepositoryProvider)
                     .addDomain(projectName, domain);
                 ref.invalidate(pageDomainsProvider(projectName));
-                
+
                 // 2. Attempt to Auto-configure DNS
                 bool autoDnsSuccess = false;
                 try {
-                  final zones = await ref.read(zonesRepositoryProvider).getZones();
-                  
+                  final zones = await ref
+                      .read(zonesRepositoryProvider)
+                      .getZones();
+
                   // Find the zone that matches the domain suffix
                   dynamic matchedZone;
                   for (final z in zones) {
                     if (domain == z.name || domain.endsWith('.${z.name}')) {
-                      if (matchedZone == null || z.name.length > matchedZone.name.length) {
+                      if (matchedZone == null ||
+                          z.name.length > matchedZone.name.length) {
                         matchedZone = z;
                       }
                     }
                   }
-                  
+
                   if (matchedZone != null) {
                     final target = '$projectName.pages.dev';
-                    await ref.read(dnsRepositoryProvider).createDnsRecord(
-                      matchedZone.id,
-                      DnsRecord(
-                        id: '',
-                        name: domain,
-                        type: 'CNAME',
-                        content: target,
-                        proxied: true,
-                        ttl: 1, // Auto
-                      ),
-                    );
+                    await ref
+                        .read(dnsRepositoryProvider)
+                        .createDnsRecord(
+                          matchedZone.id,
+                          DnsRecord(
+                            id: '',
+                            name: domain,
+                            type: 'CNAME',
+                            content: target,
+                            proxied: true,
+                            ttl: 1, // Auto
+                          ),
+                        );
                     autoDnsSuccess = true;
                   }
                 } catch (dnsError) {
@@ -548,7 +541,9 @@ class _DomainsTab extends ConsumerWidget {
                 } else {
                   messenger.showSnackBar(
                     const SnackBar(
-                      content: Text('Domain added! Please add the CNAME manually.'),
+                      content: Text(
+                        'Domain added! Please add the CNAME manually.',
+                      ),
                     ),
                   );
                 }
@@ -861,12 +856,6 @@ class _BindingsTab extends ConsumerWidget {
         : entry.detail;
 
     return Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: color.withValues(alpha: 0.3)),
-      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         child: Row(

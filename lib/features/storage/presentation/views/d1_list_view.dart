@@ -7,13 +7,20 @@ import '../../data/storage_repository.dart';
 class D1ListView extends ConsumerWidget {
   const D1ListView({super.key});
 
-  void _showDeleteDialog(BuildContext context, WidgetRef ref, String id, String name) {
+  void _showDeleteDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+    String name,
+  ) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Delete D1 Database'),
-          content: Text('Are you sure you want to delete "$name"? This action cannot be undone.'),
+          content: Text(
+            'Are you sure you want to delete "$name"? This action cannot be undone.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -25,10 +32,14 @@ class D1ListView extends ConsumerWidget {
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
                 try {
-                  await ref.read(storageRepositoryProvider).deleteD1Database(id);
+                  await ref
+                      .read(storageRepositoryProvider)
+                      .deleteD1Database(id);
                   ref.invalidate(d1DatabasesProvider);
                   scaffoldMessenger.showSnackBar(
-                    const SnackBar(content: Text('D1 Database deleted successfully!')),
+                    const SnackBar(
+                      content: Text('D1 Database deleted successfully!'),
+                    ),
                   );
                 } catch (e) {
                   scaffoldMessenger.showSnackBar(
@@ -36,7 +47,10 @@ class D1ListView extends ConsumerWidget {
                   );
                 }
               },
-              child: const Text('Delete', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -56,9 +70,19 @@ class D1ListView extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.dataset_outlined, size: 64, color: colorScheme.outlineVariant),
+                Icon(
+                  Icons.dataset_outlined,
+                  size: 64,
+                  color: colorScheme.outlineVariant,
+                ),
                 const SizedBox(height: 16),
-                Text('No D1 Databases found', style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 16)),
+                Text(
+                  'No D1 Databases found',
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 16,
+                  ),
+                ),
               ],
             ),
           );
@@ -70,12 +94,6 @@ class D1ListView extends ConsumerWidget {
           itemBuilder: (context, index) {
             final database = databases[index];
             return Card(
-              elevation: 0,
-              margin: const EdgeInsets.only(bottom: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: colorScheme.outlineVariant, width: 1),
-              ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -96,17 +114,29 @@ class D1ListView extends ConsumerWidget {
                         children: [
                           Text(
                             database.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           GestureDetector(
                             onTap: () {
-                              Clipboard.setData(ClipboardData(text: database.uuid));
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('UUID copied to clipboard')));
+                              Clipboard.setData(
+                                ClipboardData(text: database.uuid),
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('UUID copied to clipboard'),
+                                ),
+                              );
                             },
                             child: Text(
                               'UUID: ${database.uuid}',
-                              style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
+                              style: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 13,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -114,17 +144,28 @@ class D1ListView extends ConsumerWidget {
                             const SizedBox(height: 4),
                             Text(
                               'Created: ${database.createdAt}',
-                              style: TextStyle(color: colorScheme.outline, fontSize: 12),
+                              style: TextStyle(
+                                color: colorScheme.outline,
+                                fontSize: 12,
+                              ),
                             ),
-                          ]
+                          ],
                         ],
                       ),
                     ),
                     PopupMenuButton<String>(
-                      icon: Icon(Icons.more_vert, color: colorScheme.onSurfaceVariant),
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                       onSelected: (value) {
                         if (value == 'delete') {
-                          _showDeleteDialog(context, ref, database.uuid, database.name);
+                          _showDeleteDialog(
+                            context,
+                            ref,
+                            database.uuid,
+                            database.name,
+                          );
                         }
                       },
                       itemBuilder: (context) => [
@@ -134,7 +175,10 @@ class D1ListView extends ConsumerWidget {
                             children: [
                               Icon(Icons.delete, size: 20, color: Colors.red),
                               SizedBox(width: 12),
-                              Text('Delete', style: TextStyle(color: Colors.red)),
+                              Text(
+                                'Delete',
+                                style: TextStyle(color: Colors.red),
+                              ),
                             ],
                           ),
                         ),

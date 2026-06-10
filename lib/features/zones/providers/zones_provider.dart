@@ -7,7 +7,8 @@ final zonesProvider = FutureProvider<List<Zone>>((ref) async {
   return repository.getZones();
 });
 
-final zoneSslCertificatesProvider = FutureProvider.family<List<dynamic>, String>((ref, zoneId) async {
-  final repository = ref.watch(zonesRepositoryProvider);
-  return repository.getSslCertificates(zoneId);
-});
+final zoneSslCertificatesProvider =
+    FutureProvider.family<List<dynamic>, String>((ref, zoneId) async {
+      final repository = ref.watch(zonesRepositoryProvider);
+      return repository.getSslCertificates(zoneId);
+    });

@@ -13,17 +13,31 @@ class AnalyticsPage extends ConsumerWidget {
   });
 
   String _formatNumber(num value) {
-    if (value >= 1000000000) return '${(value / 1000000000).toStringAsFixed(1)}B';
-    if (value >= 1000000) return '${(value / 1000000).toStringAsFixed(1)}M';
-    if (value >= 1000) return '${(value / 1000).toStringAsFixed(1)}K';
+    if (value >= 1000000000) {
+      return '${(value / 1000000000).toStringAsFixed(1)}B';
+    }
+    if (value >= 1000000) {
+      return '${(value / 1000000).toStringAsFixed(1)}M';
+    }
+    if (value >= 1000) {
+      return '${(value / 1000).toStringAsFixed(1)}K';
+    }
     return value.toString();
   }
 
   String _formatBytes(num bytes) {
-    if (bytes >= 1099511627776) return '${(bytes / 1099511627776).toStringAsFixed(1)} TB';
-    if (bytes >= 1073741824) return '${(bytes / 1073741824).toStringAsFixed(1)} GB';
-    if (bytes >= 1048576) return '${(bytes / 1048576).toStringAsFixed(1)} MB';
-    if (bytes >= 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    if (bytes >= 1099511627776) {
+      return '${(bytes / 1099511627776).toStringAsFixed(1)} TB';
+    }
+    if (bytes >= 1073741824) {
+      return '${(bytes / 1073741824).toStringAsFixed(1)} GB';
+    }
+    if (bytes >= 1048576) {
+      return '${(bytes / 1048576).toStringAsFixed(1)} MB';
+    }
+    if (bytes >= 1024) {
+      return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    }
     return '$bytes B';
   }
 
@@ -56,9 +70,15 @@ class AnalyticsPage extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.all(16.0),
               children: [
-                const Text('Last 30 Days Summary', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+                const Text(
+                  'Last 30 Days Summary',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 16),
-                
+
                 // Requests
                 _buildStatCard(
                   context,
@@ -67,12 +87,20 @@ class AnalyticsPage extends ConsumerWidget {
                   icon: Icons.sync_alt,
                   color: Colors.blue,
                   details: [
-                    _DetailRow('Cached', _formatNumber(reqCached), Colors.green),
-                    _DetailRow('Uncached', _formatNumber(reqUncached), Colors.orange),
+                    _DetailRow(
+                      'Cached',
+                      _formatNumber(reqCached),
+                      Colors.green,
+                    ),
+                    _DetailRow(
+                      'Uncached',
+                      _formatNumber(reqUncached),
+                      Colors.orange,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Bandwidth
                 _buildStatCard(
                   context,
@@ -82,11 +110,15 @@ class AnalyticsPage extends ConsumerWidget {
                   color: Colors.purple,
                   details: [
                     _DetailRow('Cached', _formatBytes(bwCached), Colors.green),
-                    _DetailRow('Uncached', _formatBytes(bwUncached), Colors.orange),
+                    _DetailRow(
+                      'Uncached',
+                      _formatBytes(bwUncached),
+                      Colors.orange,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Unique Visitors
                 Row(
                   children: [
@@ -122,11 +154,23 @@ class AnalyticsPage extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.analytics_outlined, size: 48, color: Colors.grey),
+                const Icon(
+                  Icons.analytics_outlined,
+                  size: 48,
+                  color: Colors.grey,
+                ),
                 const SizedBox(height: 16),
-                const Text('Analytics data is not available for this zone or plan.', textAlign: TextAlign.center, style: TextStyle(fontSize: 16)),
+                const Text(
+                  'Analytics data is not available for this zone or plan.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
+                ),
                 const SizedBox(height: 8),
-                Text('Details: $e', textAlign: TextAlign.center, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                Text(
+                  'Details: $e',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(analyticsProvider(zoneId)),
@@ -140,7 +184,14 @@ class AnalyticsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatCard(BuildContext context, {required String title, required String value, required IconData icon, required Color color, required List<_DetailRow> details}) {
+  Widget _buildStatCard(
+    BuildContext context, {
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+    required List<_DetailRow> details,
+  }) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -155,33 +206,59 @@ class AnalyticsPage extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 16),
-            Text(value, style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              value,
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 8),
-            ...details.map((d) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(width: 8, height: 8, decoration: BoxDecoration(color: d.color, shape: BoxShape.circle)),
-                      const SizedBox(width: 8),
-                      Text(d.label, style: const TextStyle(color: Colors.grey)),
-                    ],
-                  ),
-                  Text(d.value, style: const TextStyle(fontWeight: FontWeight.bold)),
-                ],
+            ...details.map(
+              (d) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: d.color,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          d.label,
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      d.value,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMiniCard(BuildContext context, {required String title, required String value, required IconData icon, required Color color}) {
+  Widget _buildMiniCard(
+    BuildContext context, {
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -190,9 +267,17 @@ class AnalyticsPage extends ConsumerWidget {
           children: [
             Icon(icon, color: color),
             const SizedBox(height: 12),
-            Text(value, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              value,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 4),
-            Text(title, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+            Text(
+              title,
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
           ],
         ),
       ),

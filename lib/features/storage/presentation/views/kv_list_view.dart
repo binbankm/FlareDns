@@ -7,7 +7,12 @@ import '../../data/storage_repository.dart';
 class KVListView extends ConsumerWidget {
   const KVListView({super.key});
 
-  void _showEditDialog(BuildContext context, WidgetRef ref, String id, String currentTitle) {
+  void _showEditDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+    String currentTitle,
+  ) {
     final controller = TextEditingController(text: currentTitle);
     showDialog(
       context: context,
@@ -34,10 +39,14 @@ class KVListView extends ConsumerWidget {
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
                 try {
-                  await ref.read(storageRepositoryProvider).updateKVNamespace(id, title);
+                  await ref
+                      .read(storageRepositoryProvider)
+                      .updateKVNamespace(id, title);
                   ref.invalidate(kvNamespacesProvider);
                   scaffoldMessenger.showSnackBar(
-                    const SnackBar(content: Text('KV Namespace updated successfully!')),
+                    const SnackBar(
+                      content: Text('KV Namespace updated successfully!'),
+                    ),
                   );
                 } catch (e) {
                   scaffoldMessenger.showSnackBar(
@@ -53,13 +62,20 @@ class KVListView extends ConsumerWidget {
     );
   }
 
-  void _showDeleteDialog(BuildContext context, WidgetRef ref, String id, String title) {
+  void _showDeleteDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+    String title,
+  ) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Delete KV Namespace'),
-          content: Text('Are you sure you want to delete "$title"? This action cannot be undone.'),
+          content: Text(
+            'Are you sure you want to delete "$title"? This action cannot be undone.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -71,10 +87,14 @@ class KVListView extends ConsumerWidget {
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
                 try {
-                  await ref.read(storageRepositoryProvider).deleteKVNamespace(id);
+                  await ref
+                      .read(storageRepositoryProvider)
+                      .deleteKVNamespace(id);
                   ref.invalidate(kvNamespacesProvider);
                   scaffoldMessenger.showSnackBar(
-                    const SnackBar(content: Text('KV Namespace deleted successfully!')),
+                    const SnackBar(
+                      content: Text('KV Namespace deleted successfully!'),
+                    ),
                   );
                 } catch (e) {
                   scaffoldMessenger.showSnackBar(
@@ -82,7 +102,10 @@ class KVListView extends ConsumerWidget {
                   );
                 }
               },
-              child: const Text('Delete', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -102,9 +125,19 @@ class KVListView extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.storage_outlined, size: 64, color: colorScheme.outlineVariant),
+                Icon(
+                  Icons.storage_outlined,
+                  size: 64,
+                  color: colorScheme.outlineVariant,
+                ),
                 const SizedBox(height: 16),
-                Text('No KV Namespaces found', style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 16)),
+                Text(
+                  'No KV Namespaces found',
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 16,
+                  ),
+                ),
               ],
             ),
           );
@@ -116,12 +149,6 @@ class KVListView extends ConsumerWidget {
           itemBuilder: (context, index) {
             final namespace = namespaces[index];
             return Card(
-              elevation: 0,
-              margin: const EdgeInsets.only(bottom: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: colorScheme.outlineVariant, width: 1),
-              ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -142,29 +169,54 @@ class KVListView extends ConsumerWidget {
                         children: [
                           Text(
                             namespace.title,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           GestureDetector(
                             onTap: () {
-                              Clipboard.setData(ClipboardData(text: namespace.id));
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ID copied to clipboard')));
+                              Clipboard.setData(
+                                ClipboardData(text: namespace.id),
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('ID copied to clipboard'),
+                                ),
+                              );
                             },
                             child: Text(
                               'ID: ${namespace.id}',
-                              style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
+                              style: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
                     PopupMenuButton<String>(
-                      icon: Icon(Icons.more_vert, color: colorScheme.onSurfaceVariant),
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                       onSelected: (value) {
                         if (value == 'edit') {
-                          _showEditDialog(context, ref, namespace.id, namespace.title);
+                          _showEditDialog(
+                            context,
+                            ref,
+                            namespace.id,
+                            namespace.title,
+                          );
                         } else if (value == 'delete') {
-                          _showDeleteDialog(context, ref, namespace.id, namespace.title);
+                          _showDeleteDialog(
+                            context,
+                            ref,
+                            namespace.id,
+                            namespace.title,
+                          );
                         }
                       },
                       itemBuilder: (context) => [
@@ -184,7 +236,10 @@ class KVListView extends ConsumerWidget {
                             children: [
                               Icon(Icons.delete, size: 20, color: Colors.red),
                               SizedBox(width: 12),
-                              Text('Delete', style: TextStyle(color: Colors.red)),
+                              Text(
+                                'Delete',
+                                style: TextStyle(color: Colors.red),
+                              ),
                             ],
                           ),
                         ),

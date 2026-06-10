@@ -3,7 +3,10 @@ import '../domain/dns_record.dart';
 import '../data/dns_repository.dart';
 
 // Provider to fetch DNS records for a specific zone
-final dnsRecordsProvider = FutureProvider.family<List<DnsRecord>, String>((ref, zoneId) async {
+final dnsRecordsProvider = FutureProvider.family<List<DnsRecord>, String>((
+  ref,
+  zoneId,
+) async {
   final repository = ref.watch(dnsRepositoryProvider);
   return repository.getDnsRecords(zoneId);
 });
@@ -17,7 +20,11 @@ class DnsMutationService {
   final Ref _ref;
   DnsMutationService(this._ref);
 
-  Future<void> toggleProxied(String zoneId, DnsRecord record, bool proxied) async {
+  Future<void> toggleProxied(
+    String zoneId,
+    DnsRecord record,
+    bool proxied,
+  ) async {
     final repository = _ref.read(dnsRepositoryProvider);
     await repository.patchDnsRecordProxied(zoneId, record, proxied);
     _ref.invalidate(dnsRecordsProvider(zoneId));

@@ -19,7 +19,8 @@ class Zone {
       name: json['name'] as String,
       status: json['status'] as String,
       planName: json['plan']?['name'] as String?,
-      nameServers: (json['name_servers'] as List<dynamic>?)?.cast<String>() ?? [],
+      nameServers:
+          (json['name_servers'] as List<dynamic>?)?.cast<String>() ?? [],
     );
   }
 }

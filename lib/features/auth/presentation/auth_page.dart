@@ -23,10 +23,9 @@ class _AuthPageState extends ConsumerState<AuthPage> {
 
   void _submit() async {
     if (_formKey.currentState!.validate()) {
-      await ref.read(authProvider.notifier).login(
-            _emailController.text.trim(),
-            _apiKeyController.text.trim(),
-          );
+      await ref
+          .read(authProvider.notifier)
+          .login(_emailController.text.trim(), _apiKeyController.text.trim());
       // Wait for state to settle, then routing will take over via GoRouter redirect
     }
   }
@@ -52,23 +51,22 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                     'Welcome to FlareDns',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Sign in with your Cloudflare Global API Key',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey,
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
                   ),
                   const SizedBox(height: 48),
                   TextFormField(
                     controller: _emailController,
                     decoration: const InputDecoration(
                       labelText: 'Account Email',
-                      border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.email),
                     ),
                     keyboardType: TextInputType.emailAddress,
@@ -80,7 +78,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                     controller: _apiKeyController,
                     decoration: const InputDecoration(
                       labelText: 'Global API Key',
-                      border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.vpn_key),
                     ),
                     obscureText: true,
@@ -90,9 +87,6 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                   const SizedBox(height: 24),
                   FilledButton(
                     onPressed: authState.isLoading ? null : _submit,
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
                     child: authState.isLoading
                         ? const SizedBox(
                             width: 24,

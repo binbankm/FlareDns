@@ -18,12 +18,15 @@ class DnsRepository {
     int totalPages = 1;
 
     do {
-      final response = await _dio.get('/zones/$zoneId/dns_records', queryParameters: {'page': page, 'per_page': 50});
+      final response = await _dio.get(
+        '/zones/$zoneId/dns_records',
+        queryParameters: {'page': page, 'per_page': 50},
+      );
       final data = response.data;
       if (data['success'] == true) {
         final List<dynamic> result = data['result'];
         allRecords.addAll(result.map((json) => DnsRecord.fromJson(json)));
-        
+
         final resultInfo = data['result_info'];
         if (resultInfo != null) {
           totalPages = resultInfo['total_pages'] as int? ?? 1;
@@ -73,7 +76,11 @@ class DnsRepository {
     }
   }
 
-  Future<DnsRecord> patchDnsRecordProxied(String zoneId, DnsRecord record, bool proxied) async {
+  Future<DnsRecord> patchDnsRecordProxied(
+    String zoneId,
+    DnsRecord record,
+    bool proxied,
+  ) async {
     final response = await _dio.patch(
       '/zones/$zoneId/dns_records/${record.id}',
       data: {'proxied': proxied},

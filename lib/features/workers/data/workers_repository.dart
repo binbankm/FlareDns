@@ -35,10 +35,12 @@ class WorkersRepository {
     final accountId = await _getAccountId();
     final response = await _dio.get('/accounts/$accountId/workers/scripts');
     final data = response.data;
-    
+
     if (data['success'] == true) {
       final results = data['result'] as List<dynamic>;
-      return results.map((e) => CloudflareWorker.fromJson(e as Map<String, dynamic>)).toList();
+      return results
+          .map((e) => CloudflareWorker.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch workers: ${data['errors']}');
     }
@@ -46,11 +48,15 @@ class WorkersRepository {
 
   Future<List<WorkerBinding>> getBindings(String scriptName) async {
     final accountId = await _getAccountId();
-    final response = await _dio.get('/accounts/$accountId/workers/scripts/$scriptName/bindings');
+    final response = await _dio.get(
+      '/accounts/$accountId/workers/scripts/$scriptName/bindings',
+    );
     final data = response.data;
     if (data['success'] == true) {
       final results = data['result'] as List<dynamic>;
-      return results.map((e) => WorkerBinding.fromJson(e as Map<String, dynamic>)).toList();
+      return results
+          .map((e) => WorkerBinding.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch bindings: ${data['errors']}');
     }
@@ -58,12 +64,16 @@ class WorkersRepository {
 
   Future<List<WorkerSchedule>> getSchedules(String scriptName) async {
     final accountId = await _getAccountId();
-    final response = await _dio.get('/accounts/$accountId/workers/scripts/$scriptName/schedules');
+    final response = await _dio.get(
+      '/accounts/$accountId/workers/scripts/$scriptName/schedules',
+    );
     final data = response.data;
     if (data['success'] == true) {
       final result = data['result'] as Map<String, dynamic>;
       final schedules = result['schedules'] as List<dynamic>? ?? [];
-      return schedules.map((e) => WorkerSchedule.fromJson(e as Map<String, dynamic>)).toList();
+      return schedules
+          .map((e) => WorkerSchedule.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch schedules: ${data['errors']}');
     }
@@ -83,12 +93,16 @@ class WorkersRepository {
 
   Future<List<WorkerDeployment>> getDeployments(String scriptName) async {
     final accountId = await _getAccountId();
-    final response = await _dio.get('/accounts/$accountId/workers/scripts/$scriptName/deployments');
+    final response = await _dio.get(
+      '/accounts/$accountId/workers/scripts/$scriptName/deployments',
+    );
     final data = response.data;
     if (data['success'] == true) {
       final result = data['result'] as Map<String, dynamic>;
       final deployments = result['deployments'] as List<dynamic>? ?? [];
-      return deployments.map((e) => WorkerDeployment.fromJson(e as Map<String, dynamic>)).toList();
+      return deployments
+          .map((e) => WorkerDeployment.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch deployments: ${data['errors']}');
     }
@@ -100,7 +114,9 @@ class WorkersRepository {
     final data = response.data;
     if (data['success'] == true) {
       final results = data['result'] as List<dynamic>;
-      return results.map((e) => WorkerDomain.fromJson(e as Map<String, dynamic>)).toList();
+      return results
+          .map((e) => WorkerDomain.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch domains: ${data['errors']}');
     }
@@ -124,35 +140,40 @@ class WorkersRepository {
 
   Future<void> deleteDomain(String domainId) async {
     final accountId = await _getAccountId();
-    final response = await _dio.delete('/accounts/$accountId/workers/domains/$domainId');
+    final response = await _dio.delete(
+      '/accounts/$accountId/workers/domains/$domainId',
+    );
     // Note: Cloudflare API might return empty string on successful DELETE for domains
     if (response.statusCode != 200 && response.statusCode != 204) {
       throw Exception('Failed to delete domain: ${response.statusCode}');
     }
   }
 
-
   Future<List<WorkerSecret>> getSecrets(String scriptName) async {
     final accountId = await _getAccountId();
-    final response = await _dio.get('/accounts/$accountId/workers/scripts/$scriptName/secrets');
+    final response = await _dio.get(
+      '/accounts/$accountId/workers/scripts/$scriptName/secrets',
+    );
     final data = response.data;
     if (data['success'] == true) {
       final results = data['result'] as List<dynamic>;
-      return results.map((e) => WorkerSecret.fromJson(e as Map<String, dynamic>)).toList();
+      return results
+          .map((e) => WorkerSecret.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch secrets: ${data['errors']}');
     }
   }
 
-  Future<void> putSecret(String scriptName, String secretName, String secretValue) async {
+  Future<void> putSecret(
+    String scriptName,
+    String secretName,
+    String secretValue,
+  ) async {
     final accountId = await _getAccountId();
     final response = await _dio.put(
       '/accounts/$accountId/workers/scripts/$scriptName/secrets',
-      data: {
-        'name': secretName,
-        'text': secretValue,
-        'type': 'secret_text',
-      },
+      data: {'name': secretName, 'text': secretValue, 'type': 'secret_text'},
     );
     final data = response.data;
     if (data['success'] != true) {
@@ -162,7 +183,9 @@ class WorkersRepository {
 
   Future<void> deleteSecret(String scriptName, String secretName) async {
     final accountId = await _getAccountId();
-    final response = await _dio.delete('/accounts/$accountId/workers/scripts/$scriptName/secrets/$secretName');
+    final response = await _dio.delete(
+      '/accounts/$accountId/workers/scripts/$scriptName/secrets/$secretName',
+    );
     final data = response.data;
     if (data['success'] != true) {
       throw Exception('Failed to delete secret: ${data['errors']}');
@@ -171,11 +194,15 @@ class WorkersRepository {
 
   Future<List<CloudflareKVNamespace>> getKVNamespaces() async {
     final accountId = await _getAccountId();
-    final response = await _dio.get('/accounts/$accountId/storage/kv/namespaces');
+    final response = await _dio.get(
+      '/accounts/$accountId/storage/kv/namespaces',
+    );
     final data = response.data;
     if (data['success'] == true) {
       final results = data['result'] as List<dynamic>? ?? [];
-      return results.map((e) => CloudflareKVNamespace.fromJson(e as Map<String, dynamic>)).toList();
+      return results
+          .map((e) => CloudflareKVNamespace.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch KV namespaces: ${data['errors']}');
     }
@@ -187,27 +214,32 @@ class WorkersRepository {
     final data = response.data;
     if (data['success'] == true) {
       final results = data['result'] as List<dynamic>? ?? [];
-      return results.map((e) => CloudflareD1Database.fromJson(e as Map<String, dynamic>)).toList();
+      return results
+          .map((e) => CloudflareD1Database.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch D1 databases: ${data['errors']}');
     }
   }
 
-  Future<void> updateBindings(String scriptName, List<Map<String, dynamic>> bindings) async {
+  Future<void> updateBindings(
+    String scriptName,
+    List<Map<String, dynamic>> bindings,
+  ) async {
     final accountId = await _getAccountId();
-    
+
     // 1. Fetch current code
     final code = await getWorkerContent(scriptName);
 
     // 2. Determine module type to construct metadata
-    final isESModule = code.contains('export default') || code.contains('export const') || code.contains('export function');
-    
+    final isESModule =
+        code.contains('export default') ||
+        code.contains('export const') ||
+        code.contains('export function');
+
     FormData formData;
     if (isESModule) {
-      final metadata = {
-        "main_module": "index.js",
-        "bindings": bindings,
-      };
+      final metadata = {"main_module": "index.js", "bindings": bindings};
       formData = FormData.fromMap({
         'metadata': MultipartFile.fromString(
           jsonEncode(metadata),
@@ -220,10 +252,7 @@ class WorkersRepository {
         ),
       });
     } else {
-      final metadata = {
-        "body_part": "script",
-        "bindings": bindings,
-      };
+      final metadata = {"body_part": "script", "bindings": bindings};
       formData = FormData.fromMap({
         'metadata': MultipartFile.fromString(
           jsonEncode(metadata),
@@ -250,7 +279,9 @@ class WorkersRepository {
 
   Future<void> deleteWorker(String scriptName) async {
     final accountId = await _getAccountId();
-    final response = await _dio.delete('/accounts/$accountId/workers/scripts/$scriptName');
+    final response = await _dio.delete(
+      '/accounts/$accountId/workers/scripts/$scriptName',
+    );
     final data = response.data;
     if (data['success'] != true) {
       throw Exception('Failed to delete worker: ${data['errors']}');
@@ -263,10 +294,12 @@ class WorkersRepository {
       '/accounts/$accountId/workers/scripts/$scriptName/content/v2',
       options: Options(responseType: ResponseType.plain),
     );
-    
+
     final contentType = response.headers.value('content-type');
     if (contentType != null && contentType.contains('multipart/form-data')) {
-      final boundaryMatches = RegExp(r'boundary="?([^";]+)"?').allMatches(contentType);
+      final boundaryMatches = RegExp(
+        r'boundary="?([^";]+)"?',
+      ).allMatches(contentType);
       if (boundaryMatches.isNotEmpty) {
         final boundary = boundaryMatches.first.group(1)!;
         final parts = response.data.toString().split('--$boundary');
@@ -294,7 +327,9 @@ class WorkersRepository {
     // 1. Fetch existing bindings to preserve them
     List<dynamic> existingBindings = [];
     try {
-      final bRes = await _dio.get('/accounts/$accountId/workers/scripts/$scriptName/bindings');
+      final bRes = await _dio.get(
+        '/accounts/$accountId/workers/scripts/$scriptName/bindings',
+      );
       if (bRes.data['success'] == true) {
         existingBindings = bRes.data['result'] as List<dynamic>? ?? [];
       }
@@ -302,8 +337,11 @@ class WorkersRepository {
       // Ignore if bindings fetch fails (e.g. new worker)
     }
 
-    final isESModule = code.contains('export default') || code.contains('export const') || code.contains('export function');
-    
+    final isESModule =
+        code.contains('export default') ||
+        code.contains('export const') ||
+        code.contains('export function');
+
     FormData formData;
     if (isESModule) {
       final metadata = {
@@ -322,10 +360,7 @@ class WorkersRepository {
         ),
       });
     } else {
-      final metadata = {
-        "body_part": "script",
-        "bindings": existingBindings,
-      };
+      final metadata = {"body_part": "script", "bindings": existingBindings};
       formData = FormData.fromMap({
         'metadata': MultipartFile.fromString(
           jsonEncode(metadata),

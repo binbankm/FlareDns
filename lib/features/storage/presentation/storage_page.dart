@@ -13,7 +13,8 @@ class StoragePage extends ConsumerStatefulWidget {
   ConsumerState<StoragePage> createState() => _StoragePageState();
 }
 
-class _StoragePageState extends ConsumerState<StoragePage> with SingleTickerProviderStateMixin {
+class _StoragePageState extends ConsumerState<StoragePage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -33,7 +34,9 @@ class _StoragePageState extends ConsumerState<StoragePage> with SingleTickerProv
 
   void _showCreateDialog() {
     final index = _tabController.index;
-    final title = index == 0 ? 'KV Namespace' : (index == 1 ? 'D1 Database' : 'R2 Bucket');
+    final title = index == 0
+        ? 'KV Namespace'
+        : (index == 1 ? 'D1 Database' : 'R2 Bucket');
     final controller = TextEditingController();
 
     showDialog(
@@ -51,35 +54,35 @@ class _StoragePageState extends ConsumerState<StoragePage> with SingleTickerProv
               onPressed: () => Navigator.pop(context),
               child: const Text('Cancel'),
             ),
-              ElevatedButton(
-                onPressed: () async {
-                  final name = controller.text.trim();
-                  if (name.isEmpty) return;
+            ElevatedButton(
+              onPressed: () async {
+                final name = controller.text.trim();
+                if (name.isEmpty) return;
 
-                  final scaffoldMessenger = ScaffoldMessenger.of(context);
-                  Navigator.pop(context);
-                  
-                  try {
-                    final repo = ref.read(storageRepositoryProvider);
-                    if (index == 0) {
-                      await repo.createKVNamespace(name);
-                      ref.invalidate(kvNamespacesProvider);
-                    } else if (index == 1) {
-                      await repo.createD1Database(name);
-                      ref.invalidate(d1DatabasesProvider);
-                    } else if (index == 2) {
-                      await repo.createR2Bucket(name);
-                      ref.invalidate(r2BucketsProvider);
-                    }
-                    scaffoldMessenger.showSnackBar(
-                      SnackBar(content: Text('$title created successfully!')),
-                    );
-                  } catch (e) {
-                    scaffoldMessenger.showSnackBar(
-                      SnackBar(content: Text('Error: $e')),
-                    );
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+                Navigator.pop(context);
+
+                try {
+                  final repo = ref.read(storageRepositoryProvider);
+                  if (index == 0) {
+                    await repo.createKVNamespace(name);
+                    ref.invalidate(kvNamespacesProvider);
+                  } else if (index == 1) {
+                    await repo.createD1Database(name);
+                    ref.invalidate(d1DatabasesProvider);
+                  } else if (index == 2) {
+                    await repo.createR2Bucket(name);
+                    ref.invalidate(r2BucketsProvider);
                   }
-                },
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text('$title created successfully!')),
+                  );
+                } catch (e) {
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(content: Text('Error: $e')),
+                  );
+                }
+              },
               child: const Text('Create'),
             ),
           ],
@@ -104,11 +107,7 @@ class _StoragePageState extends ConsumerState<StoragePage> with SingleTickerProv
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          KVListView(),
-          D1ListView(),
-          R2ListView(),
-        ],
+        children: const [KVListView(), D1ListView(), R2ListView()],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showCreateDialog,

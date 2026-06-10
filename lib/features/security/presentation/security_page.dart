@@ -7,11 +7,7 @@ class SecurityPage extends ConsumerStatefulWidget {
   final String zoneId;
   final String zoneName;
 
-  const SecurityPage({
-    super.key,
-    required this.zoneId,
-    required this.zoneName,
-  });
+  const SecurityPage({super.key, required this.zoneId, required this.zoneName});
 
   @override
   ConsumerState<SecurityPage> createState() => _SecurityPageState();
@@ -29,12 +25,20 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
       ref.invalidate(devModeProvider(widget.zoneId));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(newValue ? 'Development Mode Enabled' : 'Development Mode Disabled')),
+          SnackBar(
+            content: Text(
+              newValue
+                  ? 'Development Mode Enabled'
+                  : 'Development Mode Disabled',
+            ),
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     } finally {
       if (mounted) setState(() => _isSavingDevMode = false);
@@ -54,7 +58,9 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     } finally {
       if (mounted) setState(() => _isSavingSecLevel = false);
@@ -81,13 +87,27 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.shield, color: Theme.of(context).colorScheme.error, size: 28),
+                      Icon(
+                        Icons.shield,
+                        color: Theme.of(context).colorScheme.error,
+                        size: 28,
+                      ),
                       const SizedBox(width: 12),
-                      Text('I\'m Under Attack Mode', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onErrorContainer)),
+                      Text(
+                        'I\'m Under Attack Mode',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onErrorContainer,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Text('Defend against DDoS attacks. Visitors will see a JavaScript challenge.', style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer)),
+                  Text(
+                    'Defend against DDoS attacks. Visitors will see a JavaScript challenge.',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onErrorContainer,
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   secLevelAsync.when(
                     data: (level) {
@@ -96,21 +116,38 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                         width: double.infinity,
                         child: FilledButton(
                           style: FilledButton.styleFrom(
-                            backgroundColor: isUnderAttack ? Colors.white : Theme.of(context).colorScheme.error,
-                            foregroundColor: isUnderAttack ? Theme.of(context).colorScheme.error : Colors.white,
+                            backgroundColor: isUnderAttack
+                                ? Colors.white
+                                : Theme.of(context).colorScheme.error,
+                            foregroundColor: isUnderAttack
+                                ? Theme.of(context).colorScheme.error
+                                : Colors.white,
                           ),
                           onPressed: _isSavingSecLevel
                               ? null
                               : () {
-                                  _changeSecurityLevel(isUnderAttack ? 'medium' : 'under_attack');
+                                  _changeSecurityLevel(
+                                    isUnderAttack ? 'medium' : 'under_attack',
+                                  );
                                 },
                           child: _isSavingSecLevel
-                              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                              : Text(isUnderAttack ? 'TURN OFF' : 'ENABLE UNDER ATTACK MODE'),
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(
+                                  isUnderAttack
+                                      ? 'TURN OFF'
+                                      : 'ENABLE UNDER ATTACK MODE',
+                                ),
                         ),
                       );
                     },
-                    loading: () => const Center(child: CircularProgressIndicator()),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
                     error: (e, s) => Text('Error loading status: $e'),
                   ),
                 ],
@@ -126,7 +163,10 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Security Level', style: Theme.of(context).textTheme.titleLarge),
+                  Text(
+                    'Security Level',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                   const SizedBox(height: 8),
                   const Text('Adjust your website\'s security profile.'),
                   const SizedBox(height: 16),
@@ -135,27 +175,39 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                       if (level == 'under_attack') {
                         return const Padding(
                           padding: EdgeInsets.symmetric(vertical: 16.0),
-                          child: Text('Under Attack mode is enabled. To change the level, please turn it off first.', style: TextStyle(fontStyle: FontStyle.italic)),
+                          child: Text(
+                            'Under Attack mode is enabled. To change the level, please turn it off first.',
+                            style: TextStyle(fontStyle: FontStyle.italic),
+                          ),
                         );
                       }
-                      
+
                       return DropdownButtonFormField<String>(
                         initialValue: level,
-                        decoration: const InputDecoration(border: OutlineInputBorder()),
+                        decoration: const InputDecoration(),
                         items: const [
-                          DropdownMenuItem(value: 'essentially_off', child: Text('Essentially Off')),
+                          DropdownMenuItem(
+                            value: 'essentially_off',
+                            child: Text('Essentially Off'),
+                          ),
                           DropdownMenuItem(value: 'low', child: Text('Low')),
-                          DropdownMenuItem(value: 'medium', child: Text('Medium')),
+                          DropdownMenuItem(
+                            value: 'medium',
+                            child: Text('Medium'),
+                          ),
                           DropdownMenuItem(value: 'high', child: Text('High')),
                         ],
-                        onChanged: _isSavingSecLevel ? null : (val) {
-                          if (val != null && val != level) {
-                            _changeSecurityLevel(val);
-                          }
-                        },
+                        onChanged: _isSavingSecLevel
+                            ? null
+                            : (val) {
+                                if (val != null && val != level) {
+                                  _changeSecurityLevel(val);
+                                }
+                              },
                       );
                     },
-                    loading: () => const Center(child: CircularProgressIndicator()),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
                     error: (e, s) => Text('Error loading status: $e'),
                   ),
                 ],
@@ -173,25 +225,39 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.build, color: Theme.of(context).colorScheme.primary, size: 28),
+                      Icon(
+                        Icons.build,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 28,
+                      ),
                       const SizedBox(width: 12),
-                      Text('Development Mode', style: Theme.of(context).textTheme.titleLarge),
+                      Text(
+                        'Development Mode',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text('Temporarily bypass our cache. Allows you to see changes to your origin server in real-time. Automatically turns off after 3 hours.'),
+                  const Text(
+                    'Temporarily bypass our cache. Allows you to see changes to your origin server in real-time. Automatically turns off after 3 hours.',
+                  ),
                   const SizedBox(height: 16),
                   devModeAsync.when(
                     data: (isDevMode) {
                       return SwitchListTile(
-                        title: Text(isDevMode ? 'Active (Bypassing Cache)' : 'Off'),
+                        title: Text(
+                          isDevMode ? 'Active (Bypassing Cache)' : 'Off',
+                        ),
                         value: isDevMode,
-                        onChanged: _isSavingDevMode ? null : (val) => _toggleDevMode(val),
+                        onChanged: _isSavingDevMode
+                            ? null
+                            : (val) => _toggleDevMode(val),
                         contentPadding: EdgeInsets.zero,
                         activeThumbColor: Colors.orange,
                       );
                     },
-                    loading: () => const Center(child: CircularProgressIndicator()),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
                     error: (e, s) => Text('Error loading status: $e'),
                   ),
                 ],

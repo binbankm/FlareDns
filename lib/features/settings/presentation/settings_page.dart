@@ -12,33 +12,37 @@ class SettingsPage extends ConsumerWidget {
     final accountAsync = ref.watch(authProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Settings'), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         children: [
           // Account Section
           const Padding(
             padding: EdgeInsets.only(left: 8.0, bottom: 8.0, top: 8.0),
-            child: Text('ACCOUNT', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+            child: Text(
+              'ACCOUNT',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
           ),
           Card(
-            elevation: 0,
-            margin: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 1),
-            ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                    child: Icon(Icons.person, size: 36, color: Theme.of(context).colorScheme.primary),
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer,
+                    child: Icon(
+                      Icons.person,
+                      size: 36,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -50,11 +54,20 @@ class SettingsPage extends ConsumerWidget {
                           children: [
                             Text(
                               account.email,
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
-                            const Text('Cloudflare Global API Key', style: TextStyle(fontSize: 13, color: Colors.grey)),
+                            const Text(
+                              'Cloudflare Global API Key',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey,
+                              ),
+                            ),
                           ],
                         );
                       },
@@ -72,33 +85,51 @@ class SettingsPage extends ConsumerWidget {
           // Appearance Section
           const Padding(
             padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
-            child: Text('APPEARANCE', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+            child: Text(
+              'APPEARANCE',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
           ),
           Card(
-            elevation: 0,
-            margin: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 1),
-            ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Theme', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  const Text(
+                    'Theme',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
                     child: SegmentedButton<ThemeMode>(
                       segments: const [
-                        ButtonSegment(value: ThemeMode.system, label: Text('System'), icon: Icon(Icons.brightness_auto)),
-                        ButtonSegment(value: ThemeMode.light, label: Text('Light'), icon: Icon(Icons.light_mode)),
-                        ButtonSegment(value: ThemeMode.dark, label: Text('Dark'), icon: Icon(Icons.dark_mode)),
+                        ButtonSegment(
+                          value: ThemeMode.system,
+                          label: Text('System'),
+                          icon: Icon(Icons.brightness_auto),
+                        ),
+                        ButtonSegment(
+                          value: ThemeMode.light,
+                          label: Text('Light'),
+                          icon: Icon(Icons.light_mode),
+                        ),
+                        ButtonSegment(
+                          value: ThemeMode.dark,
+                          label: Text('Dark'),
+                          icon: Icon(Icons.dark_mode),
+                        ),
                       ],
                       selected: {themeMode},
                       onSelectionChanged: (Set<ThemeMode> newSelection) {
-                        ref.read(themeProvider.notifier).setThemeMode(newSelection.first);
+                        ref
+                            .read(themeProvider.notifier)
+                            .setThemeMode(newSelection.first);
                       },
                     ),
                   ),
@@ -112,21 +143,25 @@ class SettingsPage extends ConsumerWidget {
           // About Section
           const Padding(
             padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
-            child: Text('ABOUT', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.grey)),
+            child: Text(
+              'ABOUT',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
           ),
           Card(
-            elevation: 0,
-            margin: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 1),
-            ),
             child: Column(
               children: [
                 ListTile(
                   leading: const Icon(Icons.info_outline),
                   title: const Text('Version'),
-                  trailing: const Text('1.0.0', style: TextStyle(color: Colors.grey)),
+                  trailing: const Text(
+                    '1.0.0',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
                 const Divider(height: 1, indent: 56),
                 ListTile(
@@ -151,11 +186,12 @@ class SettingsPage extends ConsumerWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.errorContainer,
                 foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
-                elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
               icon: const Icon(Icons.logout),
-              label: const Text('Logout', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              label: const Text(
+                'Logout',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -168,12 +204,17 @@ class SettingsPage extends ConsumerWidget {
                         child: const Text('Cancel'),
                       ),
                       ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
                         onPressed: () {
                           Navigator.pop(context);
                           ref.read(authProvider.notifier).logout();
                         },
-                        child: const Text('Logout', style: TextStyle(color: Colors.white)),
+                        child: const Text(
+                          'Logout',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ],
                   ),

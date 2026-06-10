@@ -6,7 +6,6 @@ import '../../pages/presentation/pages_list_page.dart';
 import '../../storage/presentation/storage_page.dart';
 import '../../settings/presentation/settings_page.dart';
 
-
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -28,10 +27,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (index) {

@@ -32,11 +32,15 @@ class StorageRepository {
 
   Future<List<CloudflareKVNamespace>> getKVNamespaces() async {
     final accountId = await _getAccountId();
-    final response = await _dio.get('/accounts/$accountId/storage/kv/namespaces');
+    final response = await _dio.get(
+      '/accounts/$accountId/storage/kv/namespaces',
+    );
     final data = response.data;
     if (data['success'] == true) {
       final results = data['result'] as List<dynamic>? ?? [];
-      return results.map((e) => CloudflareKVNamespace.fromJson(e as Map<String, dynamic>)).toList();
+      return results
+          .map((e) => CloudflareKVNamespace.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch KV namespaces: ${data['errors']}');
     }
@@ -48,7 +52,9 @@ class StorageRepository {
     final data = response.data;
     if (data['success'] == true) {
       final results = data['result'] as List<dynamic>? ?? [];
-      return results.map((e) => CloudflareD1Database.fromJson(e as Map<String, dynamic>)).toList();
+      return results
+          .map((e) => CloudflareD1Database.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch D1 databases: ${data['errors']}');
     }
@@ -61,7 +67,9 @@ class StorageRepository {
     if (data['success'] == true) {
       final result = data['result'] as Map<String, dynamic>? ?? {};
       final buckets = result['buckets'] as List<dynamic>? ?? [];
-      return buckets.map((e) => CloudflareR2Bucket.fromJson(e as Map<String, dynamic>)).toList();
+      return buckets
+          .map((e) => CloudflareR2Bucket.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch R2 buckets: ${data['errors']}');
     }
@@ -74,7 +82,9 @@ class StorageRepository {
       data: {'title': title},
     );
     if (response.data['success'] != true) {
-      throw Exception('Failed to create KV namespace: ${response.data['errors']}');
+      throw Exception(
+        'Failed to create KV namespace: ${response.data['errors']}',
+      );
     }
   }
 
@@ -85,7 +95,9 @@ class StorageRepository {
       data: {'title': title},
     );
     if (response.data['success'] != true) {
-      throw Exception('Failed to update KV namespace: ${response.data['errors']}');
+      throw Exception(
+        'Failed to update KV namespace: ${response.data['errors']}',
+      );
     }
   }
 
@@ -95,7 +107,9 @@ class StorageRepository {
       '/accounts/$accountId/storage/kv/namespaces/$namespaceId',
     );
     if (response.data['success'] != true) {
-      throw Exception('Failed to delete KV namespace: ${response.data['errors']}');
+      throw Exception(
+        'Failed to delete KV namespace: ${response.data['errors']}',
+      );
     }
   }
 
@@ -106,7 +120,9 @@ class StorageRepository {
       data: {'name': name},
     );
     if (response.data['success'] != true) {
-      throw Exception('Failed to create D1 database: ${response.data['errors']}');
+      throw Exception(
+        'Failed to create D1 database: ${response.data['errors']}',
+      );
     }
   }
 
@@ -116,7 +132,9 @@ class StorageRepository {
       '/accounts/$accountId/d1/database/$databaseId',
     );
     if (response.data['success'] != true) {
-      throw Exception('Failed to delete D1 database: ${response.data['errors']}');
+      throw Exception(
+        'Failed to delete D1 database: ${response.data['errors']}',
+      );
     }
   }
 
@@ -133,9 +151,7 @@ class StorageRepository {
 
   Future<void> deleteR2Bucket(String name) async {
     final accountId = await _getAccountId();
-    final response = await _dio.delete(
-      '/accounts/$accountId/r2/buckets/$name',
-    );
+    final response = await _dio.delete('/accounts/$accountId/r2/buckets/$name');
     if (response.data['success'] != true) {
       throw Exception('Failed to delete R2 bucket: ${response.data['errors']}');
     }

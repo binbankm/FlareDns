@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../domain/account.dart';
 import '../data/auth_repository.dart';
 
-final authProvider = AsyncNotifierProvider<AuthNotifier, Account?>(AuthNotifier.new);
+final authProvider = AsyncNotifierProvider<AuthNotifier, Account?>(
+  AuthNotifier.new,
+);
 
 class AuthNotifier extends AsyncNotifier<Account?> {
   @override

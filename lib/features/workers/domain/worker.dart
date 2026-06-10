@@ -22,7 +22,11 @@ class CloudflareWorker {
       modifiedOn: json['modified_on'] as String,
       usageModel: json['usage_model'] as String? ?? 'standard',
       compatibilityDate: json['compatibility_date'] as String?,
-      handlers: (json['handlers'] as List<dynamic>?)?.map((e) => e as String).toList() ?? [],
+      handlers:
+          (json['handlers'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
     );
   }
 }
@@ -52,12 +56,14 @@ class WorkerBinding {
       detail = json['service']?.toString();
     } else {
       // Fallback for any other binding types
-      final extraKeys = json.keys.where((k) => k != 'name' && k != 'type').toList();
+      final extraKeys = json.keys
+          .where((k) => k != 'name' && k != 'type')
+          .toList();
       if (extraKeys.isNotEmpty) {
         detail = extraKeys.map((k) => '$k: ${json[k]}').join(', ');
       }
     }
-    
+
     return WorkerBinding(
       name: json['name'] as String,
       type: json['type'] as String,
@@ -66,10 +72,7 @@ class WorkerBinding {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {
-      'name': name,
-      'type': type,
-    };
+    final Map<String, dynamic> data = {'name': name, 'type': type};
     if (detail != null) {
       if (type == 'd1') {
         data['database_id'] = detail;
@@ -153,7 +156,12 @@ class WorkerDomain {
   final String environment;
   final String service;
 
-  const WorkerDomain({required this.id, required this.hostname, required this.environment, required this.service});
+  const WorkerDomain({
+    required this.id,
+    required this.hostname,
+    required this.environment,
+    required this.service,
+  });
 
   factory WorkerDomain.fromJson(Map<String, dynamic> json) {
     return WorkerDomain(

@@ -13,9 +13,13 @@ class AnalyticsRepository {
 
   Future<Map<String, dynamic>> getDashboardMetrics(String zoneId) async {
     // Cloudflare GraphQL API
-    final String dateGeq = DateTime.now().subtract(const Duration(days: 30)).toIso8601String().split('T')[0];
+    final String dateGeq = DateTime.now()
+        .subtract(const Duration(days: 30))
+        .toIso8601String()
+        .split('T')[0];
 
-    final query = '''
+    final query =
+        '''
       query {
         viewer {
           zones(filter: { zoneTag: "$zoneId" }) {
@@ -39,7 +43,7 @@ class AnalyticsRepository {
     // or absolute if base url is /client/v4.
     // Assuming base URL is 'https://api.cloudflare.com/client/v4'
     final response = await _dio.post('/graphql', data: {'query': query});
-    
+
     final data = response.data;
     if (data['errors'] != null && (data['errors'] as List).isNotEmpty) {
       throw Exception('GraphQL Error: ${data['errors'][0]['message']}');
@@ -52,7 +56,7 @@ class AnalyticsRepository {
     if (zones.isEmpty) throw Exception('Zone not found in analytics');
 
     final groups = zones[0]['httpRequests1dGroups'] as List<dynamic>? ?? [];
-    
+
     num totalReqs = 0;
     num totalBytes = 0;
     num totalPageViews = 0;
@@ -80,13 +84,12 @@ class AnalyticsRepository {
           'cached': totalCachedBytes,
           'uncached': totalBytes - totalCachedBytes,
         },
-        'pageviews': {
-          'all': totalPageViews,
-        },
+        'pageviews': {'all': totalPageViews},
         'uniques': {
-          'all': 0, // uniques is not easily available in the free httpRequests1dGroups
-        }
-      }
+          'all':
+              0, // uniques is not easily available in the free httpRequests1dGroups
+        },
+      },
     };
   }
 }

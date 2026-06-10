@@ -29,15 +29,21 @@ class AuthRepository {
     } else {
       accounts.add(account);
     }
-    await _storage.write(key: _accountsKey, value: jsonEncode(accounts.map((e) => e.toJson()).toList()));
+    await _storage.write(
+      key: _accountsKey,
+      value: jsonEncode(accounts.map((e) => e.toJson()).toList()),
+    );
     await setActiveAccount(account.email);
   }
 
   Future<void> removeAccount(String email) async {
     final accounts = await getAccounts();
     accounts.removeWhere((a) => a.email == email);
-    await _storage.write(key: _accountsKey, value: jsonEncode(accounts.map((e) => e.toJson()).toList()));
-    
+    await _storage.write(
+      key: _accountsKey,
+      value: jsonEncode(accounts.map((e) => e.toJson()).toList()),
+    );
+
     final activeEmail = await getActiveAccountEmail();
     if (activeEmail == email) {
       if (accounts.isNotEmpty) {

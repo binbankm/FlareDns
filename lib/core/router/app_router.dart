@@ -36,14 +36,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const AuthPage(),
-      ),
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const HomePage(),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const AuthPage()),
+      GoRoute(path: '/', builder: (context, state) => const HomePage()),
       GoRoute(
         path: '/zone/:zoneId',
         builder: (context, state) {
@@ -65,7 +59,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final zoneId = state.pathParameters['zoneId']!;
           final existingRecord = state.extra as DnsRecord?;
-          return DnsRecordFormPage(zoneId: zoneId, existingRecord: existingRecord);
+          return DnsRecordFormPage(
+            zoneId: zoneId,
+            existingRecord: existingRecord,
+          );
         },
       ),
       GoRoute(
@@ -105,8 +102,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final worker = state.extra as CloudflareWorker;
           final initialTabStr = state.uri.queryParameters['initialTab'];
-          final initialTab = initialTabStr != null ? int.tryParse(initialTabStr) ?? 0 : 0;
-          return WorkerDashboardPage(worker: worker, initialTabIndex: initialTab);
+          final initialTab = initialTabStr != null
+              ? int.tryParse(initialTabStr) ?? 0
+              : 0;
+          return WorkerDashboardPage(
+            worker: worker,
+            initialTabIndex: initialTab,
+          );
         },
       ),
       GoRoute(

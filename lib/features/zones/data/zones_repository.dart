@@ -18,12 +18,15 @@ class ZonesRepository {
     int totalPages = 1;
 
     do {
-      final response = await _dio.get('/zones', queryParameters: {'page': page, 'per_page': 50});
+      final response = await _dio.get(
+        '/zones',
+        queryParameters: {'page': page, 'per_page': 50},
+      );
       final data = response.data;
       if (data['success'] == true) {
         final List<dynamic> result = data['result'];
         allZones.addAll(result.map((json) => Zone.fromJson(json)));
-        
+
         final resultInfo = data['result_info'];
         if (resultInfo != null) {
           totalPages = resultInfo['total_pages'] as int? ?? 1;

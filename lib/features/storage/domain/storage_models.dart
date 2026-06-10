@@ -17,7 +17,11 @@ class CloudflareD1Database {
   final String name;
   final String? createdAt;
 
-  const CloudflareD1Database({required this.uuid, required this.name, this.createdAt});
+  const CloudflareD1Database({
+    required this.uuid,
+    required this.name,
+    this.createdAt,
+  });
 
   factory CloudflareD1Database.fromJson(Map<String, dynamic> json) {
     return CloudflareD1Database(

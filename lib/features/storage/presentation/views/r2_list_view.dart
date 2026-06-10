@@ -12,7 +12,9 @@ class R2ListView extends ConsumerWidget {
       builder: (context) {
         return AlertDialog(
           title: const Text('Delete R2 Bucket'),
-          content: Text('Are you sure you want to delete "$name"? This action cannot be undone.'),
+          content: Text(
+            'Are you sure you want to delete "$name"? This action cannot be undone.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -24,10 +26,14 @@ class R2ListView extends ConsumerWidget {
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
                 try {
-                  await ref.read(storageRepositoryProvider).deleteR2Bucket(name);
+                  await ref
+                      .read(storageRepositoryProvider)
+                      .deleteR2Bucket(name);
                   ref.invalidate(r2BucketsProvider);
                   scaffoldMessenger.showSnackBar(
-                    const SnackBar(content: Text('R2 Bucket deleted successfully!')),
+                    const SnackBar(
+                      content: Text('R2 Bucket deleted successfully!'),
+                    ),
                   );
                 } catch (e) {
                   scaffoldMessenger.showSnackBar(
@@ -35,7 +41,10 @@ class R2ListView extends ConsumerWidget {
                   );
                 }
               },
-              child: const Text('Delete', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         );
@@ -55,9 +64,19 @@ class R2ListView extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.cloud_outlined, size: 64, color: colorScheme.outlineVariant),
+                Icon(
+                  Icons.cloud_outlined,
+                  size: 64,
+                  color: colorScheme.outlineVariant,
+                ),
                 const SizedBox(height: 16),
-                Text('No R2 Buckets found', style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 16)),
+                Text(
+                  'No R2 Buckets found',
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 16,
+                  ),
+                ),
               ],
             ),
           );
@@ -69,12 +88,6 @@ class R2ListView extends ConsumerWidget {
           itemBuilder: (context, index) {
             final bucket = buckets[index];
             return Card(
-              elevation: 0,
-              margin: const EdgeInsets.only(bottom: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: colorScheme.outlineVariant, width: 1),
-              ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -95,20 +108,29 @@ class R2ListView extends ConsumerWidget {
                         children: [
                           Text(
                             bucket.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
                           if (bucket.creationDate != null) ...[
                             const SizedBox(height: 4),
                             Text(
                               'Created: ${bucket.creationDate}',
-                              style: TextStyle(color: colorScheme.outline, fontSize: 12),
+                              style: TextStyle(
+                                color: colorScheme.outline,
+                                fontSize: 12,
+                              ),
                             ),
-                          ]
+                          ],
                         ],
                       ),
                     ),
                     PopupMenuButton<String>(
-                      icon: Icon(Icons.more_vert, color: colorScheme.onSurfaceVariant),
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                       onSelected: (value) {
                         if (value == 'delete') {
                           _showDeleteDialog(context, ref, bucket.name);
@@ -121,7 +143,10 @@ class R2ListView extends ConsumerWidget {
                             children: [
                               Icon(Icons.delete, size: 20, color: Colors.red),
                               SizedBox(width: 12),
-                              Text('Delete', style: TextStyle(color: Colors.red)),
+                              Text(
+                                'Delete',
+                                style: TextStyle(color: Colors.red),
+                              ),
                             ],
                           ),
                         ),

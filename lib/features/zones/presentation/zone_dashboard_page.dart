@@ -16,9 +16,7 @@ class ZoneDashboardPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(zoneName),
-      ),
+      appBar: AppBar(title: Text(zoneName)),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
@@ -28,7 +26,9 @@ class ZoneDashboardPage extends ConsumerWidget {
             color: Colors.orange,
             title: 'DNS',
             subtitle: 'Manage DNS records',
-            onTap: () => context.push('/zone/$zoneId/dns?name=${Uri.encodeComponent(zoneName)}'),
+            onTap: () => context.push(
+              '/zone/$zoneId/dns?name=${Uri.encodeComponent(zoneName)}',
+            ),
           ),
           _buildFeatureCard(
             context,
@@ -36,7 +36,9 @@ class ZoneDashboardPage extends ConsumerWidget {
             color: Colors.redAccent,
             title: 'Security',
             subtitle: 'Under attack mode & Dev mode',
-            onTap: () => context.push('/zone/$zoneId/security?name=${Uri.encodeComponent(zoneName)}'),
+            onTap: () => context.push(
+              '/zone/$zoneId/security?name=${Uri.encodeComponent(zoneName)}',
+            ),
           ),
           _buildFeatureCard(
             context,
@@ -44,7 +46,9 @@ class ZoneDashboardPage extends ConsumerWidget {
             color: Colors.blueAccent,
             title: 'Analytics',
             subtitle: 'Web traffic & usage metrics',
-            onTap: () => context.push('/zone/$zoneId/analytics?name=${Uri.encodeComponent(zoneName)}'),
+            onTap: () => context.push(
+              '/zone/$zoneId/analytics?name=${Uri.encodeComponent(zoneName)}',
+            ),
           ),
           _buildFeatureCard(
             context,
@@ -52,7 +56,9 @@ class ZoneDashboardPage extends ConsumerWidget {
             color: Colors.teal,
             title: 'Caching',
             subtitle: 'Purge cache & settings',
-            onTap: () => context.push('/zone/$zoneId/cache?name=${Uri.encodeComponent(zoneName)}'),
+            onTap: () => context.push(
+              '/zone/$zoneId/cache?name=${Uri.encodeComponent(zoneName)}',
+            ),
           ),
           _buildSslCard(context, ref),
         ],
@@ -62,12 +68,16 @@ class ZoneDashboardPage extends ConsumerWidget {
 
   Widget _buildSslCard(BuildContext context, WidgetRef ref) {
     final sslAsync = ref.watch(zoneSslCertificatesProvider(zoneId));
-    
+
     Widget trailingWidget = const Icon(Icons.chevron_right, color: Colors.grey);
     String subtitleText = 'Manage encryption mode';
-    
+
     if (sslAsync.isLoading) {
-      trailingWidget = const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2));
+      trailingWidget = const SizedBox(
+        width: 16,
+        height: 16,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      );
     } else if (sslAsync.hasError) {
       trailingWidget = Expanded(
         child: Text(
@@ -84,9 +94,9 @@ class ZoneDashboardPage extends ConsumerWidget {
         final status = cert['status'] ?? 'unknown';
         final type = cert['type'] ?? 'universal';
         subtitleText = 'Manage encryption mode & certificates';
-        
+
         final color = status == 'active' ? Colors.green : Colors.orange;
-        
+
         trailingWidget = Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -97,8 +107,12 @@ class ZoneDashboardPage extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
-                type.toString().toUpperCase(), 
-                style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.bold)
+                type.toString().toUpperCase(),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: color,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(width: 8),
@@ -108,21 +122,21 @@ class ZoneDashboardPage extends ConsumerWidget {
       } else {
         trailingWidget = const Text(
           'NO CERTS FOUND',
-          style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
         );
       }
     }
 
     return Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.purpleAccent.withValues(alpha: 0.3)),
-      ),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => context.push('/zone/$zoneId/ssl?name=${Uri.encodeComponent(zoneName)}'),
+        onTap: () => context.push(
+          '/zone/$zoneId/ssl?name=${Uri.encodeComponent(zoneName)}',
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           child: Row(
@@ -134,16 +148,29 @@ class ZoneDashboardPage extends ConsumerWidget {
                   color: Colors.purpleAccent.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.security, color: Colors.purpleAccent, size: 20),
+                child: const Icon(
+                  Icons.security,
+                  color: Colors.purpleAccent,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('SSL/TLS', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    const Text(
+                      'SSL/TLS',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
                     const SizedBox(height: 2),
-                    Text(subtitleText, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                    Text(
+                      subtitleText,
+                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
                   ],
                 ),
               ),
@@ -164,12 +191,6 @@ class ZoneDashboardPage extends ConsumerWidget {
     required VoidCallback onTap,
   }) {
     return Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: color.withValues(alpha: 0.3)),
-      ),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
@@ -191,9 +212,18 @@ class ZoneDashboardPage extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
                     const SizedBox(height: 2),
-                    Text(subtitle, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
                   ],
                 ),
               ),

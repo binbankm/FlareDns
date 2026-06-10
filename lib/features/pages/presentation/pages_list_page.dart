@@ -30,16 +30,20 @@ class _PagesListPageState extends ConsumerState<PagesListPage> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search projects...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 700),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  decoration: const InputDecoration(
+                    hintText: 'Search projects...',
+                    prefixIcon: Icon(Icons.search),
+                  ),
+                  onChanged: (val) =>
+                      setState(() => _searchQuery = val.trim().toLowerCase()),
+                ),
               ),
-              onChanged: (val) => setState(() => _searchQuery = val.trim().toLowerCase()),
             ),
           ),
           Expanded(
@@ -48,15 +52,22 @@ class _PagesListPageState extends ConsumerState<PagesListPage> {
                 if (pages.isEmpty) {
                   return const Center(child: Text('No Pages projects found.'));
                 }
-                final filtered = pages.where((p) => p.name.toLowerCase().contains(_searchQuery)).toList();
+                final filtered = pages
+                    .where((p) => p.name.toLowerCase().contains(_searchQuery))
+                    .toList();
                 if (filtered.isEmpty) {
-                  return const Center(child: Text('No projects match your search.'));
+                  return const Center(
+                    child: Text('No projects match your search.'),
+                  );
                 }
                 return Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 700),
                     child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       itemCount: filtered.length,
                       itemBuilder: (context, i) => _PageCard(page: filtered[i]),
                     ),
@@ -82,17 +93,23 @@ class _PageCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final isGithub = page.source == 'github';
     final isGitlab = page.source == 'gitlab';
-    final sourceColor = isGithub ? Colors.indigo : isGitlab ? Colors.orange : Colors.blue;
-    final sourceIcon = isGithub ? Icons.code : isGitlab ? Icons.merge_type : Icons.web;
-    final sourceLabel = isGithub ? 'GitHub' : isGitlab ? 'GitLab' : 'Direct';
+    final sourceColor = isGithub
+        ? Colors.indigo
+        : isGitlab
+        ? Colors.orange
+        : Colors.blue;
+    final sourceIcon = isGithub
+        ? Icons.code
+        : isGitlab
+        ? Icons.merge_type
+        : Icons.web;
+    final sourceLabel = isGithub
+        ? 'GitHub'
+        : isGitlab
+        ? 'GitLab'
+        : 'Direct';
 
     return Card(
-      elevation: 0,
-      margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: colorScheme.outlineVariant, width: 1),
-      ),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: () => context.push('/page/${page.name}', extra: page),
@@ -101,7 +118,8 @@ class _PageCard extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 44, height: 44,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: sourceColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
@@ -113,19 +131,37 @@ class _PageCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(page.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15), overflow: TextOverflow.ellipsis),
+                    Text(
+                      page.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       page.subdomain,
-                      style: TextStyle(color: colorScheme.primary, fontSize: 12),
+                      style: TextStyle(
+                        color: colorScheme.primary,
+                        fontSize: 12,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 6),
                     Wrap(
                       spacing: 6,
                       children: [
-                        _InfoChip(icon: sourceIcon, label: sourceLabel, color: sourceColor),
-                        _InfoChip(icon: Icons.call_split, label: page.productionBranch, color: Colors.grey),
+                        _InfoChip(
+                          icon: sourceIcon,
+                          label: sourceLabel,
+                          color: sourceColor,
+                        ),
+                        _InfoChip(
+                          icon: Icons.call_split,
+                          label: page.productionBranch,
+                          color: Colors.grey,
+                        ),
                       ],
                     ),
                   ],
@@ -144,7 +180,11 @@ class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
-  const _InfoChip({required this.icon, required this.label, required this.color});
+  const _InfoChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +199,14 @@ class _InfoChip extends StatelessWidget {
         children: [
           Icon(icon, size: 11, color: color),
           const SizedBox(width: 3),
-          Text(label, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w600)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );

@@ -33,7 +33,9 @@ class PagesRepository {
     final data = response.data;
     if (data['success'] == true) {
       final results = data['result'] as List<dynamic>;
-      return results.map((e) => CloudflarePage.fromJson(e as Map<String, dynamic>)).toList();
+      return results
+          .map((e) => CloudflarePage.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch Pages projects: ${data['errors']}');
     }
@@ -41,11 +43,15 @@ class PagesRepository {
 
   Future<List<PageDeployment>> getDeployments(String projectName) async {
     final accountId = await _getAccountId();
-    final response = await _dio.get('/accounts/$accountId/pages/projects/$projectName/deployments');
+    final response = await _dio.get(
+      '/accounts/$accountId/pages/projects/$projectName/deployments',
+    );
     final data = response.data;
     if (data['success'] == true) {
       final results = data['result'] as List<dynamic>;
-      return results.map((e) => PageDeployment.fromJson(e as Map<String, dynamic>)).toList();
+      return results
+          .map((e) => PageDeployment.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch deployments: ${data['errors']}');
     }
@@ -53,11 +59,15 @@ class PagesRepository {
 
   Future<List<PageDomain>> getDomains(String projectName) async {
     final accountId = await _getAccountId();
-    final response = await _dio.get('/accounts/$accountId/pages/projects/$projectName/domains');
+    final response = await _dio.get(
+      '/accounts/$accountId/pages/projects/$projectName/domains',
+    );
     final data = response.data;
     if (data['success'] == true) {
       final results = data['result'] as List<dynamic>;
-      return results.map((e) => PageDomain.fromJson(e as Map<String, dynamic>)).toList();
+      return results
+          .map((e) => PageDomain.fromJson(e as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Failed to fetch domains: ${data['errors']}');
     }
@@ -91,7 +101,9 @@ class PagesRepository {
   /// Get the full project (including deployment_configs with bindings)
   Future<CloudflarePage> getProject(String projectName) async {
     final accountId = await _getAccountId();
-    final response = await _dio.get('/accounts/$accountId/pages/projects/$projectName');
+    final response = await _dio.get(
+      '/accounts/$accountId/pages/projects/$projectName',
+    );
     final data = response.data;
     if (data['success'] == true) {
       return CloudflarePage.fromJson(data['result'] as Map<String, dynamic>);
@@ -101,7 +113,10 @@ class PagesRepository {
   }
 
   /// Update project env vars / bindings by PATCHing deployment_configs
-  Future<void> updateProjectBindings(String projectName, Map<String, dynamic> deploymentConfigs) async {
+  Future<void> updateProjectBindings(
+    String projectName,
+    Map<String, dynamic> deploymentConfigs,
+  ) async {
     final accountId = await _getAccountId();
     final response = await _dio.patch(
       '/accounts/$accountId/pages/projects/$projectName',

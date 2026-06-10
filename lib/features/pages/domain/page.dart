@@ -26,7 +26,10 @@ class CloudflarePage {
   });
 
   factory CloudflarePage.fromJson(Map<String, dynamic> json) {
-    final prod = (json['deployment_configs'] as Map<String, dynamic>?)?['production'] as Map<String, dynamic>? ?? {};
+    final prod =
+        (json['deployment_configs'] as Map<String, dynamic>?)?['production']
+            as Map<String, dynamic>? ??
+        {};
     return CloudflarePage(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -70,7 +73,8 @@ class PageDeployment {
 
   factory PageDeployment.fromJson(Map<String, dynamic> json) {
     String status = 'unknown';
-    if (json['latest_stage'] != null && json['latest_stage']['status'] != null) {
+    if (json['latest_stage'] != null &&
+        json['latest_stage']['status'] != null) {
       status = json['latest_stage']['status'] as String;
     }
 
@@ -84,14 +88,17 @@ class PageDeployment {
         commitHash = (meta['commit_hash'] as String? ?? '').length > 7
             ? (meta['commit_hash'] as String).substring(0, 7)
             : (meta['commit_hash'] as String? ?? '');
-        commitMessage = (meta['commit_message'] as String? ?? '').split('\n').first;
+        commitMessage = (meta['commit_message'] as String? ?? '')
+            .split('\n')
+            .first;
         branch = meta['branch'] as String? ?? '';
       }
     }
 
     return PageDeployment(
       id: json['id'] as String,
-      shortId: json['short_id'] as String? ?? json['id'].toString().substring(0, 8),
+      shortId:
+          json['short_id'] as String? ?? json['id'].toString().substring(0, 8),
       environment: json['environment'] as String? ?? 'unknown',
       url: json['url'] as String? ?? '',
       createdOn: json['created_on'] as String,

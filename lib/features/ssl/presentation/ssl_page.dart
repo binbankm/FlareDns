@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../data/ssl_repository.dart';
 import '../providers/ssl_provider.dart';
 import '../../zones/providers/zones_provider.dart';
@@ -17,25 +18,27 @@ class SslPage extends ConsumerStatefulWidget {
 class _SslPageState extends ConsumerState<SslPage> {
   bool _isSaving = false;
 
-  final List<Map<String, String>> _modes = [
-    {'value': 'off', 'title': 'Off', 'desc': 'No encryption applied.'},
-    {
-      'value': 'flexible',
-      'title': 'Flexible',
-      'desc': 'Encrypts traffic between the browser and Cloudflare.',
-    },
-    {
-      'value': 'full',
-      'title': 'Full',
-      'desc': 'Encrypts end-to-end, using a self-signed cert on the server.',
-    },
-    {
-      'value': 'strict',
-      'title': 'Full (strict)',
-      'desc':
-          'Encrypts end-to-end, requires a trusted CA or Cloudflare Origin CA cert on the server.',
-    },
-  ];
+  List<Map<String, String>> _getModes(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return [
+      {'value': 'off', 'title': l10n.sslModeOff, 'desc': l10n.sslModeOffDesc},
+      {
+        'value': 'flexible',
+        'title': l10n.sslModeFlexible,
+        'desc': l10n.sslModeFlexibleDesc,
+      },
+      {
+        'value': 'full',
+        'title': l10n.sslModeFull,
+        'desc': l10n.sslModeFullDesc,
+      },
+      {
+        'value': 'strict',
+        'title': l10n.sslModeStrict,
+        'desc': l10n.sslModeStrictDesc,
+      },
+    ];
+  }
 
   Future<void> _updateMode(String newMode) async {
     setState(() => _isSaving = true);
@@ -44,10 +47,10 @@ class _SslPageState extends ConsumerState<SslPage> {
       await repository.setSslMode(widget.zoneId, newMode);
       ref.invalidate(sslModeProvider(widget.zoneId));
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('SSL/TLS mode updated!'),
-            
+          SnackBar(
+            content: Text(l10n.sslUpdated),
           ),
         );
       }
@@ -55,7 +58,7 @@ class _SslPageState extends ConsumerState<SslPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).commonError(e.toString()))));
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -65,9 +68,10 @@ class _SslPageState extends ConsumerState<SslPage> {
   @override
   Widget build(BuildContext context) {
     final sslState = ref.watch(sslModeProvider(widget.zoneId));
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('SSL/TLS: ${widget.zoneName}')),
+      appBar: AppBar(title: Text(l10n.sslTitle(widget.zoneName))),
       body: sslState.when(
         data: (currentMode) {
           final certsAsync = ref.watch(
@@ -92,20 +96,20 @@ class _SslPageState extends ConsumerState<SslPage> {
                           ),
                           SizedBox(width: 12),
                           Text(
-                            'Encryption Mode',
+                            l10n.sslEncryptionMode,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                         ],
                       ),
                       SizedBox(height: 12),
                       Text(
-                        'Choose how Cloudflare connects to your origin server.',
+                        l10n.sslEncryptionModeDesc,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                       SizedBox(height: 24),
-                      ..._modes.map((mode) {
+                      ..._getModes(context).map((mode) {
                         return RadioListTile<String>(
                           title: Text(
                             mode['title']!,
@@ -152,14 +156,14 @@ class _SslPageState extends ConsumerState<SslPage> {
                           ),
                           SizedBox(width: 12),
                           Text(
-                            'Edge Certificates',
+                            l10n.sslEdgeCertificates,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                         ],
                       ),
                       SizedBox(height: 12),
                       Text(
-                        'Active certificates protecting your domain.',
+                        l10n.sslEdgeCertificatesDesc,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -170,7 +174,7 @@ class _SslPageState extends ConsumerState<SslPage> {
                           if (certs.isEmpty) {
                             return Padding(
                               padding: EdgeInsets.symmetric(vertical: 16),
-                              child: Text('No edge certificates found.'),
+                              child: Text(l10n.sslNoCerts),
                             );
                           }
                           return Column(
@@ -235,7 +239,7 @@ class _SslPageState extends ConsumerState<SslPage> {
                                     ),
                                     SizedBox(height: 8),
                                     Text(
-                                      'Hosts:',
+                                      l10n.sslHosts,
                                       style: TextStyle(
                                         color: Theme.of(context).colorScheme.outline,
                                         fontSize: 12,
@@ -290,7 +294,7 @@ class _SslPageState extends ConsumerState<SslPage> {
                         error: (err, stack) => Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            'Error loading certificates: $err',
+                            l10n.sslCertError(err.toString()),
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(
                                   color: Theme.of(context).colorScheme.error,
@@ -312,11 +316,11 @@ class _SslPageState extends ConsumerState<SslPage> {
             children: [
               Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
               SizedBox(height: 16),
-              Text('Error: $err', textAlign: TextAlign.center),
+              Text(AppLocalizations.of(context).commonError(err.toString()), textAlign: TextAlign.center),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(sslModeProvider(widget.zoneId)),
-                child: Text('Retry'),
+                child: Text(l10n.commonRetry),
               ),
             ],
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../providers/analytics_provider.dart';
 
 class AnalyticsPage extends ConsumerWidget {
@@ -44,9 +45,10 @@ class AnalyticsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final analyticsAsync = ref.watch(analyticsProvider(zoneId));
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Analytics: $zoneName')),
+      appBar: AppBar(title: Text(l10n.analyticsTitle(zoneName))),
       body: analyticsAsync.when(
         data: (data) {
           final totals = data['totals'] as Map<String, dynamic>? ?? {};
@@ -71,7 +73,7 @@ class AnalyticsPage extends ConsumerWidget {
               padding: const EdgeInsets.all(16.0),
               children: [
                 Text(
-                  'Last 30 Days Summary',
+                  l10n.analyticsLast30Days,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.outline,
                     fontWeight: FontWeight.bold,
@@ -82,18 +84,18 @@ class AnalyticsPage extends ConsumerWidget {
                 // Requests
                 _buildStatCard(
                   context,
-                  title: 'Total Requests',
+                  title: l10n.analyticsTotalRequests,
                   value: _formatNumber(reqAll),
                   icon: Icons.sync_alt,
                   color: Theme.of(context).colorScheme.primary,
                   details: [
                     _DetailRow(
-                      'Cached',
+                      l10n.analyticsCached,
                       _formatNumber(reqCached),
                       Theme.of(context).colorScheme.primary,
                     ),
                     _DetailRow(
-                      'Uncached',
+                      l10n.analyticsUncached,
                       _formatNumber(reqUncached),
                       Theme.of(context).colorScheme.tertiary,
                     ),
@@ -104,14 +106,14 @@ class AnalyticsPage extends ConsumerWidget {
                 // Bandwidth
                 _buildStatCard(
                   context,
-                  title: 'Total Bandwidth',
+                  title: l10n.analyticsTotalBandwidth,
                   value: _formatBytes(bwAll),
                   icon: Icons.data_usage,
                   color: Theme.of(context).colorScheme.secondary,
                   details: [
-                    _DetailRow('Cached', _formatBytes(bwCached), Theme.of(context).colorScheme.primary),
+                    _DetailRow(l10n.analyticsCached, _formatBytes(bwCached), Theme.of(context).colorScheme.primary),
                     _DetailRow(
-                      'Uncached',
+                      l10n.analyticsUncached,
                       _formatBytes(bwUncached),
                       Theme.of(context).colorScheme.tertiary,
                     ),
@@ -125,7 +127,7 @@ class AnalyticsPage extends ConsumerWidget {
                     Expanded(
                       child: _buildMiniCard(
                         context,
-                        title: 'Unique Visitors',
+                        title: l10n.analyticsUniqueVisitors,
                         value: _formatNumber(uniques['all'] as num? ?? 0),
                         icon: Icons.people,
                         color: Theme.of(context).colorScheme.primaryContainer,
@@ -135,7 +137,7 @@ class AnalyticsPage extends ConsumerWidget {
                     Expanded(
                       child: _buildMiniCard(
                         context,
-                        title: 'Page Views',
+                        title: l10n.analyticsPageViews,
                         value: _formatNumber(pageviews['all'] as num? ?? 0),
                         icon: Icons.visibility,
                         color: Theme.of(context).colorScheme.tertiaryContainer,
@@ -161,13 +163,13 @@ class AnalyticsPage extends ConsumerWidget {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Analytics data is not available for this zone or plan.',
+                  l10n.analyticsUnavailable,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Details: $e',
+                  l10n.analyticsDetails(e.toString()),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -176,7 +178,7 @@ class AnalyticsPage extends ConsumerWidget {
                 SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(analyticsProvider(zoneId)),
-                  child: Text('Retry'),
+                  child: Text(l10n.commonRetry),
                 ),
               ],
             ),

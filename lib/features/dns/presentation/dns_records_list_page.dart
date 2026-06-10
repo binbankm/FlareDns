@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../providers/dns_provider.dart';
 
 class DnsRecordsListPage extends ConsumerStatefulWidget {
@@ -20,21 +21,23 @@ class DnsRecordsListPage extends ConsumerStatefulWidget {
 class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
   String _searchQuery = '';
 
-  String _formatTtl(int ttl) {
-    if (ttl == 1) return 'Auto';
-    if (ttl < 60) return '$ttl sec';
-    if (ttl < 3600) return '${ttl ~/ 60} mins';
-    if (ttl < 86400) return '${ttl ~/ 3600} hours';
-    return '${ttl ~/ 86400} days';
+  String _formatTtl(BuildContext context, int ttl) {
+    final l10n = AppLocalizations.of(context);
+    if (ttl == 1) return l10n.dnsTtlAuto;
+    if (ttl < 60) return l10n.dnsTtlSec(ttl);
+    if (ttl < 3600) return l10n.dnsTtlMins(ttl ~/ 60);
+    if (ttl < 86400) return l10n.dnsTtlHours(ttl ~/ 3600);
+    return l10n.dnsTtlDays(ttl ~/ 86400);
   }
 
   @override
   Widget build(BuildContext context) {
     final dnsRecordsAsyncValue = ref.watch(dnsRecordsProvider(widget.zoneId));
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('DNS: ${widget.zoneName}'),
+        title: Text(l10n.dnsTitle(widget.zoneName)),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
@@ -52,8 +55,8 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
-                  decoration: const InputDecoration(
-                    hintText: 'Search DNS records...',
+                  decoration: InputDecoration(
+                    hintText: l10n.dnsSearch,
                     prefixIcon: Icon(Icons.search),
                   ),
                   onChanged: (val) {
@@ -69,7 +72,7 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
             child: dnsRecordsAsyncValue.when(
               data: (records) {
                 if (records.isEmpty) {
-                  return Center(child: Text('No DNS records found.'));
+                  return Center(child: Text(l10n.dnsEmpty));
                 }
 
                 final filtered = records.where((r) {
@@ -86,7 +89,7 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
 
                 if (filtered.isEmpty) {
                   return Center(
-                    child: Text('No records match your search.'),
+                    child: Text(l10n.dnsNoMatch),
                   );
                 }
 
@@ -186,7 +189,7 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                                   BorderRadius.circular(6),
                                             ),
                                             child: Text(
-                                              _formatTtl(record.ttl),
+                                              _formatTtl(context, record.ttl),
                                               style: TextStyle(
                                                 fontSize: 10,
                                                 color: Theme.of(
@@ -211,7 +214,7 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                                     BorderRadius.circular(6),
                                               ),
                                               child: Text(
-                                                'Pri: ${record.priority}',
+                                                l10n.dnsPriority(record.priority!),
                                                 style: TextStyle(
                                                   fontSize: 10,
                                                   color: Theme.of(
@@ -249,7 +252,7 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                                           ).showSnackBar(
                                                             SnackBar(
                                                               content: Text(
-                                                                'Error: $e',
+                                                                AppLocalizations.of(context).commonError(e.toString()),
                                                               ),
                                                             ),
                                                           );
@@ -274,24 +277,24 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                                   context: context,
                                                   builder: (context) => AlertDialog(
                                                     title: Text(
-                                                      'Delete Record',
+                                                      l10n.dnsDeleteTitle,
                                                     ),
                                                     content: Text(
-                                                      'Are you sure you want to delete ${record.name}?',
+                                                      l10n.dnsDeleteContent(record.name),
                                                     ),
                                                     actions: [
                                                       TextButton(
                                                         onPressed: () =>
                                                             context.pop(false),
                                                         child: Text(
-                                                          'Cancel',
+                                                          l10n.commonCancel,
                                                         ),
                                                       ),
                                                       TextButton(
                                                         onPressed: () =>
                                                             context.pop(true),
                                                         child: Text(
-                                                          'Delete',
+                                                          l10n.commonDelete,
                                                           style: TextStyle(
                                                             color: Theme.of(context).colorScheme.error,
                                                           ),
@@ -318,7 +321,7 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                                       ).showSnackBar(
                                                         SnackBar(
                                                           content: Text(
-                                                            'Error: $e',
+                                                            AppLocalizations.of(context).commonError(e.toString()),
                                                           ),
                                                         ),
                                                       );
@@ -353,12 +356,12 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                       color: Theme.of(context).colorScheme.error,
                     ),
                     SizedBox(height: 16),
-                    Text('Error: $error', textAlign: TextAlign.center),
+                    Text(AppLocalizations.of(context).commonError(error.toString()), textAlign: TextAlign.center),
                     SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () =>
                           ref.invalidate(dnsRecordsProvider(widget.zoneId)),
-                      child: Text('Retry'),
+                      child: Text(l10n.commonRetry),
                     ),
                   ],
                 ),
@@ -368,6 +371,7 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: null,
         onPressed: () {
           context.push('/zone/${widget.zoneId}/dns/form');
         },

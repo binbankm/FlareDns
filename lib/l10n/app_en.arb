@@ -1,0 +1,759 @@
+{
+  "@@locale": "en",
+  "appTitle": "FlareDns",
+  "@appTitle": {
+    "description": "App title"
+  },
+  "navDomains": "Domains",
+  "@navDomains": {},
+  "navWorkers": "Workers",
+  "@navWorkers": {},
+  "navPages": "Pages",
+  "@navPages": {},
+  "navStorage": "Storage",
+  "@navStorage": {},
+  "navSettings": "Settings",
+  "@navSettings": {},
+  "authWelcome": "Welcome to FlareDns",
+  "@authWelcome": {},
+  "authSubtitle": "Sign in with your Cloudflare Global API Key",
+  "@authSubtitle": {},
+  "authEmail": "Account Email",
+  "@authEmail": {},
+  "authApiKey": "Global API Key",
+  "@authApiKey": {},
+  "authLogin": "Login",
+  "@authLogin": {},
+  "authRequired": "Required",
+  "@authRequired": {},
+  "settingsTitle": "Settings",
+  "@settingsTitle": {},
+  "settingsSectionAccount": "ACCOUNT",
+  "@settingsSectionAccount": {},
+  "settingsNotLoggedIn": "Not logged in",
+  "@settingsNotLoggedIn": {},
+  "settingsCloudflareApiKey": "Cloudflare Global API Key",
+  "@settingsCloudflareApiKey": {},
+  "settingsSectionAppearance": "APPEARANCE",
+  "@settingsSectionAppearance": {},
+  "settingsTheme": "Theme",
+  "@settingsTheme": {},
+  "settingsThemeSystem": "System",
+  "@settingsThemeSystem": {},
+  "settingsThemeLight": "Light",
+  "@settingsThemeLight": {},
+  "settingsThemeDark": "Dark",
+  "@settingsThemeDark": {},
+  "settingsSectionLanguage": "LANGUAGE",
+  "@settingsSectionLanguage": {},
+  "settingsLanguageSystem": "System",
+  "@settingsLanguageSystem": {},
+  "settingsLanguageChinese": "中文",
+  "@settingsLanguageChinese": {},
+  "settingsLanguageEnglish": "English",
+  "@settingsLanguageEnglish": {},
+  "settingsSectionAbout": "ABOUT",
+  "@settingsSectionAbout": {},
+  "settingsVersion": "Version",
+  "@settingsVersion": {},
+  "settingsSourceCode": "Source Code",
+  "@settingsSourceCode": {},
+  "settingsLogout": "Logout",
+  "@settingsLogout": {},
+  "settingsLogoutConfirmTitle": "Logout",
+  "@settingsLogoutConfirmTitle": {},
+  "settingsLogoutConfirmContent": "Are you sure you want to logout?",
+  "@settingsLogoutConfirmContent": {},
+  "settingsLogoutConfirm": "Logout",
+  "@settingsLogoutConfirm": {},
+  "commonCancel": "Cancel",
+  "@commonCancel": {},
+  "commonRetry": "Retry",
+  "@commonRetry": {},
+  "commonDelete": "Delete",
+  "@commonDelete": {},
+  "commonCreate": "Create",
+  "@commonCreate": {},
+  "commonSave": "Save",
+  "@commonSave": {},
+  "commonError": "Error: {error}",
+  "@commonError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "commonLoading": "Loading...",
+  "@commonLoading": {},
+  "commonRequired": "Required",
+  "@commonRequired": {},
+  "zonesTitle": "Domains",
+  "@zonesTitle": {},
+  "zonesSearch": "Search domains...",
+  "@zonesSearch": {},
+  "zonesEmpty": "No zones found.",
+  "@zonesEmpty": {},
+  "zonesNoMatch": "No domains match your search.",
+  "@zonesNoMatch": {},
+  "zoneDashboardDns": "DNS",
+  "@zoneDashboardDns": {},
+  "zoneDashboardDnsSubtitle": "Manage DNS records",
+  "@zoneDashboardDnsSubtitle": {},
+  "zoneDashboardSecurity": "Security",
+  "@zoneDashboardSecurity": {},
+  "zoneDashboardSecuritySubtitle": "Under attack mode & Dev mode",
+  "@zoneDashboardSecuritySubtitle": {},
+  "zoneDashboardAnalytics": "Analytics",
+  "@zoneDashboardAnalytics": {},
+  "zoneDashboardAnalyticsSubtitle": "Web traffic & usage metrics",
+  "@zoneDashboardAnalyticsSubtitle": {},
+  "zoneDashboardCaching": "Caching",
+  "@zoneDashboardCaching": {},
+  "zoneDashboardCachingSubtitle": "Purge cache & settings",
+  "@zoneDashboardCachingSubtitle": {},
+  "zoneDashboardSslSubtitle": "Manage encryption mode",
+  "@zoneDashboardSslSubtitle": {},
+  "zoneDashboardSslSubtitleWithCerts": "Manage encryption mode & certificates",
+  "@zoneDashboardSslSubtitleWithCerts": {},
+  "zoneDashboardSslNoCerts": "NO CERTS FOUND",
+  "@zoneDashboardSslNoCerts": {},
+  "dnsTitle": "DNS: {zoneName}",
+  "@dnsTitle": {
+    "placeholders": {
+      "zoneName": {
+        "type": "String"
+      }
+    }
+  },
+  "dnsSearch": "Search DNS records...",
+  "@dnsSearch": {},
+  "dnsEmpty": "No DNS records found.",
+  "@dnsEmpty": {},
+  "dnsNoMatch": "No records match your search.",
+  "@dnsNoMatch": {},
+  "dnsDeleteTitle": "Delete Record",
+  "@dnsDeleteTitle": {},
+  "dnsDeleteContent": "Are you sure you want to delete {name}?",
+  "@dnsDeleteContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "dnsPriority": "Pri: {priority}",
+  "@dnsPriority": {
+    "placeholders": {
+      "priority": {
+        "type": "int"
+      }
+    }
+  },
+  "dnsTtlAuto": "Auto",
+  "@dnsTtlAuto": {},
+  "dnsTtlSec": "{sec} sec",
+  "@dnsTtlSec": {
+    "placeholders": {
+      "sec": {
+        "type": "int"
+      }
+    }
+  },
+  "dnsTtlMins": "{min} mins",
+  "@dnsTtlMins": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "dnsTtlHours": "{hour} hours",
+  "@dnsTtlHours": {
+    "placeholders": {
+      "hour": {
+        "type": "int"
+      }
+    }
+  },
+  "dnsTtlDays": "{day} days",
+  "@dnsTtlDays": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "dnsFormEditTitle": "Edit Record",
+  "@dnsFormEditTitle": {},
+  "dnsFormAddTitle": "Add Record",
+  "@dnsFormAddTitle": {},
+  "dnsFormType": "Type",
+  "@dnsFormType": {},
+  "dnsFormName": "Name",
+  "@dnsFormName": {},
+  "dnsFormNameHint": "e.g., www or @ for root",
+  "@dnsFormNameHint": {},
+  "dnsFormNameRequired": "Name is required",
+  "@dnsFormNameRequired": {},
+  "dnsFormContentRequired": "Content is required",
+  "@dnsFormContentRequired": {},
+  "dnsFormContent": "Content",
+  "@dnsFormContent": {},
+  "dnsFormPriority": "Priority",
+  "@dnsFormPriority": {},
+  "dnsFormPriorityHint": "e.g., 10",
+  "@dnsFormPriorityHint": {},
+  "dnsFormPriorityRequired": "Priority is required",
+  "@dnsFormPriorityRequired": {},
+  "dnsFormPriorityInvalid": "Must be a valid number",
+  "@dnsFormPriorityInvalid": {},
+  "dnsFormTtl": "TTL",
+  "@dnsFormTtl": {},
+  "dnsFormTtlLocked": "TTL is locked to Auto when proxied",
+  "@dnsFormTtlLocked": {},
+  "dnsFormTtlAutoEnforced": "Auto (Enforced by Proxy)",
+  "@dnsFormTtlAutoEnforced": {},
+  "dnsFormProxied": "Proxied",
+  "@dnsFormProxied": {},
+  "dnsFormProxiedSubtitle": "Route traffic through Cloudflare",
+  "@dnsFormProxiedSubtitle": {},
+  "dnsFormSaveChanges": "Save Changes",
+  "@dnsFormSaveChanges": {},
+  "dnsFormCreateRecord": "Create Record",
+  "@dnsFormCreateRecord": {},
+  "dnsFormInvalidIpv4": "Invalid IPv4 address",
+  "@dnsFormInvalidIpv4": {},
+  "dnsFormInvalidIpv4Segment": "Invalid IPv4 segment",
+  "@dnsFormInvalidIpv4Segment": {},
+  "dnsFormInvalidIpv6": "Invalid IPv6 address",
+  "@dnsFormInvalidIpv6": {},
+  "workersTitle": "Workers",
+  "@workersTitle": {},
+  "workersSearch": "Search workers...",
+  "@workersSearch": {},
+  "workersEmpty": "No Workers found in your account.",
+  "@workersEmpty": {},
+  "workersNoMatch": "No workers match your search.",
+  "@workersNoMatch": {},
+  "workersDeleteTitle": "Delete Worker",
+  "@workersDeleteTitle": {},
+  "workersDeleteContent": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+  "@workersDeleteContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "workersDeleted": "Worker deleted.",
+  "@workersDeleted": {},
+  "workersCreateTitle": "Create New Worker",
+  "@workersCreateTitle": {},
+  "workersCreateNameLabel": "Worker Name",
+  "@workersCreateNameLabel": {},
+  "workersCreateNameHint": "e.g. my-awesome-worker",
+  "@workersCreateNameHint": {},
+  "workersCreateError": "Error creating worker: {error}",
+  "@workersCreateError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "workersNewTooltip": "New Worker",
+  "@workersNewTooltip": {},
+  "pagesTitle": "Pages",
+  "@pagesTitle": {},
+  "pagesSearch": "Search projects...",
+  "@pagesSearch": {},
+  "pagesEmpty": "No Pages projects found.",
+  "@pagesEmpty": {},
+  "pagesNoMatch": "No projects match your search.",
+  "@pagesNoMatch": {},
+  "securityTitle": "Security: {zoneName}",
+  "@securityTitle": {
+    "placeholders": {
+      "zoneName": {
+        "type": "String"
+      }
+    }
+  },
+  "securityUnderAttackTitle": "I'm Under Attack Mode",
+  "@securityUnderAttackTitle": {},
+  "securityUnderAttackDesc": "Defend against DDoS attacks. Visitors will see a JavaScript challenge.",
+  "@securityUnderAttackDesc": {},
+  "securityUnderAttackTurnOff": "TURN OFF",
+  "@securityUnderAttackTurnOff": {},
+  "securityUnderAttackEnable": "ENABLE UNDER ATTACK MODE",
+  "@securityUnderAttackEnable": {},
+  "securityLevelTitle": "Security Level",
+  "@securityLevelTitle": {},
+  "securityLevelDesc": "Adjust your website's security profile.",
+  "@securityLevelDesc": {},
+  "securityLevelUnderAttackNote": "Under Attack mode is enabled. To change the level, please turn it off first.",
+  "@securityLevelUnderAttackNote": {},
+  "securityLevelEssentiallyOff": "Essentially Off",
+  "@securityLevelEssentiallyOff": {},
+  "securityLevelLow": "Low",
+  "@securityLevelLow": {},
+  "securityLevelMedium": "Medium",
+  "@securityLevelMedium": {},
+  "securityLevelHigh": "High",
+  "@securityLevelHigh": {},
+  "securityDevModeTitle": "Development Mode",
+  "@securityDevModeTitle": {},
+  "securityDevModeDesc": "Temporarily bypass our cache. Allows you to see changes to your origin server in real-time. Automatically turns off after 3 hours.",
+  "@securityDevModeDesc": {},
+  "securityDevModeActive": "Active (Bypassing Cache)",
+  "@securityDevModeActive": {},
+  "securityDevModeOff": "Off",
+  "@securityDevModeOff": {},
+  "securityDevModeEnabled": "Development Mode Enabled",
+  "@securityDevModeEnabled": {},
+  "securityDevModeDisabled": "Development Mode Disabled",
+  "@securityDevModeDisabled": {},
+  "securityLevelUpdated": "Security Level updated to {level}",
+  "@securityLevelUpdated": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "securityErrorLoading": "Error loading status: {error}",
+  "@securityErrorLoading": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "analyticsTitle": "Analytics: {zoneName}",
+  "@analyticsTitle": {
+    "placeholders": {
+      "zoneName": {
+        "type": "String"
+      }
+    }
+  },
+  "analyticsLast30Days": "Last 30 Days Summary",
+  "@analyticsLast30Days": {},
+  "analyticsTotalRequests": "Total Requests",
+  "@analyticsTotalRequests": {},
+  "analyticsTotalBandwidth": "Total Bandwidth",
+  "@analyticsTotalBandwidth": {},
+  "analyticsUniqueVisitors": "Unique Visitors",
+  "@analyticsUniqueVisitors": {},
+  "analyticsPageViews": "Page Views",
+  "@analyticsPageViews": {},
+  "analyticsCached": "Cached",
+  "@analyticsCached": {},
+  "analyticsUncached": "Uncached",
+  "@analyticsUncached": {},
+  "analyticsUnavailable": "Analytics data is not available for this zone or plan.",
+  "@analyticsUnavailable": {},
+  "analyticsDetails": "Details: {error}",
+  "@analyticsDetails": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "cachingTitle": "Caching: {zoneName}",
+  "@cachingTitle": {
+    "placeholders": {
+      "zoneName": {
+        "type": "String"
+      }
+    }
+  },
+  "cachePurgeTitle": "Purge Cache",
+  "@cachePurgeTitle": {},
+  "cachePurgeDesc": "Clear cached files to force Cloudflare to fetch a fresh version of those files from your web server.",
+  "@cachePurgeDesc": {},
+  "cachePurgeConfirmTitle": "Purge Everything?",
+  "@cachePurgeConfirmTitle": {},
+  "cachePurgeConfirmContent": "This will clear all cached resources for this zone. It may temporarily increase load on your origin server. Are you sure?",
+  "@cachePurgeConfirmContent": {},
+  "cachePurge": "Purge",
+  "@cachePurge": {},
+  "cachePurgeButton": "Purge Everything",
+  "@cachePurgeButton": {},
+  "cachePurging": "Purging...",
+  "@cachePurging": {},
+  "cachePurgeSuccess": "Cache successfully purged!",
+  "@cachePurgeSuccess": {},
+  "sslTitle": "SSL/TLS: {zoneName}",
+  "@sslTitle": {
+    "placeholders": {
+      "zoneName": {
+        "type": "String"
+      }
+    }
+  },
+  "sslEncryptionMode": "Encryption Mode",
+  "@sslEncryptionMode": {},
+  "sslEncryptionModeDesc": "Choose how Cloudflare connects to your origin server.",
+  "@sslEncryptionModeDesc": {},
+  "sslModeOff": "Off",
+  "@sslModeOff": {},
+  "sslModeOffDesc": "No encryption applied.",
+  "@sslModeOffDesc": {},
+  "sslModeFlexible": "Flexible",
+  "@sslModeFlexible": {},
+  "sslModeFlexibleDesc": "Encrypts traffic between the browser and Cloudflare.",
+  "@sslModeFlexibleDesc": {},
+  "sslModeFull": "Full",
+  "@sslModeFull": {},
+  "sslModeFullDesc": "Encrypts end-to-end, using a self-signed cert on the server.",
+  "@sslModeFullDesc": {},
+  "sslModeStrict": "Full (strict)",
+  "@sslModeStrict": {},
+  "sslModeStrictDesc": "Encrypts end-to-end, requires a trusted CA or Cloudflare Origin CA cert on the server.",
+  "@sslModeStrictDesc": {},
+  "sslEdgeCertificates": "Edge Certificates",
+  "@sslEdgeCertificates": {},
+  "sslEdgeCertificatesDesc": "Active certificates protecting your domain.",
+  "@sslEdgeCertificatesDesc": {},
+  "sslNoCerts": "No edge certificates found.",
+  "@sslNoCerts": {},
+  "sslHosts": "Hosts:",
+  "@sslHosts": {},
+  "sslUpdated": "SSL/TLS mode updated!",
+  "@sslUpdated": {},
+  "sslCertError": "Error loading certificates: {error}",
+  "@sslCertError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "storageTitle": "Storage",
+  "@storageTitle": {},
+  "storageCreateKV": "Create KV Namespace",
+  "@storageCreateKV": {},
+  "storageCreateD1": "Create D1 Database",
+  "@storageCreateD1": {},
+  "storageCreateR2": "Create R2 Bucket",
+  "@storageCreateR2": {},
+  "storageCreateHint": "Enter name",
+  "@storageCreateHint": {},
+  "storageCreateSuccess": "{title} created successfully!",
+  "@storageCreateSuccess": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "pageDashboardDeployments": "Deployments",
+  "@pageDashboardDeployments": {},
+  "pageDashboardDomains": "Domains",
+  "@pageDashboardDomains": {},
+  "pageDashboardBindings": "Bindings",
+  "@pageDashboardBindings": {},
+  "pageDashboardNoDeployments": "No deployments found.",
+  "@pageDashboardNoDeployments": {},
+  "pageDashboardProduction": "Production",
+  "@pageDashboardProduction": {},
+  "pageDashboardPreview": "Preview",
+  "@pageDashboardPreview": {},
+  "pageDashboardNoDomains": "No custom domains configured.",
+  "@pageDashboardNoDomains": {},
+  "pageDashboardAddDomain": "Add Custom Domain",
+  "@pageDashboardAddDomain": {},
+  "pageDashboardDomainName": "Domain name",
+  "@pageDashboardDomainName": {},
+  "pageDashboardDomainHint": "e.g. mail.example.com",
+  "@pageDashboardDomainHint": {},
+  "pageDashboardAddDomainSuccess": "Domain added and CNAME auto-configured!",
+  "@pageDashboardAddDomainSuccess": {},
+  "pageDashboardAddDomainManual": "Domain added! Please add the CNAME manually.",
+  "@pageDashboardAddDomainManual": {},
+  "pageDashboardRemoveDomainTitle": "Remove Domain?",
+  "@pageDashboardRemoveDomainTitle": {},
+  "pageDashboardRemoveDomainContent": "Remove \"{name}\" from this project?",
+  "@pageDashboardRemoveDomainContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pageDashboardRemoveDomainConfirm": "Remove",
+  "@pageDashboardRemoveDomainConfirm": {},
+  "pageDashboardRemoveDomainSuccess": "Domain removed.",
+  "@pageDashboardRemoveDomainSuccess": {},
+  "pageDashboardEnvVars": "Environment Variables",
+  "@pageDashboardEnvVars": {},
+  "pageDashboardNoBindings": "No bindings configured.",
+  "@pageDashboardNoBindings": {},
+  "pageDashboardAddBinding": "Add Binding",
+  "@pageDashboardAddBinding": {},
+  "pageDashboardAddSecret": "Add Secret",
+  "@pageDashboardAddSecret": {},
+  "pageDashboardKV": "KV Namespace",
+  "@pageDashboardKV": {},
+  "pageDashboardD1": "D1 Database",
+  "@pageDashboardD1": {},
+  "pageDashboardR2": "R2 Bucket",
+  "@pageDashboardR2": {},
+  "pageDashboardService": "Service",
+  "@pageDashboardService": {},
+  "pageDashboardEnvVar": "Env Var",
+  "@pageDashboardEnvVar": {},
+  "pageDashboardSecret": "Secret",
+  "@pageDashboardSecret": {},
+  "storageEditKVTitle": "Edit KV Namespace",
+  "@storageEditKVTitle": {},
+  "storageEditKVPrompt": "Enter new title",
+  "@storageEditKVPrompt": {},
+  "storageUpdateKVSuccess": "KV Namespace updated successfully!",
+  "@storageUpdateKVSuccess": {},
+  "storageDeleteTitle": "Delete {item}",
+  "@storageDeleteTitle": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "storageDeleteContent": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+  "@storageDeleteContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "storageDeleteSuccess": "{item} deleted successfully!",
+  "@storageDeleteSuccess": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "storageNoItems": "No {item} found",
+  "@storageNoItems": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "storageCopyId": "ID copied to clipboard",
+  "@storageCopyId": {},
+  "storageCopyUuid": "UUID copied to clipboard",
+  "@storageCopyUuid": {},
+  "storageCreated": "Created: {date}",
+  "@storageCreated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "storageRename": "Rename",
+  "@storageRename": {},
+  "pageDashboardSecretAdded": "Secret added.",
+  "@pageDashboardSecretAdded": {},
+  "pageDashboardSecretDeleted": "Secret deleted.",
+  "@pageDashboardSecretDeleted": {},
+  "pageDashboardDeleteBindingTitle": "Delete Binding?",
+  "@pageDashboardDeleteBindingTitle": {},
+  "pageDashboardDeleteBindingContent": "Are you sure you want to delete \"{name}\"?",
+  "@pageDashboardDeleteBindingContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pageDashboardBindingDeleted": "Binding deleted.",
+  "@pageDashboardBindingDeleted": {},
+  "pageDashboardBindingAdded": "Binding added.",
+  "@pageDashboardBindingAdded": {},
+  "pageDashboardBindingTypeEnv": "Plain Text (Env Var)",
+  "@pageDashboardBindingTypeEnv": {},
+  "pageDashboardBindingTypeKV": "KV Namespace",
+  "@pageDashboardBindingTypeKV": {},
+  "pageDashboardBindingTypeD1": "D1 Database",
+  "@pageDashboardBindingTypeD1": {},
+  "workerDashboardRedeploying": "Redeploying to remove binding...",
+  "@workerDashboardRedeploying": {},
+  "workerDashboardPleaseDeploy": "Please deploy the worker first to configure triggers.",
+  "@workerDashboardPleaseDeploy": {},
+  "workerDashboardDeleteScheduleTitle": "Delete Schedule?",
+  "@workerDashboardDeleteScheduleTitle": {},
+  "workerDashboardScheduleDeleted": "Schedule deleted.",
+  "@workerDashboardScheduleDeleted": {},
+  "workerDashboardDeleteDomainTitle": "Delete Domain?",
+  "@workerDashboardDeleteDomainTitle": {},
+  "workerDashboardDomainDeleted": "Domain deleted.",
+  "@workerDashboardDomainDeleted": {},
+  "workerDashboardAddDomainTitle": "Add Custom Domain",
+  "@workerDashboardAddDomainTitle": {},
+  "workerDashboardDomainAdded": "Domain added successfully.",
+  "@workerDashboardDomainAdded": {},
+  "workerDashboardDeployCode": "Deploy Code",
+  "@workerDashboardDeployCode": {},
+  "workerCron1m": "1 min",
+  "@workerCron1m": {},
+  "workerCron5m": "5 mins",
+  "@workerCron5m": {},
+  "workerCron15m": "15 mins",
+  "@workerCron15m": {},
+  "workerCron30m": "30 mins",
+  "@workerCron30m": {},
+  "workerCronHourly": "Hourly",
+  "@workerCronHourly": {},
+  "workerCronDaily": "Daily",
+  "@workerCronDaily": {},
+  "workerCronWeekly": "Weekly",
+  "@workerCronWeekly": {},
+  "workerDashboardTabBindings": "Bindings & Secrets",
+  "@workerDashboardTabBindings": {},
+  "workerDashboardTabTriggers": "Triggers & Routes",
+  "@workerDashboardTabTriggers": {},
+  "workerDashboardTabHistory": "History",
+  "@workerDashboardTabHistory": {},
+  "workerDashboardTabEditor": "Editor",
+  "@workerDashboardTabEditor": {},
+  "workerDashboardNoHistory": "No history for new worker.",
+  "@workerDashboardNoHistory": {},
+  "workerDashboardNoDeployments": "No deployment history.",
+  "@workerDashboardNoDeployments": {},
+  "workerDashboardNoBindings": "No bindings or secrets configured.",
+  "@workerDashboardNoBindings": {},
+  "workerDashboardAddBinding": "Add Binding",
+  "@workerDashboardAddBinding": {},
+  "workerDashboardAddSecret": "Add Secret",
+  "@workerDashboardAddSecret": {},
+  "workerDashboardDeleteSecretTitle": "Delete Secret?",
+  "@workerDashboardDeleteSecretTitle": {},
+  "workerDashboardDeleteSecretContent": "Are you sure you want to delete the secret \"{name}\"?",
+  "@workerDashboardDeleteSecretContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "workerDashboardDeleteBindingTitle": "Delete Binding?",
+  "@workerDashboardDeleteBindingTitle": {},
+  "workerDashboardDeleteBindingContent": "Are you sure you want to delete the binding \"{name}\"?\nThis will redeploy your code.",
+  "@workerDashboardDeleteBindingContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "workerDashboardDeleteScheduleContent": "Are you sure you want to delete the schedule \"{name}\"?",
+  "@workerDashboardDeleteScheduleContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "workerDashboardDeleteDomainContent": "Are you sure you want to delete the domain \"{name}\"?",
+  "@workerDashboardDeleteDomainContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "workerDashboardDeployedSuccess": "Deployed Successfully!",
+  "@workerDashboardDeployedSuccess": {},
+  "formSecretNameLabel": "Secret Name (e.g. API_KEY)",
+  "@formSecretNameLabel": {},
+  "formSecretValueLabel": "Secret Value",
+  "@formSecretValueLabel": {},
+  "formBindingTypeLabel": "Binding Type",
+  "@formBindingTypeLabel": {},
+  "formBindingNameLabel": "Binding Name (e.g. DB, MY_KV, API_URL)",
+  "@formBindingNameLabel": {},
+  "formBindingValueLabel": "Value",
+  "@formBindingValueLabel": {},
+  "formBindingKvNamespaceLabel": "KV Namespace ID",
+  "@formBindingKvNamespaceLabel": {},
+  "formBindingSelectKvLabel": "Select KV Namespace",
+  "@formBindingSelectKvLabel": {},
+  "formBindingD1DatabaseLabel": "D1 Database ID",
+  "@formBindingD1DatabaseLabel": {},
+  "formBindingSelectD1Label": "Select D1 Database",
+  "@formBindingSelectD1Label": {},
+  "formCronExpressionLabel": "Cron Expression",
+  "@formCronExpressionLabel": {},
+  "formCronExpressionHint": "e.g. * * * * * or */5 * * * *",
+  "@formCronExpressionHint": {},
+  "formHostnameLabel": "Hostname",
+  "@formHostnameLabel": {},
+  "formHostnameHint": "e.g. api.example.com",
+  "@formHostnameHint": {},
+  "commonOpenSite": "Open site",
+  "@commonOpenSite": {},
+  "commonOpenInBrowser": "Open in browser",
+  "@commonOpenInBrowser": {},
+  "workerCronEveryMinute": "Every minute",
+  "@workerCronEveryMinute": {},
+  "workerCronEvery5Minutes": "Every 5 minutes",
+  "@workerCronEvery5Minutes": {},
+  "workerCronEvery15Minutes": "Every 15 minutes",
+  "@workerCronEvery15Minutes": {},
+  "workerCronEvery30Minutes": "Every 30 minutes",
+  "@workerCronEvery30Minutes": {},
+  "workerCronEveryHour": "Every hour",
+  "@workerCronEveryHour": {},
+  "workerCronEvery6Hours": "Every 6 hours",
+  "@workerCronEvery6Hours": {},
+  "workerCronEvery12Hours": "Every 12 hours",
+  "@workerCronEvery12Hours": {},
+  "workerCronOnceADay": "Once a day (midnight)",
+  "@workerCronOnceADay": {},
+  "workerCronEveryDay9Am": "Every day at 9 AM",
+  "@workerCronEveryDay9Am": {},
+  "workerCronEverySunday": "Every Sunday",
+  "@workerCronEverySunday": {},
+  "workerCronFirstDayOfMonth": "First day of each month",
+  "@workerCronFirstDayOfMonth": {},
+  "workerCronCustomSchedule": "Custom schedule",
+  "@workerCronCustomSchedule": {},
+  "workerDashboardCustomDomainsRoutes": "Custom Domains / Routes",
+  "@workerDashboardCustomDomainsRoutes": {},
+  "workerDashboardCronSchedules": "Cron Schedules",
+  "@workerDashboardCronSchedules": {},
+  "workerDashboardNoCustomDomains": "No custom domains configured.",
+  "@workerDashboardNoCustomDomains": {},
+  "workerDashboardNoCronSchedules": "No cron schedules configured.",
+  "@workerDashboardNoCronSchedules": {},
+  "workerDashboardEditBinding": "Edit Binding",
+  "@workerDashboardEditBinding": {},
+  "workerDashboardAddDeploy": "Add (Deploy)",
+  "@workerDashboardAddDeploy": {},
+  "workerDashboardUpdateDeploy": "Update (Deploy)",
+  "@workerDashboardUpdateDeploy": {},
+  "workerDashboardEditSecret": "Edit Secret",
+  "@workerDashboardEditSecret": {},
+  "formNewSecretValueLabel": "New Secret Value",
+  "@formNewSecretValueLabel": {},
+  "workerDashboardSecretAdded": "Secret added.",
+  "@workerDashboardSecretAdded": {},
+  "workerDashboardSecretUpdated": "Secret updated.",
+  "@workerDashboardSecretUpdated": {},
+  "commonAdd": "Add",
+  "@commonAdd": {},
+  "commonUpdate": "Update",
+  "@commonUpdate": {},
+  "dnsFormHintSrv": "Target (e.g. example.com). For SRV use data API for full control, or format content appropriately.",
+  "@dnsFormHintSrv": {},
+  "dnsFormHintDefault": "Value",
+  "@dnsFormHintDefault": {}
+}

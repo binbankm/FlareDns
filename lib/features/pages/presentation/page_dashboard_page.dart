@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../domain/page.dart';
 import '../providers/pages_provider.dart';
 import '../data/pages_repository.dart';
@@ -40,7 +41,7 @@ class PageDashboardPage extends ConsumerWidget {
           actions: [
             IconButton(
               icon: Icon(Icons.open_in_new, size: 20),
-              tooltip: 'Open site',
+              tooltip: AppLocalizations.of(context).commonOpenSite,
               onPressed: () async {
                 final uri = Uri.tryParse('https://${page.subdomain}');
                 if (uri != null) {
@@ -57,11 +58,11 @@ class PageDashboardPage extends ConsumerWidget {
               },
             ),
           ],
-          bottom: const TabBar(
+          bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.rocket_launch), text: 'Deployments'),
-              Tab(icon: Icon(Icons.language), text: 'Domains'),
-              Tab(icon: Icon(Icons.link), text: 'Bindings'),
+              Tab(icon: Icon(Icons.rocket_launch), text: AppLocalizations.of(context).pageDashboardDeployments),
+              Tab(icon: Icon(Icons.language), text: AppLocalizations.of(context).pageDashboardDomains),
+              Tab(icon: Icon(Icons.link), text: AppLocalizations.of(context).pageDashboardBindings),
             ],
           ),
         ),
@@ -118,7 +119,7 @@ class _DeploymentsTab extends ConsumerWidget {
     return deploymentsAsync.when(
       data: (deployments) {
         if (deployments.isEmpty) {
-          return Center(child: Text('No deployments found.'));
+          return Center(child: Text(AppLocalizations.of(context).pageDashboardNoDeployments));
         }
 
         final production = deployments
@@ -132,13 +133,13 @@ class _DeploymentsTab extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           children: [
             if (production.isNotEmpty) ...[
-              _sectionHeader('Production', Theme.of(context).colorScheme.primary),
+              _sectionHeader(AppLocalizations.of(context).pageDashboardProduction, Theme.of(context).colorScheme.primary),
               SizedBox(height: 8),
               ...production.map((d) => _buildCard(context, d)),
               SizedBox(height: 24),
             ],
             if (preview.isNotEmpty) ...[
-              _sectionHeader('Preview', Theme.of(context).colorScheme.tertiary),
+              _sectionHeader(AppLocalizations.of(context).pageDashboardPreview, Theme.of(context).colorScheme.tertiary),
               SizedBox(height: 8),
               ...preview.map((d) => _buildCard(context, d)),
             ],
@@ -146,7 +147,7 @@ class _DeploymentsTab extends ConsumerWidget {
         );
       },
       loading: () => Center(child: CircularProgressIndicator()),
-      error: (e, s) => Center(child: Text('Error: $e')),
+      error: (e, s) => Center(child: Text(AppLocalizations.of(context).commonError(e.toString()))),
     );
   }
 
@@ -356,7 +357,7 @@ class _DomainsTab extends ConsumerWidget {
                     Icon(Icons.language_outlined, color: Theme.of(context).colorScheme.outline, size: 18),
                     SizedBox(width: 8),
                     Text(
-                      'No custom domains configured.',
+                      AppLocalizations.of(context).pageDashboardNoDomains,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -461,13 +462,13 @@ class _DomainsTab extends ConsumerWidget {
             OutlinedButton.icon(
               onPressed: () => _showAddDomainDialog(context, ref),
               icon: Icon(Icons.add, size: 18),
-              label: Text('Add Custom Domain'),
+              label: Text(AppLocalizations.of(context).pageDashboardAddDomain),
             ),
           ],
         );
       },
       loading: () => Center(child: CircularProgressIndicator()),
-      error: (e, s) => Center(child: Text('Error: $e')),
+      error: (e, s) => Center(child: Text(AppLocalizations.of(context).commonError(e.toString()))),
     );
   }
 
@@ -476,25 +477,29 @@ class _DomainsTab extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Add Custom Domain'),
+        title: Text(AppLocalizations.of(context).pageDashboardAddDomain),
         content: TextField(
           controller: ctrl,
-          decoration: const InputDecoration(
-            labelText: 'Domain name',
-            hintText: 'e.g. mail.example.com',
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context).pageDashboardDomainName,
+            hintText: AppLocalizations.of(context).pageDashboardDomainHint,
           ),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           ElevatedButton(
             onPressed: () async {
               final domain = ctrl.text.trim();
               if (domain.isEmpty) return;
               Navigator.pop(ctx);
+              final l10n = AppLocalizations.of(context);
+              final successMsg = l10n.pageDashboardAddDomainSuccess;
+              final manualMsg = l10n.pageDashboardAddDomainManual;
+              final errorMsg = l10n.commonError;
               final messenger = ScaffoldMessenger.of(context);
               try {
                 // 1. Add domain to Pages project
@@ -542,27 +547,25 @@ class _DomainsTab extends ConsumerWidget {
                   debugPrint('Auto DNS failed: $dnsError');
                 }
 
+                if (!context.mounted) return;
                 if (autoDnsSuccess) {
                   messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('Domain added and CNAME auto-configured!'),
-                      
+                    SnackBar(
+                      content: Text(successMsg),
                     ),
                   );
                 } else {
                   messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Domain added! Please add the CNAME manually.',
-                      ),
+                    SnackBar(
+                      content: Text(manualMsg),
                     ),
                   );
                 }
               } catch (e) {
-                messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+                messenger.showSnackBar(SnackBar(content: Text(errorMsg(e.toString()))));
               }
             },
-            child: Text('Add'),
+            child: Text(AppLocalizations.of(context).commonCreate),
           ),
         ],
       ),
@@ -577,17 +580,17 @@ class _DomainsTab extends ConsumerWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Remove Domain?'),
-        content: Text('Remove "${domain.name}" from this project?'),
+        title: Text(AppLocalizations.of(context).pageDashboardRemoveDomainTitle),
+        content: Text(AppLocalizations.of(context).pageDashboardRemoveDomainContent(domain.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
-              'Remove',
+              AppLocalizations.of(context).pageDashboardRemoveDomainConfirm,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.error,
               ),
@@ -596,16 +599,20 @@ class _DomainsTab extends ConsumerWidget {
         ],
       ),
     );
-    if (confirm != true || !context.mounted) return;
+    if (confirm != true) return;
+    if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final successMsg = l10n.pageDashboardRemoveDomainSuccess;
+    final errorMsg = l10n.commonError;
     final messenger = ScaffoldMessenger.of(context);
     try {
       await ref
           .read(pagesRepositoryProvider)
           .deleteDomain(projectName, domain.name);
       ref.invalidate(pageDomainsProvider(projectName));
-      messenger.showSnackBar(const SnackBar(content: Text('Domain removed.')));
+      messenger.showSnackBar(SnackBar(content: Text(successMsg)));
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(errorMsg(e.toString()))));
     }
   }
 }
@@ -621,17 +628,17 @@ class _BindingsTab extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     switch (type) {
       case 'kv':
-        return (Icons.storage, colorScheme.primary, 'KV Namespace');
+        return (Icons.storage, colorScheme.primary, AppLocalizations.of(context).pageDashboardKV);
       case 'd1':
-        return (Icons.dataset, colorScheme.secondary, 'D1 Database');
+        return (Icons.dataset, colorScheme.secondary, AppLocalizations.of(context).pageDashboardD1);
       case 'r2':
-        return (Icons.folder, colorScheme.tertiary, 'R2 Bucket');
+        return (Icons.folder, colorScheme.tertiary, AppLocalizations.of(context).pageDashboardR2);
       case 'service':
-        return (Icons.hub, colorScheme.primary, 'Service');
+        return (Icons.hub, colorScheme.primary, AppLocalizations.of(context).pageDashboardService);
       case 'env':
-        return (Icons.text_fields, colorScheme.tertiary, 'Env Var');
+        return (Icons.text_fields, colorScheme.tertiary, AppLocalizations.of(context).pageDashboardEnvVar);
       case 'secret':
-        return (Icons.lock, colorScheme.error, 'Secret');
+        return (Icons.lock, colorScheme.error, AppLocalizations.of(context).pageDashboardSecret);
       default:
         return (Icons.settings, colorScheme.outline, type);
     }
@@ -711,7 +718,7 @@ class _BindingsTab extends ConsumerWidget {
               Padding(
                 padding: EdgeInsets.only(bottom: 10),
                 child: Text(
-                  'Bindings',
+                  AppLocalizations.of(context).pageDashboardBindings,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
@@ -730,7 +737,7 @@ class _BindingsTab extends ConsumerWidget {
               Padding(
                 padding: EdgeInsets.only(bottom: 10),
                 child: Text(
-                  'Environment Variables',
+                  AppLocalizations.of(context).pageDashboardEnvVars,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
@@ -754,7 +761,7 @@ class _BindingsTab extends ConsumerWidget {
                     Icon(Icons.link_off, color: Theme.of(context).colorScheme.outline, size: 18),
                     SizedBox(width: 8),
                     Text(
-                      'No bindings configured.',
+                      AppLocalizations.of(context).pageDashboardNoBindings,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -773,7 +780,7 @@ class _BindingsTab extends ConsumerWidget {
                       builder: (ctx) => AddPageBindingDialog(project: project),
                     ),
                     icon: Icon(Icons.add_link, size: 18),
-                    label: Text('Add Binding'),
+                    label: Text(AppLocalizations.of(context).pageDashboardAddBinding),
                   ),
                 ),
                 SizedBox(width: 12),
@@ -782,7 +789,7 @@ class _BindingsTab extends ConsumerWidget {
                     onPressed: () =>
                         _showAddPageSecretDialog(context, ref, project),
                     icon: Icon(Icons.lock_outline, size: 18),
-                    label: Text('Add Secret'),
+                    label: Text(AppLocalizations.of(context).pageDashboardAddSecret),
                   ),
                 ),
               ],
@@ -791,7 +798,7 @@ class _BindingsTab extends ConsumerWidget {
         );
       },
       loading: () => Center(child: CircularProgressIndicator()),
-      error: (e, s) => Center(child: Text('Error: $e')),
+      error: (e, s) => Center(child: Text(AppLocalizations.of(context).commonError(e.toString()))),
     );
   }
 
@@ -806,28 +813,28 @@ class _BindingsTab extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Add Secret'),
+        title: Text(AppLocalizations.of(context).pageDashboardAddSecret),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Secret Name (e.g. API_KEY)',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).formSecretNameLabel,
               ),
             ),
             SizedBox(height: 8),
             TextField(
               controller: valCtrl,
               obscureText: true,
-              decoration: const InputDecoration(labelText: 'Secret Value'),
+              decoration: InputDecoration(labelText: AppLocalizations.of(context).formSecretValueLabel),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -835,6 +842,9 @@ class _BindingsTab extends ConsumerWidget {
               final val = valCtrl.text;
               if (name.isEmpty || val.isEmpty) return;
               Navigator.pop(ctx);
+              final l10n = AppLocalizations.of(context);
+              final successMsg = l10n.pageDashboardSecretAdded;
+              final errorMsg = l10n.commonError;
               final messenger = ScaffoldMessenger.of(context);
               try {
                 final updated = Map<String, dynamic>.from(
@@ -850,13 +860,13 @@ class _BindingsTab extends ConsumerWidget {
                 );
                 ref.invalidate(pageProjectProvider(project.name));
                 messenger.showSnackBar(
-                  const SnackBar(content: Text('Secret added.')),
+                  SnackBar(content: Text(successMsg)),
                 );
               } catch (e) {
-                messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+                messenger.showSnackBar(SnackBar(content: Text(errorMsg(e.toString()))));
               }
             },
-            child: Text('Add'),
+            child: Text(AppLocalizations.of(context).commonCreate),
           ),
         ],
       ),
@@ -966,17 +976,17 @@ class _BindingsTab extends ConsumerWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Delete Binding?'),
-        content: Text('Are you sure you want to delete "${entry.name}"?'),
+        title: Text(AppLocalizations.of(context).pageDashboardDeleteBindingTitle),
+        content: Text(AppLocalizations.of(context).pageDashboardDeleteBindingContent(entry.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
-              'Delete',
+              AppLocalizations.of(context).commonDelete,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.error,
               ),
@@ -985,7 +995,11 @@ class _BindingsTab extends ConsumerWidget {
         ],
       ),
     );
-    if (confirm != true || !context.mounted) return;
+    if (confirm != true) return;
+    if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final successMsg = l10n.pageDashboardBindingDeleted;
+    final errorMsg = l10n.commonError;
     final messenger = ScaffoldMessenger.of(context);
     try {
       Map<String, dynamic> updatedConfig = {};
@@ -1022,9 +1036,9 @@ class _BindingsTab extends ConsumerWidget {
           .read(pagesRepositoryProvider)
           .updateProjectBindings(project.name, updatedConfig);
       ref.invalidate(pageProjectProvider(project.name));
-      messenger.showSnackBar(const SnackBar(content: Text('Binding deleted.')));
+      messenger.showSnackBar(SnackBar(content: Text(successMsg)));
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(errorMsg(e.toString()))));
     }
   }
 }
@@ -1047,7 +1061,7 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Add Binding'),
+      title: Text(AppLocalizations.of(context).pageDashboardAddBinding),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1055,17 +1069,17 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
           children: [
             DropdownButtonFormField<String>(
               initialValue: _selectedType,
-              decoration: const InputDecoration(labelText: 'Binding Type'),
-              items: const [
+              decoration: InputDecoration(labelText: AppLocalizations.of(context).formBindingTypeLabel),
+              items: [
                 DropdownMenuItem(
                   value: 'plain_text',
-                  child: Text('Plain Text (Env Var)'),
+                  child: Text(AppLocalizations.of(context).pageDashboardBindingTypeEnv),
                 ),
                 DropdownMenuItem(
                   value: 'kv_namespace',
-                  child: Text('KV Namespace'),
+                  child: Text(AppLocalizations.of(context).pageDashboardBindingTypeKV),
                 ),
-                DropdownMenuItem(value: 'd1', child: Text('D1 Database')),
+                DropdownMenuItem(value: 'd1', child: Text(AppLocalizations.of(context).pageDashboardBindingTypeD1)),
               ],
               onChanged: (val) {
                 setState(() => _selectedType = val!);
@@ -1074,25 +1088,25 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
             SizedBox(height: 8),
             TextField(
               controller: _nameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Binding Name (e.g. DB, MY_KV, API_URL)',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).formBindingNameLabel,
               ),
             ),
             SizedBox(height: 8),
             if (_selectedType == 'plain_text')
               TextField(
                 controller: _detailCtrl,
-                decoration: const InputDecoration(labelText: 'Value'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context).formBindingValueLabel),
               )
             else if (_selectedType == 'kv_namespace')
               TextField(
                 controller: _detailCtrl,
-                decoration: const InputDecoration(labelText: 'KV Namespace ID'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context).formBindingKvNamespaceLabel),
               )
             else if (_selectedType == 'd1')
               TextField(
                 controller: _detailCtrl,
-                decoration: const InputDecoration(labelText: 'D1 Database ID'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context).formBindingD1DatabaseLabel),
               ),
           ],
         ),
@@ -1100,7 +1114,7 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('Cancel'),
+          child: Text(AppLocalizations.of(context).commonCancel),
         ),
         ElevatedButton(
           onPressed: () async {
@@ -1108,6 +1122,9 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
             final detail = _detailCtrl.text.trim();
             if (name.isEmpty || detail.isEmpty) return;
             Navigator.pop(context);
+            final l10n = AppLocalizations.of(context);
+            final successMsg = l10n.pageDashboardBindingAdded;
+            final errorMsg = l10n.commonError;
             final messenger = ScaffoldMessenger.of(context);
             try {
               Map<String, dynamic> updatedConfig = {};
@@ -1138,13 +1155,13 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
               );
               ref.invalidate(pageProjectProvider(widget.project.name));
               messenger.showSnackBar(
-                const SnackBar(content: Text('Binding added.')),
+                SnackBar(content: Text(successMsg)),
               );
             } catch (e) {
-              messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+              messenger.showSnackBar(SnackBar(content: Text(errorMsg(e.toString()))));
             }
           },
-          child: Text('Add'),
+          child: Text(AppLocalizations.of(context).commonCreate),
         ),
       ],
     );

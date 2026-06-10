@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../domain/dns_record.dart';
 import '../data/dns_repository.dart';
 import '../providers/dns_provider.dart';
@@ -54,20 +55,23 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
     'TLSA',
   ];
 
-  final Map<int, String> _ttlOptions = {
-    1: 'Auto',
-    60: '1 min',
-    120: '2 min',
-    300: '5 min',
-    600: '10 min',
-    900: '15 min',
-    1800: '30 min',
-    3600: '1 hour',
-    7200: '2 hours',
-    18000: '5 hours',
-    43200: '12 hours',
-    86400: '1 day',
-  };
+  Map<int, String> _ttlOptions(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return {
+      1: l10n.dnsTtlAuto,
+      60: l10n.dnsTtlMins(1),
+      120: l10n.dnsTtlMins(2),
+      300: l10n.dnsTtlMins(5),
+      600: l10n.dnsTtlMins(10),
+      900: l10n.dnsTtlMins(15),
+      1800: l10n.dnsTtlMins(30),
+      3600: l10n.dnsTtlHours(1),
+      7200: l10n.dnsTtlHours(2),
+      18000: l10n.dnsTtlHours(5),
+      43200: l10n.dnsTtlHours(12),
+      86400: l10n.dnsTtlDays(1),
+    };
+  }
 
   @override
   void initState() {
@@ -84,10 +88,6 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
     );
 
     _ttl = record?.ttl ?? 1;
-    if (!_ttlOptions.containsKey(_ttl)) {
-      _ttlOptions[_ttl] = '$_ttl sec';
-    }
-
     _proxied = record?.proxied ?? false;
   }
 
@@ -136,7 +136,7 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).commonError(e.toString()))));
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -144,19 +144,19 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
   }
 
   String? _validateContent(String? value) {
-    if (value == null || value.isEmpty) return 'Content is required';
+    if (value == null || value.isEmpty) return AppLocalizations.of(context).dnsFormContentRequired;
 
     if (_type == 'A') {
       final ipv4RegExp = RegExp(r'^(\d{1,3}\.){3}\d{1,3}$');
-      if (!ipv4RegExp.hasMatch(value)) return 'Invalid IPv4 address';
+      if (!ipv4RegExp.hasMatch(value)) return AppLocalizations.of(context).dnsFormInvalidIpv4;
 
       final parts = value.split('.');
       for (final p in parts) {
         final val = int.tryParse(p);
-        if (val == null || val < 0 || val > 255) return 'Invalid IPv4 segment';
+        if (val == null || val < 0 || val > 255) return AppLocalizations.of(context).dnsFormInvalidIpv4Segment;
       }
     } else if (_type == 'AAAA') {
-      if (!value.contains(':')) return 'Invalid IPv6 address';
+      if (!value.contains(':')) return AppLocalizations.of(context).dnsFormInvalidIpv6;
     }
 
     return null;
@@ -177,9 +177,9 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
       case 'NS':
         return 'ns1.example.com';
       case 'SRV':
-        return 'Target (e.g. example.com). For SRV use data API for full control, or format content appropriately.';
+        return AppLocalizations.of(context).dnsFormHintSrv;
       default:
-        return 'Value';
+        return AppLocalizations.of(context).dnsFormHintDefault;
     }
   }
 
@@ -188,9 +188,14 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
     final isEditing = widget.existingRecord != null;
     final canProxy = ['A', 'AAAA', 'CNAME'].contains(_type);
     final requiresPriority = ['MX', 'SRV', 'URI'].contains(_type);
+    final l10n = AppLocalizations.of(context);
+    final ttlOptions = _ttlOptions(context);
+    if (!ttlOptions.containsKey(_ttl)) {
+      ttlOptions[_ttl] = l10n.dnsTtlSec(_ttl);
+    }
 
     return Scaffold(
-      appBar: AppBar(title: Text(isEditing ? 'Edit Record' : 'Add Record')),
+      appBar: AppBar(title: Text(isEditing ? l10n.dnsFormEditTitle : l10n.dnsFormAddTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -201,7 +206,7 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
               // Type Selection
               DropdownButtonFormField<String>(
                 initialValue: _type,
-                decoration: const InputDecoration(labelText: 'Type'),
+                decoration: InputDecoration(labelText: l10n.dnsFormType),
                 items: _supportedTypes
                     .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                     .toList(),
@@ -228,13 +233,13 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
                   Expanded(
                     child: TextFormField(
                       controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Name',
-                        hintText: 'e.g., www or @ for root',
+                      decoration: InputDecoration(
+                        labelText: l10n.dnsFormName,
+                        hintText: l10n.dnsFormNameHint,
                       ),
                       validator: (val) => val != null && val.isNotEmpty
                           ? null
-                          : 'Name is required',
+                          : l10n.dnsFormNameRequired,
                     ),
                   ),
                   SizedBox(width: 8),
@@ -257,17 +262,17 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
               if (requiresPriority) ...[
                 TextFormField(
                   controller: _priorityController,
-                  decoration: const InputDecoration(
-                    labelText: 'Priority',
-                    hintText: 'e.g., 10',
+                  decoration: InputDecoration(
+                    labelText: l10n.dnsFormPriority,
+                    hintText: l10n.dnsFormPriorityHint,
                   ),
                   keyboardType: TextInputType.number,
                   validator: (val) {
                     if (val == null || val.isEmpty) {
-                      return 'Priority is required';
+                      return l10n.dnsFormPriorityRequired;
                     }
                     if (int.tryParse(val) == null) {
-                      return 'Must be a valid number';
+                      return l10n.dnsFormPriorityInvalid;
                     }
                     return null;
                   },
@@ -279,7 +284,7 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
               TextFormField(
                 controller: _contentController,
                 decoration: InputDecoration(
-                  labelText: 'Content',
+                  labelText: l10n.dnsFormContent,
                   hintText: _getHintForType(),
                 ),
                 maxLines: _type == 'TXT' ? 3 : 1,
@@ -290,11 +295,11 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
               // TTL Dropdown
               DropdownButtonFormField<int>(
                 initialValue: _ttl,
-                decoration: const InputDecoration(
-                  labelText: 'TTL',
+                decoration: InputDecoration(
+                  labelText: l10n.dnsFormTtl,
                   border: OutlineInputBorder(),
                 ),
-                items: _ttlOptions.entries
+                items: ttlOptions.entries
                     .map(
                       (e) =>
                           DropdownMenuItem(value: e.key, child: Text(e.value)),
@@ -309,13 +314,13 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
                           });
                         }
                       },
-                hint: _proxied ? Text('Auto (Enforced by Proxy)') : null,
+                hint: _proxied ? Text(l10n.dnsFormTtlAutoEnforced) : null,
               ),
               if (_proxied)
                 Padding(
                   padding: EdgeInsets.only(top: 4.0, left: 12.0),
                   child: Text(
-                    'TTL is locked to Auto when proxied',
+                    l10n.dnsFormTtlLocked,
                     style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.tertiary),
                   ),
                 ),
@@ -324,8 +329,8 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
               // Proxy Switch
               if (canProxy)
                 SwitchListTile(
-                  title: Text('Proxied'),
-                  subtitle: Text('Route traffic through Cloudflare'),
+                  title: Text(l10n.dnsFormProxied),
+                  subtitle: Text(l10n.dnsFormProxiedSubtitle),
                   value: _proxied,
                   onChanged: (val) {
                     setState(() {
@@ -349,7 +354,7 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
                         height: 24,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Text(isEditing ? 'Save Changes' : 'Create Record'),
+                    : Text(isEditing ? l10n.dnsFormSaveChanges : l10n.dnsFormCreateRecord),
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../../providers/storage_providers.dart';
 import '../../data/storage_repository.dart';
 
@@ -17,18 +18,22 @@ class D1ListView extends ConsumerWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Delete D1 Database'),
+          title: Text(AppLocalizations.of(context).storageDeleteTitle(AppLocalizations.of(context).pageDashboardD1)),
           content: Text(
-            'Are you sure you want to delete "$name"? This action cannot be undone.',
+            AppLocalizations.of(context).storageDeleteContent(name),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: Text(AppLocalizations.of(context).commonCancel),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
               onPressed: () async {
+                final l10n = AppLocalizations.of(context);
+                final successMsg = l10n.storageDeleteSuccess(l10n.pageDashboardD1);
+                final errorMsg = l10n.commonError;
+
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
                 try {
@@ -37,18 +42,18 @@ class D1ListView extends ConsumerWidget {
                       .deleteD1Database(id);
                   ref.invalidate(d1DatabasesProvider);
                   scaffoldMessenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('D1 Database deleted successfully!'),
+                    SnackBar(
+                      content: Text(successMsg),
                     ),
                   );
                 } catch (e) {
                   scaffoldMessenger.showSnackBar(
-                    SnackBar(content: Text('Error: $e')),
+                    SnackBar(content: Text(errorMsg(e.toString()))),
                   );
                 }
               },
               child: Text(
-                'Delete',
+                AppLocalizations.of(context).commonDelete,
                 
               ),
             ),
@@ -77,7 +82,7 @@ class D1ListView extends ConsumerWidget {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'No D1 Databases found',
+                  AppLocalizations.of(context).storageNoItems(AppLocalizations.of(context).pageDashboardD1),
                   style: TextStyle(
                     color: colorScheme.onSurfaceVariant,
                     fontSize: 16,
@@ -126,8 +131,8 @@ class D1ListView extends ConsumerWidget {
                                 ClipboardData(text: database.uuid),
                               );
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('UUID copied to clipboard'),
+                                SnackBar(
+                                  content: Text(AppLocalizations.of(context).storageCopyUuid),
                                 ),
                               );
                             },
@@ -143,7 +148,7 @@ class D1ListView extends ConsumerWidget {
                           if (database.createdAt != null) ...[
                             SizedBox(height: 4),
                             Text(
-                              'Created: ${database.createdAt}',
+                              AppLocalizations.of(context).storageCreated(database.createdAt!),
                               style: TextStyle(
                                 color: colorScheme.outline,
                                 fontSize: 12,
@@ -176,7 +181,7 @@ class D1ListView extends ConsumerWidget {
                               Icon(Icons.delete, size: 20, color: Theme.of(context).colorScheme.error),
                               SizedBox(width: 12),
                               Text(
-                                'Delete',
+                                AppLocalizations.of(context).commonDelete,
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       color: Theme.of(
@@ -205,11 +210,11 @@ class D1ListView extends ConsumerWidget {
             children: [
               Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error, size: 48),
               SizedBox(height: 16),
-              Text('Error: $error', textAlign: TextAlign.center),
+              Text(AppLocalizations.of(context).commonError(error.toString()), textAlign: TextAlign.center),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(d1DatabasesProvider),
-                child: Text('Retry'),
+                child: Text(AppLocalizations.of(context).commonRetry),
               ),
             ],
           ),

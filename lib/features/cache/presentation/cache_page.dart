@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../data/cache_repository.dart';
 
 class CachePage extends ConsumerStatefulWidget {
@@ -16,22 +17,21 @@ class _CachePageState extends ConsumerState<CachePage> {
   bool _isPurging = false;
 
   Future<void> _purgeAll() async {
+    final l10n = AppLocalizations.of(context);
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Purge Everything?'),
-        content: Text(
-          'This will clear all cached resources for this zone. It may temporarily increase load on your origin server. Are you sure?',
-        ),
+        title: Text(l10n.cachePurgeConfirmTitle),
+        content: Text(l10n.cachePurgeConfirmContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+            child: Text(l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
-            child: Text('Purge'),
+            child: Text(l10n.cachePurge),
           ),
         ],
       ),
@@ -44,10 +44,10 @@ class _CachePageState extends ConsumerState<CachePage> {
       final repository = ref.read(cacheRepositoryProvider);
       await repository.purgeAll(widget.zoneId);
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Cache successfully purged!'),
-            
+          SnackBar(
+            content: Text(l10n.cachePurgeSuccess),
           ),
         );
       }
@@ -55,7 +55,7 @@ class _CachePageState extends ConsumerState<CachePage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).commonError(e.toString()))));
       }
     } finally {
       if (mounted) setState(() => _isPurging = false);
@@ -64,8 +64,9 @@ class _CachePageState extends ConsumerState<CachePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text('Caching: ${widget.zoneName}')),
+      appBar: AppBar(title: Text(l10n.cachingTitle(widget.zoneName))),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
@@ -84,14 +85,14 @@ class _CachePageState extends ConsumerState<CachePage> {
                       ),
                       SizedBox(width: 12),
                       Text(
-                        'Purge Cache',
+                        l10n.cachePurgeTitle,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ],
                   ),
                   SizedBox(height: 12),
                   Text(
-                    'Clear cached files to force Cloudflare to fetch a fresh version of those files from your web server.',
+                    l10n.cachePurgeDesc,
                   ),
                   SizedBox(height: 24),
                   SizedBox(
@@ -106,7 +107,7 @@ class _CachePageState extends ConsumerState<CachePage> {
                             )
                           : Icon(Icons.warning),
                       label: Text(
-                        _isPurging ? 'Purging...' : 'Purge Everything',
+                        _isPurging ? l10n.cachePurging : l10n.cachePurgeButton,
                       ),
                       style: FilledButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.error,

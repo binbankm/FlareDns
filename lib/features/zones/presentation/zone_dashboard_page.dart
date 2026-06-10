@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../providers/zones_provider.dart';
 
 class ZoneDashboardPage extends ConsumerWidget {
@@ -15,6 +16,7 @@ class ZoneDashboardPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(zoneName)),
       body: ListView(
@@ -24,8 +26,8 @@ class ZoneDashboardPage extends ConsumerWidget {
             context,
             icon: Icons.dns,
             color: Theme.of(context).colorScheme.tertiary,
-            title: 'DNS',
-            subtitle: 'Manage DNS records',
+            title: l10n.zoneDashboardDns,
+            subtitle: l10n.zoneDashboardDnsSubtitle,
             onTap: () => context.push(
               '/zone/$zoneId/dns?name=${Uri.encodeComponent(zoneName)}',
             ),
@@ -34,8 +36,8 @@ class ZoneDashboardPage extends ConsumerWidget {
             context,
             icon: Icons.security_update_warning,
             color: Theme.of(context).colorScheme.error,
-            title: 'Security',
-            subtitle: 'Under attack mode & Dev mode',
+            title: l10n.zoneDashboardSecurity,
+            subtitle: l10n.zoneDashboardSecuritySubtitle,
             onTap: () => context.push(
               '/zone/$zoneId/security?name=${Uri.encodeComponent(zoneName)}',
             ),
@@ -44,8 +46,8 @@ class ZoneDashboardPage extends ConsumerWidget {
             context,
             icon: Icons.analytics,
             color: Theme.of(context).colorScheme.primary,
-            title: 'Analytics',
-            subtitle: 'Web traffic & usage metrics',
+            title: l10n.zoneDashboardAnalytics,
+            subtitle: l10n.zoneDashboardAnalyticsSubtitle,
             onTap: () => context.push(
               '/zone/$zoneId/analytics?name=${Uri.encodeComponent(zoneName)}',
             ),
@@ -54,8 +56,8 @@ class ZoneDashboardPage extends ConsumerWidget {
             context,
             icon: Icons.speed,
             color: Theme.of(context).colorScheme.primaryContainer,
-            title: 'Caching',
-            subtitle: 'Purge cache & settings',
+            title: l10n.zoneDashboardCaching,
+            subtitle: l10n.zoneDashboardCachingSubtitle,
             onTap: () => context.push(
               '/zone/$zoneId/cache?name=${Uri.encodeComponent(zoneName)}',
             ),
@@ -68,9 +70,10 @@ class ZoneDashboardPage extends ConsumerWidget {
 
   Widget _buildSslCard(BuildContext context, WidgetRef ref) {
     final sslAsync = ref.watch(zoneSslCertificatesProvider(zoneId));
+    final l10n = AppLocalizations.of(context);
 
     Widget trailingWidget = Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.outline);
-    String subtitleText = 'Manage encryption mode';
+    String subtitleText = l10n.zoneDashboardSslSubtitle;
 
     if (sslAsync.isLoading) {
       trailingWidget = SizedBox(
@@ -93,7 +96,7 @@ class ZoneDashboardPage extends ConsumerWidget {
         final cert = certs.first;
         final status = cert['status'] ?? 'unknown';
         final type = cert['type'] ?? 'universal';
-        subtitleText = 'Manage encryption mode & certificates';
+        subtitleText = l10n.zoneDashboardSslSubtitleWithCerts;
 
         final color = status == 'active' ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.tertiary;
 
@@ -121,7 +124,7 @@ class ZoneDashboardPage extends ConsumerWidget {
         );
       } else {
         trailingWidget = Text(
-          'NO CERTS FOUND',
+          l10n.zoneDashboardSslNoCerts,
           style: TextStyle(
             color: Theme.of(context).colorScheme.outline,
             fontSize: 10,

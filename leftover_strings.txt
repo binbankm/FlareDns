@@ -1,0 +1,1228 @@
+--- lib/features/ssl/data/ssl_repository.dart ---
+  Failed to fetch SSL settings: ${data[
+  Failed to update SSL settings: ${data[
+--- lib/features/zones/data/zones_repository.dart ---
+  Failed to fetch zones: ${data[
+  Failed to fetch SSL certificates: ${data[
+--- lib/features/zones/presentation/zone_dashboard_page.dart ---
+  API Error: ${sslAsync.error}
+  SSL/TLS
+--- lib/features/cache/data/cache_repository.dart ---
+  Failed to purge cache: ${data[
+--- lib/features/security/data/security_repository.dart ---
+  Failed to update security level: ${data[
+  Failed to update development mode: ${data[
+  Failed to fetch security level: ${data[
+  Failed to fetch development mode: ${data[
+--- lib/features/storage/data/storage_repository.dart ---
+  Failed to fetch KV namespaces: ${data[
+  No Cloudflare accounts found.
+  Failed to delete R2 bucket: ${response.data[
+  Failed to delete D1 database: ${response.data[
+  Failed to update KV namespace: ${response.data[
+  Failed to fetch D1 databases: ${data[
+  Failed to fetch accounts: ${data[
+  Failed to fetch R2 buckets: ${data[
+  Failed to create R2 bucket: ${response.data[
+  Failed to delete KV namespace: ${response.data[
+  Failed to create D1 database: ${response.data[
+  Failed to create KV namespace: ${response.data[
+--- lib/features/storage/presentation/storage_page.dart ---
+  KV
+  R2
+  D1
+--- lib/features/storage/presentation/views/kv_list_view.dart ---
+  ID: ${namespace.id}
+--- lib/features/storage/presentation/views/d1_list_view.dart ---
+  UUID: ${database.uuid}
+--- lib/features/workers/data/workers_repository.dart ---
+  Failed to fetch domains: ${data[
+  Failed to deploy worker: ${data[
+  Failed to fetch deployments: ${data[
+  Failed to fetch accounts: ${data[
+  Failed to add domain: ${data[
+  Failed to delete secret: ${data[
+  Failed to fetch bindings: ${data[
+  No Cloudflare accounts found.
+  export default
+  Failed to delete worker: ${data[
+  Failed to delete domain: ${response.statusCode}
+  : existingBindings,
+      };
+      formData = FormData.fromMap({
+        'metadata': MultipartFile.fromString(
+          jsonEncode(metadata),
+          contentType: DioMediaType('application', 'json'),
+        ),
+        'index.js': MultipartFile.fromString(
+          code,
+          filename: 'index.js',
+          contentType: DioMediaType('application', 'javascript+module'),
+        ),
+      });
+    } else {
+      final metadata = {
+  Failed to fetch secrets: ${data[
+  Failed to fetch KV namespaces: ${data[
+  ?',
+      ).allMatches(contentType);
+      if (boundaryMatches.isNotEmpty) {
+        final boundary = boundaryMatches.first.group(1)!;
+        final parts = response.data.toString().split('--$boundary');
+        for (var part in parts) {
+          if (part.trim().isEmpty || part == '--') continue;
+          final headBody = part.split('\r\n\r\n');
+          if (headBody.length >= 2) {
+            final headers = headBody[0];
+            final body = headBody.sublist(1).join('\r\n\r\n').trim();
+            if (headers.contains('application/javascript')) {
+              // Extract just the javascript code
+              return body;
+            }
+          }
+        }
+      }
+    }
+    // Fallback if not multipart or if extraction fails
+    return response.data.toString();
+  }
+
+  Future<void> deployWorker(String scriptName, String code) async {
+    final accountId = await _getAccountId();
+
+    // 1. Fetch existing bindings to preserve them
+    List<dynamic> existingBindings = [];
+    try {
+      final bRes = await _dio.get(
+        '/accounts/$accountId/workers/scripts/$scriptName/bindings',
+      );
+      if (bRes.data['success'] == true) {
+        existingBindings = bRes.data['result'] as List<dynamic>? ?? [];
+      }
+    } catch (_) {
+      // Ignore if bindings fetch fails (e.g. new worker)
+    }
+
+    final isESModule =
+        code.contains('export default') ||
+        code.contains('export const') ||
+        code.contains('export function');
+
+    FormData formData;
+    if (isESModule) {
+      final metadata = {
+        
+  Failed to fetch schedules: ${data[
+  export function
+  Failed to update bindings: ${data[
+  export const
+  Failed to fetch D1 databases: ${data[
+  Failed to add secret: ${data[
+  Failed to update schedules: ${data[
+  Failed to fetch workers: ${data[
+--- lib/features/workers/domain/worker.dart ---
+  Unknown
+  $k: ${json[k]}
+--- lib/features/workers/presentation/worker_dashboard_page.dart ---
+  Service
+  : AppLocalizations.of(context).workerCronEveryMinute,
+      
+  Bindings
+  ) {
+        _selectedKvId = widget.editBinding!.detail;
+      } else if (_selectedType == 
+  Hello World!
+  )) {
+          return Center(
+            child: Text(
+              
+  ,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
+              )
+            else if (_selectedType == 
+  ,
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: cronCtrl,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context).formCronExpressionLabel,
+                  hintText: AppLocalizations.of(context).formCronExpressionHint,
+                ),
+              ),
+              SizedBox(height: 16),
+              Text(
+                
+  ${detail.substring(0, 8)}...
+  ) ||
+            e.toString().contains(
+  ,
+                    ),
+                  ),
+                );
+              } catch (e) {
+                if (context.mounted) messenger.showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).commonError(e.toString()))));
+              }
+            },
+            child: Text(editCron == null ? 
+  ) {
+        _detailCtrl.text = widget.editBinding!.detail ?? 
+  Queue
+  : AppLocalizations.of(context).workerCronEvery15Minutes,
+      
+  : AppLocalizations.of(context).workerCronEvery12Hours,
+      
+  ,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isSaving ? null : () => Navigator.pop(context),
+          child: Text(AppLocalizations.of(context).commonCancel),
+        ),
+        ElevatedButton(
+          onPressed: _isSaving ? null : _save,
+          child: _isSaving
+              ? SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text(
+                  widget.editBinding == null
+                      ? AppLocalizations.of(context).workerDashboardAddDeploy
+                      : AppLocalizations.of(context).workerDashboardUpdateDeploy,
+                ),
+        ),
+      ],
+    );
+  }
+
+  void _save() async {
+    if (_nameCtrl.text.isEmpty) return;
+
+    String? detail;
+    if (_selectedType == 
+  ,
+                ),
+              );
+            }
+            return Center(child: Text(AppLocalizations.of(context).commonError(e.toString())));
+          },
+        );
+      },
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (e, s) {
+        if (e.toString().contains(
+  Analytics
+  ) ||
+                e.toString().contains(
+  : AppLocalizations.of(context).workerCronEvery6Hours,
+      
+  : AppLocalizations.of(context).workerCronEverySunday,
+      
+  ,
+                                );
+                                if (uri != null) {
+                                  await launchUrl(
+                                    uri,
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                }
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.delete_outline,
+                                size: 18,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 32,
+                                minHeight: 32,
+                              ),
+                              onPressed: () => _deleteDomain(d.id, d.hostname),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                SizedBox(height: 24),
+
+                // Section: Cron Schedules
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 4,
+                          height: 18,
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.secondary,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        Text(
+                          AppLocalizations.of(context).workerDashboardCronSchedules,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    TextButton.icon(
+                      onPressed: () => _showAddScheduleDialog(
+                        schedules.map((e) => e.cron).toList(),
+                      ),
+                      icon: Icon(Icons.add, size: 16),
+                      label: Text(AppLocalizations.of(context).commonCreate),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                if (schedules.isEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.schedule_outlined,
+                          color: Theme.of(context).colorScheme.outline,
+                          size: 18,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          AppLocalizations.of(context).workerDashboardNoCronSchedules,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  ...schedules.map(
+                    (s) => Card(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.schedule,
+                                color: Theme.of(context).colorScheme.secondary,
+                                size: 18,
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    s.cron,
+                                    style: TextStyle(
+                                      fontFamily: 
+  )) {
+      return Center(
+        child: Text(AppLocalizations.of(context).workerDashboardPleaseDeploy),
+      );
+    }
+    final schedulesAsync = ref.watch(workerSchedulesProvider(widget.worker.id));
+    final domainsAsync = ref.watch(workerDomainsProvider);
+
+    return schedulesAsync.when(
+      data: (schedules) {
+        return domainsAsync.when(
+          data: (domains) {
+            final workerDomains = domains
+                .where((d) => d.service == widget.worker.id)
+                .toList();
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                // Section: Custom Domains / Routes
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 4,
+                          height: 18,
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        Text(
+                          AppLocalizations.of(context).workerDashboardCustomDomainsRoutes,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    TextButton.icon(
+                      onPressed: () => _showAddDomainDialog(),
+                      icon: Icon(Icons.add, size: 16),
+                      label: Text(AppLocalizations.of(context).commonCreate),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                if (workerDomains.isEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.language_outlined,
+                          color: Theme.of(context).colorScheme.outline,
+                          size: 18,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          AppLocalizations.of(context).workerDashboardNoCustomDomains,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  ...workerDomains.map(
+                    (d) => Card(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.language,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 18,
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    d.hostname,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 2),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.primary.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      d.environment,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Theme.of(context).colorScheme.primary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.open_in_new,
+                                size: 18,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 32,
+                                minHeight: 32,
+                              ),
+                              tooltip: AppLocalizations.of(context).commonOpenInBrowser,
+                              onPressed: () async {
+                                final uri = Uri.tryParse(
+                                  
+  )) {
+              return Center(
+                child: Text(
+                  
+  Cloudflare Error: ${data[
+  ,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  ActionChip(
+                    label: Text(AppLocalizations.of(context).workerCron30m),
+                    onPressed: () => cronCtrl.text = 
+  ,
+                  style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondaryContainer),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: TextField(
+            controller: _codeController,
+            maxLines: null,
+            expands: true,
+            style: TextStyle(fontFamily: 
+  ;
+      }
+      return _buildEditorUI();
+    }
+
+    final contentAsync = ref.watch(workerContentProvider(widget.worker.id));
+    return contentAsync.when(
+      data: (content) {
+        if (_codeController.text.isEmpty && content.isNotEmpty) {
+          _codeController.text = content;
+        }
+        return _buildEditorUI();
+      },
+      loading: () => Center(child: CircularProgressIndicator()),
+      error: (e, s) {
+        if (e.toString().contains(
+  : AppLocalizations.of(context).workerCronEvery5Minutes,
+      
+  ,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  ActionChip(
+                    label: Text(AppLocalizations.of(context).workerCron5m),
+                    onPressed: () => cronCtrl.text = 
+  )) {
+          if (_codeController.text.isEmpty) {
+            _codeController.text = 
+  , fontSize: 13),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.all(16),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: _isDeploying
+                  ? null
+                  : () => _deployCode(_codeController.text),
+              icon: _isDeploying
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(Icons.cloud_upload),
+              label: Text(AppLocalizations.of(context).workerDashboardDeployCode),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class AddBindingDialog extends ConsumerStatefulWidget {
+  final String workerId;
+  final List<WorkerBinding> currentBindings;
+  final WorkerBinding? editBinding;
+
+  const AddBindingDialog({
+    super.key,
+    required this.workerId,
+    required this.currentBindings,
+    this.editBinding,
+  });
+
+  @override
+  ConsumerState<AddBindingDialog> createState() => _AddBindingDialogState();
+}
+
+class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
+  String _selectedType = 
+  ${dt.hour.toString().padLeft(2, 
+  ${dt.year}-${dt.month.toString().padLeft(2, 
+  ,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context).commonCancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (cronCtrl.text.isEmpty) return;
+              Navigator.pop(context);
+              final messenger = ScaffoldMessenger.of(context);
+              try {
+                // If editing, replace the old one. If adding, append it.
+                final newCrons = List<String>.from(currentCrons);
+                if (editCron != null) {
+                  newCrons.remove(editCron);
+                }
+                newCrons.add(cronCtrl.text);
+
+                await ref
+                    .read(workersRepositoryProvider)
+                    .putSchedules(widget.worker.id, newCrons);
+                ref.invalidate(workerSchedulesProvider(widget.worker.id));
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      editCron == null
+                          ? 
+  ,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  SizedBox(height: 2),
+                                  Text(
+                                    _describeCron(s.cron),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Theme.of(context).colorScheme.outline,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.edit_outlined,
+                                size: 18,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 32,
+                                minHeight: 32,
+                              ),
+                              onPressed: () => _showAddScheduleDialog(
+                                schedules.map((e) => e.cron).toList(),
+                                editCron: s.cron,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.delete_outline,
+                                size: 18,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 32,
+                                minHeight: 32,
+                              ),
+                              onPressed: () => _deleteSchedule(
+                                schedules.map((e) => e.cron).toList(),
+                                s.cron,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+          loading: () => Center(child: CircularProgressIndicator()),
+          error: (e, s) {
+            if (e.toString().contains(
+  )}-${dt.day.toString().padLeft(2, 
+  s an update
+            ),
+            SizedBox(height: 8),
+            TextField(
+              controller: valCtrl,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: editName == null
+                    ? 
+  ;
+          }
+          return _buildEditorUI();
+        }
+        return Center(child: Text(AppLocalizations.of(context).commonError(e.toString())));
+      },
+    );
+  }
+
+  Widget _buildEditorUI() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          color: Theme.of(context).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+          child: Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Theme.of(context).colorScheme.secondaryContainer),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  
+  : AppLocalizations.of(context).workerCronEveryDay9Am,
+      
+  )
+              kvsAsync.when(
+                data: (kvs) => DropdownButtonFormField<String>(
+                  initialValue: _selectedKvId,
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context).formBindingSelectKvLabel,
+                  ),
+                  items: kvs
+                      .map(
+                        (k) =>
+                            DropdownMenuItem(value: k.id, child: Text(k.title)),
+                      )
+                      .toList(),
+                  onChanged: (val) => setState(() => _selectedKvId = val),
+                ),
+                loading: () => const CircularProgressIndicator(),
+                error: (e, s) => Text(
+                  
+  : AppLocalizations.of(context).workerCronFirstDayOfMonth,
+    };
+    return presets[cron] ?? AppLocalizations.of(context).workerCronCustomSchedule;
+  }
+
+  void _deleteSchedule(List<String> currentCrons, String cronToDelete) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context).workerDashboardDeleteScheduleTitle),
+        content: Text(AppLocalizations.of(context).workerDashboardDeleteScheduleContent(cronToDelete)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(AppLocalizations.of(context).commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              AppLocalizations.of(context).commonDelete,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true) return;
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final newCrons = currentCrons.where((c) => c != cronToDelete).toList();
+      await ref
+          .read(workersRepositoryProvider)
+          .putSchedules(widget.worker.id, newCrons);
+      ref.invalidate(workerSchedulesProvider(widget.worker.id));
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.workerDashboardScheduleDeleted)),
+      );
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.commonError(e.toString()))));
+    }
+  }
+
+  void _showAddScheduleDialog(List<String> currentCrons, {String? editCron}) {
+    final cronCtrl = TextEditingController(text: editCron);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          editCron == null ? 
+  ,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  ActionChip(
+                    label: Text(AppLocalizations.of(context).workerCron15m),
+                    onPressed: () => cronCtrl.text = 
+  ,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  ActionChip(
+                    label: Text(AppLocalizations.of(context).workerCronHourly),
+                    onPressed: () => cronCtrl.text = 
+  ,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  ActionChip(
+                    label: Text(AppLocalizations.of(context).workerCronDaily),
+                    onPressed: () => cronCtrl.text = 
+  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteDomain(String domainId, String hostname) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context).workerDashboardDeleteDomainTitle),
+        content: Text(AppLocalizations.of(context).workerDashboardDeleteDomainContent(hostname)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(AppLocalizations.of(context).commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              AppLocalizations.of(context).commonDelete,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true) return;
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(workersRepositoryProvider).deleteDomain(domainId);
+      ref.invalidate(workerDomainsProvider);
+      messenger.showSnackBar(SnackBar(content: Text(l10n.workerDashboardDomainDeleted)));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.commonError(e.toString()))));
+    }
+  }
+
+  void _showAddDomainDialog() {
+    final hostnameCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context).workerDashboardAddDomainTitle),
+        content: TextField(
+          controller: hostnameCtrl,
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context).formHostnameLabel,
+            hintText: AppLocalizations.of(context).formHostnameHint,
+          ),
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context).commonCancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (hostnameCtrl.text.isEmpty) return;
+              Navigator.pop(context);
+              final l10n = AppLocalizations.of(context);
+              final messenger = ScaffoldMessenger.of(context);
+              try {
+                await ref
+                    .read(workersRepositoryProvider)
+                    .addDomain(widget.worker.id, hostnameCtrl.text);
+                ref.invalidate(workerDomainsProvider);
+                messenger.showSnackBar(
+                  SnackBar(content: Text(l10n.workerDashboardDomainAdded)),
+                );
+              } catch (e) {
+                messenger.showSnackBar(SnackBar(content: Text(l10n.commonError(e.toString()))));
+              }
+            },
+            child: Text(AppLocalizations.of(context).commonCreate),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEditorTab() {
+    if (widget.worker.id.startsWith(
+  ;
+      } else if (_selectedType == 
+  ,
+                  child: Text(AppLocalizations.of(context).pageDashboardBindingTypeEnv),
+                ),
+                DropdownMenuItem(
+                  value: 
+  : AppLocalizations.of(context).workerCronEvery30Minutes,
+      
+  Plain Text
+  )
+              TextField(
+                controller: _detailCtrl,
+                decoration: InputDecoration(labelText: AppLocalizations.of(context).formBindingValueLabel),
+              )
+            else if (_selectedType == 
+  ,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.outline,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  ActionChip(
+                    label: Text(AppLocalizations.of(context).workerCron1m),
+                    onPressed: () => cronCtrl.text = 
+  Please deploy the worker first to configure bindings.
+  Secret
+  : AppLocalizations.of(context).workerCronEveryHour,
+      
+  API Error: $data
+  not found
+  Secrets
+  ;
+  final _nameCtrl = TextEditingController();
+  final _detailCtrl = TextEditingController(); // Used for plain_text value
+
+  String? _selectedKvId;
+  String? _selectedD1Id;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.editBinding != null) {
+      _selectedType = widget.editBinding!.type;
+      _nameCtrl.text = widget.editBinding!.name;
+      if (_selectedType == 
+  ,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context).commonCancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (nameCtrl.text.isEmpty || valCtrl.text.isEmpty) return;
+              Navigator.pop(context);
+              final messenger = ScaffoldMessenger.of(context);
+              final l10n = AppLocalizations.of(context);
+              try {
+                await ref
+                    .read(workersRepositoryProvider)
+                    .putSecret(widget.worker.id, nameCtrl.text, valCtrl.text);
+                ref.invalidate(workerSecretsProvider(widget.worker.id));
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      editName == null ? l10n.workerDashboardSecretAdded : l10n.workerDashboardSecretUpdated,
+                    ),
+                  ),
+                );
+              } catch (e) {
+                if (context.mounted) messenger.showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).commonError(e.toString()))));
+              }
+            },
+            child: Text(editName == null ? AppLocalizations.of(context).commonAdd : AppLocalizations.of(context).commonUpdate),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTriggersTab() {
+    if (widget.worker.id.startsWith(
+  ,
+            ),
+          );
+        }
+        return Center(child: Text(AppLocalizations.of(context).commonError(e.toString())));
+      },
+    );
+  }
+
+  /// Returns a human-readable description for a cron expression
+  String _describeCron(String cron) {
+    final presets = {
+      
+  D1 Database
+  )
+              d1sAsync.when(
+                data: (d1s) => DropdownButtonFormField<String>(
+                  initialValue: _selectedD1Id,
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context).formBindingSelectD1Label,
+                  ),
+                  items: d1s
+                      .map(
+                        (d) => DropdownMenuItem(
+                          value: d.uuid,
+                          child: Text(d.name),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (val) => setState(() => _selectedD1Id = val),
+                ),
+                loading: () => const CircularProgressIndicator(),
+                error: (e, s) => Text(
+                  
+  ) {
+      if (_detailCtrl.text.isEmpty) return;
+      detail = _detailCtrl.text;
+    } else if (_selectedType == 
+  R2 Bucket
+  ,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  ActionChip(
+                    label: Text(AppLocalizations.of(context).workerCronWeekly),
+                    onPressed: () => cronCtrl.text = 
+  KV Namespace
+  ) {
+        _selectedD1Id = widget.editBinding!.detail;
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final kvsAsync = ref.watch(kvNamespacesProvider);
+    final d1sAsync = ref.watch(d1DatabasesProvider);
+
+    return AlertDialog(
+      title: Text(widget.editBinding == null ? AppLocalizations.of(context).workerDashboardAddBinding : AppLocalizations.of(context).workerDashboardEditBinding),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DropdownButtonFormField<String>(
+              initialValue: _selectedType,
+              decoration: InputDecoration(labelText: AppLocalizations.of(context).formBindingTypeLabel),
+              items: [
+                DropdownMenuItem(
+                  value: 
+  )}:${dt.minute.toString().padLeft(2, 
+  ) {
+      if (_selectedKvId == null) return;
+      detail = _selectedKvId;
+    } else if (_selectedType == 
+  : AppLocalizations.of(context).workerCronOnceADay,
+      
+  ,
+                  child: Text(AppLocalizations.of(context).pageDashboardBindingTypeKV),
+                ),
+                DropdownMenuItem(value: 
+  , child: Text(AppLocalizations.of(context).pageDashboardBindingTypeD1)),
+              ],
+              onChanged: widget.editBinding == null
+                  ? (val) {
+                      setState(() => _selectedType = val!);
+                    }
+                  : null, // Disable type change on edit
+            ),
+            SizedBox(height: 8),
+            TextField(
+              controller: _nameCtrl,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).formBindingNameLabel,
+              ),
+              enabled: widget.editBinding == null,
+            ),
+            SizedBox(height: 8),
+            if (_selectedType == 
+  )) {
+      if (_codeController.text.isEmpty) {
+        _codeController.text = 
+--- lib/features/workers/presentation/workers_list_page.dart ---
+  )}-${date.day.toString().padLeft(2, 
+  )} ${date.hour.toString().padLeft(2, 
+   + request.url);
+  },
+};
+  export default {
+  async fetch(request, env, ctx) {
+    return new Response(
+  )}:${date.minute.toString().padLeft(2, 
+  ${date.year}-${date.month.toString().padLeft(2, 
+--- lib/features/dns/data/dns_repository.dart ---
+  Failed to fetch DNS records: ${data[
+  Failed to delete DNS record: ${data[
+  Failed to patch DNS record: ${data[
+  Failed to create DNS record: ${data[
+  Failed to update DNS record: ${data[
+--- lib/features/dns/presentation/dns_record_form_page.dart ---
+  CAA
+  CERT
+  MX
+  SVCB
+  DS
+  Content is required
+  HTTPS
+  TLSA
+  AAAA
+  NAPTR
+  Target (e.g. example.com). For SRV use data API for full control, or format content appropriately.
+  SMIMEA
+  PTR
+  Invalid IPv4 segment
+  Invalid IPv6 address
+  SSHFP
+  URI
+  DNSKEY
+  Invalid IPv4 address
+  TXT
+  v=spf1 include:_spf.example.com ~all
+  CNAME
+  Value
+  SRV
+  A
+  LOC
+  NS
+--- lib/features/dns/presentation/dns_records_list_page.dart ---
+  A
+  AAAA
+  Error: $e
+  CNAME
+--- lib/features/pages/data/pages_repository.dart ---
+  Failed to fetch domains: ${data[
+  No Cloudflare accounts found.
+  Failed to fetch project: ${data[
+  Failed to update bindings: ${data[
+  Failed to fetch Pages projects: ${data[
+  Failed to delete domain: ${data[
+  Failed to fetch deployments: ${data[
+  Failed to fetch accounts: ${data[
+  Failed to add domain: ${data[
+--- lib/features/pages/presentation/pages_list_page.dart ---
+  Direct
+  GitLab
+  GitHub
+--- lib/features/pages/presentation/page_dashboard_page.dart ---
+  ${entry.detail.substring(0, 16)}...
+  Auto DNS failed: $dnsError
+  ${dt.hour.toString().padLeft(2, 
+  )}:${dt.minute.toString().padLeft(2, 
+  ${dt.year}-${dt.month.toString().padLeft(2, 
+  )}-${dt.day.toString().padLeft(2, 
+  CNAME
+--- lib/features/analytics/data/analytics_repository.dart ---
+  GraphQL Error: ${data[
+  
+      query {
+        viewer {
+          zones(filter: { zoneTag: "$zoneId" }) {
+            httpRequests1dGroups(limit: 30, filter: { date_geq: "$dateGeq" }) {
+              sum {
+                requests
+                bytes
+                pageViews
+                cachedRequests
+                cachedBytes
+              }
+            }
+          }
+        }
+      }
+    
+  Zone not found in analytics
+  No data returned
+  T
+--- lib/features/analytics/presentation/analytics_page.dart ---
+  ${(bytes / 1073741824).toStringAsFixed(1)} GB
+  ${(bytes / 1099511627776).toStringAsFixed(1)} TB
+  ${(bytes / 1024).toStringAsFixed(1)} KB
+  ${(value / 1000000).toStringAsFixed(1)}M
+  ${(value / 1000000000).toStringAsFixed(1)}B
+  ${(bytes / 1048576).toStringAsFixed(1)} MB
+  ${(value / 1000).toStringAsFixed(1)}K
+  $bytes B

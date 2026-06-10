@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import 'package:dio/dio.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../domain/worker.dart';
@@ -40,7 +41,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Deployed Successfully!')));
+        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).workerDashboardDeployedSuccess)));
       }
     } catch (e) {
       if (mounted) {
@@ -74,13 +75,13 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.worker.id),
-          bottom: const TabBar(
+          bottom: TabBar(
             isScrollable: true,
             tabs: [
-              Tab(icon: Icon(Icons.link), text: 'Bindings & Secrets'),
-              Tab(icon: Icon(Icons.schedule), text: 'Triggers & Routes'),
-              Tab(icon: Icon(Icons.history), text: 'History'),
-              Tab(icon: Icon(Icons.code), text: 'Editor'),
+              Tab(icon: Icon(Icons.link), text: AppLocalizations.of(context).workerDashboardTabBindings),
+              Tab(icon: Icon(Icons.schedule), text: AppLocalizations.of(context).workerDashboardTabTriggers),
+              Tab(icon: Icon(Icons.history), text: AppLocalizations.of(context).workerDashboardTabHistory),
+              Tab(icon: Icon(Icons.code), text: AppLocalizations.of(context).workerDashboardTabEditor),
             ],
           ),
         ),
@@ -98,13 +99,13 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
 
   Widget _buildHistoryTab() {
     if (widget.worker.id.startsWith('new-worker-')) {
-      return Center(child: Text('No history for new worker.'));
+      return Center(child: Text(AppLocalizations.of(context).workerDashboardNoHistory));
     }
     final historyAsync = ref.watch(workerDeploymentsProvider(widget.worker.id));
     return historyAsync.when(
       data: (deployments) {
         if (deployments.isEmpty) {
-          return Center(child: Text('No deployment history.'));
+          return Center(child: Text(AppLocalizations.of(context).workerDashboardNoDeployments));
         }
         return ListView.builder(
           padding: const EdgeInsets.all(16),
@@ -242,9 +243,9 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
       error: (e, s) {
         if (e.toString().contains('10007') ||
             e.toString().contains('not found')) {
-          return Center(child: Text('No history for new worker.'));
+          return Center(child: Text(AppLocalizations.of(context).workerDashboardNoHistory));
         }
-        return Center(child: Text('Error: $e'));
+        return Center(child: Text(AppLocalizations.of(context).commonError(e.toString())));
       },
     );
   }
@@ -252,7 +253,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
   Widget _buildBindingsTab() {
     if (widget.worker.id.startsWith('new-worker-')) {
       return Center(
-        child: Text('Please deploy the worker first to configure bindings.'),
+        child: Text(AppLocalizations.of(context).workerDashboardPleaseDeploy),
       );
     }
     final bindingsAsync = ref.watch(workerBindingsProvider(widget.worker.id));
@@ -300,7 +301,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 40),
                     child: Center(
-                      child: Text('No bindings or secrets configured.'),
+                      child: Text(AppLocalizations.of(context).workerDashboardNoBindings),
                     ),
                   ),
                 Row(
@@ -315,7 +316,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                           ),
                         ),
                         icon: Icon(Icons.add_link, size: 18),
-                        label: Text('Add Binding'),
+                        label: Text(AppLocalizations.of(context).workerDashboardAddBinding),
                       ),
                     ),
                     SizedBox(width: 12),
@@ -323,7 +324,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                       child: OutlinedButton.icon(
                         onPressed: () => _showAddSecretDialog(),
                         icon: Icon(Icons.lock_outline, size: 18),
-                        label: Text('Add Secret'),
+                        label: Text(AppLocalizations.of(context).workerDashboardAddSecret),
                       ),
                     ),
                   ],
@@ -341,7 +342,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                 ),
               );
             }
-            return Center(child: Text('Error: $e'));
+            return Center(child: Text(AppLocalizations.of(context).commonError(e.toString())));
           },
         );
       },
@@ -355,7 +356,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
             ),
           );
         }
-        return Center(child: Text('Error: $e'));
+        return Center(child: Text(AppLocalizations.of(context).commonError(e.toString())));
       },
     );
   }
@@ -364,17 +365,17 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Secret?'),
-        content: Text('Are you sure you want to delete the secret "$name"?'),
+        title: Text(AppLocalizations.of(context).workerDashboardDeleteSecretTitle),
+        content: Text(AppLocalizations.of(context).workerDashboardDeleteSecretContent(name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'Delete',
+              AppLocalizations.of(context).commonDelete,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.error,
               ),
@@ -385,15 +386,16 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     );
     if (confirm != true) return;
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     try {
       await ref
           .read(workersRepositoryProvider)
           .deleteSecret(widget.worker.id, name);
       ref.invalidate(workerSecretsProvider(widget.worker.id));
-      messenger.showSnackBar(const SnackBar(content: Text('Secret deleted.')));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.pageDashboardSecretDeleted)));
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.commonError(e.toString()))));
     }
   }
 
@@ -640,19 +642,17 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Binding?'),
-        content: Text(
-          'Are you sure you want to delete the binding "$nameToDelete"?\nThis will redeploy your code.',
-        ),
+        title: Text(AppLocalizations.of(context).workerDashboardDeleteBindingTitle),
+        content: Text(AppLocalizations.of(context).workerDashboardDeleteBindingContent(nameToDelete)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'Delete',
+              AppLocalizations.of(context).commonDelete,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.error,
               ),
@@ -663,10 +663,11 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     );
     if (confirm != true) return;
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     try {
       messenger.showSnackBar(
-        const SnackBar(content: Text('Redeploying to remove binding...')),
+        SnackBar(content: Text(l10n.workerDashboardRedeploying)),
       );
       final newBindingsMap = currentBindings
           .where((b) => b.name != nameToDelete)
@@ -676,9 +677,9 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
           .read(workersRepositoryProvider)
           .updateBindings(widget.worker.id, newBindingsMap);
       ref.invalidate(workerBindingsProvider(widget.worker.id));
-      messenger.showSnackBar(const SnackBar(content: Text('Binding deleted.')));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.pageDashboardBindingDeleted)));
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.commonError(e.toString()))));
     }
   }
 
@@ -688,14 +689,14 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(editName == null ? 'Add Secret' : 'Edit Secret'),
+        title: Text(editName == null ? AppLocalizations.of(context).workerDashboardAddSecret : AppLocalizations.of(context).workerDashboardEditSecret),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Secret Name (e.g. API_KEY)',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).formSecretNameLabel,
               ),
               enabled:
                   editName == null, // disable name editing if it's an update
@@ -715,13 +716,14 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           ElevatedButton(
             onPressed: () async {
               if (nameCtrl.text.isEmpty || valCtrl.text.isEmpty) return;
               Navigator.pop(context);
               final messenger = ScaffoldMessenger.of(context);
+              final l10n = AppLocalizations.of(context);
               try {
                 await ref
                     .read(workersRepositoryProvider)
@@ -730,15 +732,15 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                 messenger.showSnackBar(
                   SnackBar(
                     content: Text(
-                      editName == null ? 'Secret added.' : 'Secret updated.',
+                      editName == null ? l10n.workerDashboardSecretAdded : l10n.workerDashboardSecretUpdated,
                     ),
                   ),
                 );
               } catch (e) {
-                messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+                if (context.mounted) messenger.showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).commonError(e.toString()))));
               }
             },
-            child: Text(editName == null ? 'Add' : 'Update'),
+            child: Text(editName == null ? AppLocalizations.of(context).commonAdd : AppLocalizations.of(context).commonUpdate),
           ),
         ],
       ),
@@ -748,7 +750,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
   Widget _buildTriggersTab() {
     if (widget.worker.id.startsWith('new-worker-')) {
       return Center(
-        child: Text('Please deploy the worker first to configure triggers.'),
+        child: Text(AppLocalizations.of(context).workerDashboardPleaseDeploy),
       );
     }
     final schedulesAsync = ref.watch(workerSchedulesProvider(widget.worker.id));
@@ -780,7 +782,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                           ),
                         ),
                         Text(
-                          'Custom Domains / Routes',
+                          AppLocalizations.of(context).workerDashboardCustomDomainsRoutes,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -791,7 +793,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                     TextButton.icon(
                       onPressed: () => _showAddDomainDialog(),
                       icon: Icon(Icons.add, size: 16),
-                      label: Text('Add'),
+                      label: Text(AppLocalizations.of(context).commonCreate),
                       style: TextButton.styleFrom(
                         foregroundColor: Theme.of(context).colorScheme.primary,
                       ),
@@ -815,7 +817,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                         ),
                         SizedBox(width: 8),
                         Text(
-                          'No custom domains configured.',
+                          AppLocalizations.of(context).workerDashboardNoCustomDomains,
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 color: Theme.of(
@@ -896,7 +898,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                                 minWidth: 32,
                                 minHeight: 32,
                               ),
-                              tooltip: 'Open in browser',
+                              tooltip: AppLocalizations.of(context).commonOpenInBrowser,
                               onPressed: () async {
                                 final uri = Uri.tryParse(
                                   'https://${d.hostname}',
@@ -946,7 +948,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                           ),
                         ),
                         Text(
-                          'Cron Schedules',
+                          AppLocalizations.of(context).workerDashboardCronSchedules,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -959,7 +961,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                         schedules.map((e) => e.cron).toList(),
                       ),
                       icon: Icon(Icons.add, size: 16),
-                      label: Text('Add'),
+                      label: Text(AppLocalizations.of(context).commonCreate),
                       style: TextButton.styleFrom(
                         foregroundColor: Theme.of(context).colorScheme.secondary,
                       ),
@@ -983,7 +985,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                         ),
                         SizedBox(width: 8),
                         Text(
-                          'No cron schedules configured.',
+                          AppLocalizations.of(context).workerDashboardNoCronSchedules,
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 color: Theme.of(
@@ -1091,7 +1093,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                 ),
               );
             }
-            return Center(child: Text('Error: $e'));
+            return Center(child: Text(AppLocalizations.of(context).commonError(e.toString())));
           },
         );
       },
@@ -1105,46 +1107,44 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
             ),
           );
         }
-        return Center(child: Text('Error: $e'));
+        return Center(child: Text(AppLocalizations.of(context).commonError(e.toString())));
       },
     );
   }
 
   /// Returns a human-readable description for a cron expression
   String _describeCron(String cron) {
-    const presets = {
-      '* * * * *': 'Every minute',
-      '*/5 * * * *': 'Every 5 minutes',
-      '*/15 * * * *': 'Every 15 minutes',
-      '*/30 * * * *': 'Every 30 minutes',
-      '0 * * * *': 'Every hour',
-      '0 */6 * * *': 'Every 6 hours',
-      '0 */12 * * *': 'Every 12 hours',
-      '0 0 * * *': 'Once a day (midnight)',
-      '0 9 * * *': 'Every day at 9 AM',
-      '0 0 * * 0': 'Every Sunday',
-      '0 0 1 * *': 'First day of each month',
+    final presets = {
+      '* * * * *': AppLocalizations.of(context).workerCronEveryMinute,
+      '*/5 * * * *': AppLocalizations.of(context).workerCronEvery5Minutes,
+      '*/15 * * * *': AppLocalizations.of(context).workerCronEvery15Minutes,
+      '*/30 * * * *': AppLocalizations.of(context).workerCronEvery30Minutes,
+      '0 * * * *': AppLocalizations.of(context).workerCronEveryHour,
+      '0 */6 * * *': AppLocalizations.of(context).workerCronEvery6Hours,
+      '0 */12 * * *': AppLocalizations.of(context).workerCronEvery12Hours,
+      '0 0 * * *': AppLocalizations.of(context).workerCronOnceADay,
+      '0 9 * * *': AppLocalizations.of(context).workerCronEveryDay9Am,
+      '0 0 * * 0': AppLocalizations.of(context).workerCronEverySunday,
+      '0 0 1 * *': AppLocalizations.of(context).workerCronFirstDayOfMonth,
     };
-    return presets[cron] ?? 'Custom schedule';
+    return presets[cron] ?? AppLocalizations.of(context).workerCronCustomSchedule;
   }
 
   void _deleteSchedule(List<String> currentCrons, String cronToDelete) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Schedule?'),
-        content: Text(
-          'Are you sure you want to delete the schedule "$cronToDelete"?',
-        ),
+        title: Text(AppLocalizations.of(context).workerDashboardDeleteScheduleTitle),
+        content: Text(AppLocalizations.of(context).workerDashboardDeleteScheduleContent(cronToDelete)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'Delete',
+              AppLocalizations.of(context).commonDelete,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.error,
               ),
@@ -1155,6 +1155,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     );
     if (confirm != true) return;
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     try {
       final newCrons = currentCrons.where((c) => c != cronToDelete).toList();
@@ -1163,10 +1164,10 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
           .putSchedules(widget.worker.id, newCrons);
       ref.invalidate(workerSchedulesProvider(widget.worker.id));
       messenger.showSnackBar(
-        const SnackBar(content: Text('Schedule deleted.')),
+        SnackBar(content: Text(l10n.workerDashboardScheduleDeleted)),
       );
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.commonError(e.toString()))));
     }
   }
 
@@ -1186,9 +1187,9 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
             children: [
               TextField(
                 controller: cronCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Cron Expression',
-                  hintText: 'e.g. * * * * * or */5 * * * *',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context).formCronExpressionLabel,
+                  hintText: AppLocalizations.of(context).formCronExpressionHint,
                 ),
               ),
               SizedBox(height: 16),
@@ -1206,37 +1207,37 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                 runSpacing: 8,
                 children: [
                   ActionChip(
-                    label: Text('1 min'),
+                    label: Text(AppLocalizations.of(context).workerCron1m),
                     onPressed: () => cronCtrl.text = '* * * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: Text('5 mins'),
+                    label: Text(AppLocalizations.of(context).workerCron5m),
                     onPressed: () => cronCtrl.text = '*/5 * * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: Text('15 mins'),
+                    label: Text(AppLocalizations.of(context).workerCron15m),
                     onPressed: () => cronCtrl.text = '*/15 * * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: Text('30 mins'),
+                    label: Text(AppLocalizations.of(context).workerCron30m),
                     onPressed: () => cronCtrl.text = '*/30 * * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: Text('Hourly'),
+                    label: Text(AppLocalizations.of(context).workerCronHourly),
                     onPressed: () => cronCtrl.text = '0 * * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: Text('Daily'),
+                    label: Text(AppLocalizations.of(context).workerCronDaily),
                     onPressed: () => cronCtrl.text = '0 0 * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: Text('Weekly'),
+                    label: Text(AppLocalizations.of(context).workerCronWeekly),
                     onPressed: () => cronCtrl.text = '0 0 * * 0',
                     visualDensity: VisualDensity.compact,
                   ),
@@ -1248,7 +1249,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1277,7 +1278,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                   ),
                 );
               } catch (e) {
-                messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+                if (context.mounted) messenger.showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).commonError(e.toString()))));
               }
             },
             child: Text(editCron == null ? 'Add' : 'Update'),
@@ -1291,19 +1292,17 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Domain?'),
-        content: Text(
-          'Are you sure you want to delete the domain "$hostname"?',
-        ),
+        title: Text(AppLocalizations.of(context).workerDashboardDeleteDomainTitle),
+        content: Text(AppLocalizations.of(context).workerDashboardDeleteDomainContent(hostname)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'Delete',
+              AppLocalizations.of(context).commonDelete,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.error,
               ),
@@ -1314,13 +1313,14 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     );
     if (confirm != true) return;
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     try {
       await ref.read(workersRepositoryProvider).deleteDomain(domainId);
       ref.invalidate(workerDomainsProvider);
-      messenger.showSnackBar(const SnackBar(content: Text('Domain deleted.')));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.workerDashboardDomainDeleted)));
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.commonError(e.toString()))));
     }
   }
 
@@ -1329,24 +1329,25 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Add Custom Domain'),
+        title: Text(AppLocalizations.of(context).workerDashboardAddDomainTitle),
         content: TextField(
           controller: hostnameCtrl,
-          decoration: const InputDecoration(
-            labelText: 'Hostname',
-            hintText: 'e.g. api.example.com',
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context).formHostnameLabel,
+            hintText: AppLocalizations.of(context).formHostnameHint,
           ),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context).commonCancel),
           ),
           ElevatedButton(
             onPressed: () async {
               if (hostnameCtrl.text.isEmpty) return;
               Navigator.pop(context);
+              final l10n = AppLocalizations.of(context);
               final messenger = ScaffoldMessenger.of(context);
               try {
                 await ref
@@ -1354,13 +1355,13 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                     .addDomain(widget.worker.id, hostnameCtrl.text);
                 ref.invalidate(workerDomainsProvider);
                 messenger.showSnackBar(
-                  const SnackBar(content: Text('Domain added successfully.')),
+                  SnackBar(content: Text(l10n.workerDashboardDomainAdded)),
                 );
               } catch (e) {
-                messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+                messenger.showSnackBar(SnackBar(content: Text(l10n.commonError(e.toString()))));
               }
             },
-            child: Text('Add'),
+            child: Text(AppLocalizations.of(context).commonCreate),
           ),
         ],
       ),
@@ -1400,7 +1401,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
           }
           return _buildEditorUI();
         }
-        return Center(child: Text('Error: $e'));
+        return Center(child: Text(AppLocalizations.of(context).commonError(e.toString())));
       },
     );
   }
@@ -1430,7 +1431,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
             maxLines: null,
             expands: true,
             style: TextStyle(fontFamily: 'monospace', fontSize: 13),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.all(16),
             ),
@@ -1451,7 +1452,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : Icon(Icons.cloud_upload),
-              label: Text('Deploy Code'),
+              label: Text(AppLocalizations.of(context).workerDashboardDeployCode),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               ),
@@ -1510,7 +1511,7 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
     final d1sAsync = ref.watch(d1DatabasesProvider);
 
     return AlertDialog(
-      title: Text(widget.editBinding == null ? 'Add Binding' : 'Edit Binding'),
+      title: Text(widget.editBinding == null ? AppLocalizations.of(context).workerDashboardAddBinding : AppLocalizations.of(context).workerDashboardEditBinding),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1518,17 +1519,17 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
           children: [
             DropdownButtonFormField<String>(
               initialValue: _selectedType,
-              decoration: const InputDecoration(labelText: 'Binding Type'),
-              items: const [
+              decoration: InputDecoration(labelText: AppLocalizations.of(context).formBindingTypeLabel),
+              items: [
                 DropdownMenuItem(
                   value: 'plain_text',
-                  child: Text('Plain Text (Env Var)'),
+                  child: Text(AppLocalizations.of(context).pageDashboardBindingTypeEnv),
                 ),
                 DropdownMenuItem(
                   value: 'kv_namespace',
-                  child: Text('KV Namespace'),
+                  child: Text(AppLocalizations.of(context).pageDashboardBindingTypeKV),
                 ),
-                DropdownMenuItem(value: 'd1', child: Text('D1 Database')),
+                DropdownMenuItem(value: 'd1', child: Text(AppLocalizations.of(context).pageDashboardBindingTypeD1)),
               ],
               onChanged: widget.editBinding == null
                   ? (val) {
@@ -1539,8 +1540,8 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
             SizedBox(height: 8),
             TextField(
               controller: _nameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Binding Name (e.g. DB, MY_KV, API_URL)',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).formBindingNameLabel,
               ),
               enabled: widget.editBinding == null,
             ),
@@ -1548,14 +1549,14 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
             if (_selectedType == 'plain_text')
               TextField(
                 controller: _detailCtrl,
-                decoration: const InputDecoration(labelText: 'Value'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context).formBindingValueLabel),
               )
             else if (_selectedType == 'kv_namespace')
               kvsAsync.when(
                 data: (kvs) => DropdownButtonFormField<String>(
                   initialValue: _selectedKvId,
-                  decoration: const InputDecoration(
-                    labelText: 'Select KV Namespace',
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context).formBindingSelectKvLabel,
                   ),
                   items: kvs
                       .map(
@@ -1577,8 +1578,8 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
               d1sAsync.when(
                 data: (d1s) => DropdownButtonFormField<String>(
                   initialValue: _selectedD1Id,
-                  decoration: const InputDecoration(
-                    labelText: 'Select D1 Database',
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context).formBindingSelectD1Label,
                   ),
                   items: d1s
                       .map(
@@ -1604,7 +1605,7 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
       actions: [
         TextButton(
           onPressed: _isSaving ? null : () => Navigator.pop(context),
-          child: Text('Cancel'),
+          child: Text(AppLocalizations.of(context).commonCancel),
         ),
         ElevatedButton(
           onPressed: _isSaving ? null : _save,
@@ -1616,8 +1617,8 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
                 )
               : Text(
                   widget.editBinding == null
-                      ? 'Add (Deploy)'
-                      : 'Update (Deploy)',
+                      ? AppLocalizations.of(context).workerDashboardAddDeploy
+                      : AppLocalizations.of(context).workerDashboardUpdateDeploy,
                 ),
         ),
       ],
@@ -1654,6 +1655,11 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
     currentMapList.add(newBinding.toJson());
 
     setState(() => _isSaving = true);
+    final l10n = AppLocalizations.of(context);
+    final successMsg = widget.editBinding == null
+        ? l10n.pageDashboardBindingAdded
+        : l10n.pageDashboardBindingAdded; // we can just reuse added here for simplicity
+    final errorMsg = l10n.commonError;
     final messenger = ScaffoldMessenger.of(context);
     try {
       await ref
@@ -1664,11 +1670,7 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
         Navigator.pop(context);
         messenger.showSnackBar(
           SnackBar(
-            content: Text(
-              widget.editBinding == null
-                  ? 'Binding added successfully!'
-                  : 'Binding updated successfully!',
-            ),
+            content: Text(successMsg),
           ),
         );
       }
@@ -1676,7 +1678,7 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
       if (mounted) {
         setState(() => _isSaving = false);
       }
-      messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+      messenger.showSnackBar(SnackBar(content: Text(errorMsg(e.toString()))));
     }
   }
 }

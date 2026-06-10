@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../providers/pages_provider.dart';
 import '../domain/page.dart';
 
@@ -17,10 +18,11 @@ class _PagesListPageState extends ConsumerState<PagesListPage> {
   @override
   Widget build(BuildContext context) {
     final pagesAsync = ref.watch(pagesProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pages'),
+        title: Text(l10n.pagesTitle),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
@@ -36,8 +38,8 @@ class _PagesListPageState extends ConsumerState<PagesListPage> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
-                  decoration: const InputDecoration(
-                    hintText: 'Search projects...',
+                  decoration: InputDecoration(
+                    hintText: l10n.pagesSearch,
                     prefixIcon: Icon(Icons.search),
                   ),
                   onChanged: (val) =>
@@ -50,14 +52,14 @@ class _PagesListPageState extends ConsumerState<PagesListPage> {
             child: pagesAsync.when(
               data: (pages) {
                 if (pages.isEmpty) {
-                  return Center(child: Text('No Pages projects found.'));
+                  return Center(child: Text(l10n.pagesEmpty));
                 }
                 final filtered = pages
                     .where((p) => p.name.toLowerCase().contains(_searchQuery))
                     .toList();
                 if (filtered.isEmpty) {
                   return Center(
-                    child: Text('No projects match your search.'),
+                    child: Text(l10n.pagesNoMatch),
                   );
                 }
                 return Center(
@@ -75,7 +77,7 @@ class _PagesListPageState extends ConsumerState<PagesListPage> {
                 );
               },
               loading: () => Center(child: CircularProgressIndicator()),
-              error: (e, s) => Center(child: Text('Error: $e')),
+              error: (e, s) => Center(child: Text(AppLocalizations.of(context).commonError(e.toString()))),
             ),
           ),
         ],

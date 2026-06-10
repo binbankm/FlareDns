@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../providers/zones_provider.dart';
 
 class ZonesListPage extends ConsumerStatefulWidget {
@@ -16,10 +17,11 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
   @override
   Widget build(BuildContext context) {
     final zonesAsyncValue = ref.watch(zonesProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Domains'),
+        title: Text(l10n.zonesTitle),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
@@ -37,8 +39,8 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
-                  decoration: const InputDecoration(
-                    hintText: 'Search domains...',
+                  decoration: InputDecoration(
+                    hintText: l10n.zonesSearch,
                     prefixIcon: Icon(Icons.search),
                   ),
                   onChanged: (val) {
@@ -54,7 +56,7 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
             child: zonesAsyncValue.when(
               data: (zones) {
                 if (zones.isEmpty) {
-                  return Center(child: Text('No zones found.'));
+                  return Center(child: Text(l10n.zonesEmpty));
                 }
 
                 final filtered = zones.where((z) {
@@ -63,7 +65,7 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
 
                 if (filtered.isEmpty) {
                   return Center(
-                    child: Text('No domains match your search.'),
+                    child: Text(l10n.zonesNoMatch),
                   );
                 }
 
@@ -243,11 +245,11 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
                       color: Theme.of(context).colorScheme.error,
                     ),
                     SizedBox(height: 16),
-                    Text('Error: $error', textAlign: TextAlign.center),
+                    Text(AppLocalizations.of(context).commonError(error.toString()), textAlign: TextAlign.center),
                     SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(zonesProvider),
-                      child: Text('Retry'),
+                      child: Text(l10n.commonRetry),
                     ),
                   ],
                 ),

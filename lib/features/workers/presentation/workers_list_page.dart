@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../providers/workers_provider.dart';
 import '../data/workers_repository.dart';
 import '../domain/worker.dart';
@@ -49,10 +50,11 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
   Widget build(BuildContext context) {
     final workersAsyncValue = ref.watch(workersProvider);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Workers'),
+        title: Text(l10n.workersTitle),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
@@ -68,8 +70,8 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
-                  decoration: const InputDecoration(
-                    hintText: 'Search workers...',
+                  decoration: InputDecoration(
+                    hintText: l10n.workersSearch,
                     prefixIcon: Icon(Icons.search),
                   ),
                   onChanged: (val) =>
@@ -83,7 +85,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
               data: (workers) {
                 if (workers.isEmpty) {
                   return Center(
-                    child: Text('No Workers found in your account.'),
+                    child: Text(l10n.workersEmpty),
                   );
                 }
 
@@ -93,7 +95,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
 
                 if (filtered.isEmpty) {
                   return Center(
-                    child: Text('No workers match your search.'),
+                    child: Text(l10n.workersNoMatch),
                   );
                 }
 
@@ -223,22 +225,22 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                                             context: context,
                                             builder: (context) => AlertDialog(
                                               title: Text(
-                                                'Delete Worker',
+                                                l10n.workersDeleteTitle,
                                               ),
                                               content: Text(
-                                                'Are you sure you want to delete "${worker.id}"? This action cannot be undone.',
+                                                l10n.workersDeleteContent(worker.id),
                                               ),
                                               actions: [
                                                 TextButton(
                                                   onPressed: () =>
                                                       context.pop(false),
-                                                  child: Text('Cancel'),
+                                                  child: Text(l10n.commonCancel),
                                                 ),
                                                 TextButton(
                                                   onPressed: () =>
                                                       context.pop(true),
                                                   child: Text(
-                                                    'Delete',
+                                                    l10n.commonDelete,
                                                     style: TextStyle(
                                                       color: Theme.of(context).colorScheme.error,
                                                     ),
@@ -260,9 +262,9 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                                                 ScaffoldMessenger.of(
                                                   context,
                                                 ).showSnackBar(
-                                                  const SnackBar(
+                                                  SnackBar(
                                                     content: Text(
-                                                      'Worker deleted.',
+                                                      l10n.workersDeleted,
                                                     ),
                                                   ),
                                                 );
@@ -273,7 +275,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                                                   context,
                                                 ).showSnackBar(
                                                   SnackBar(
-                                                    content: Text('Error: $e'),
+                                                    content: Text(AppLocalizations.of(context).commonError(e.toString())),
                                                   ),
                                                 );
                                               }
@@ -310,11 +312,11 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                       color: Theme.of(context).colorScheme.error,
                     ),
                     SizedBox(height: 16),
-                    Text('Error: $error', textAlign: TextAlign.center),
+                    Text(AppLocalizations.of(context).commonError(error.toString()), textAlign: TextAlign.center),
                     SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(workersProvider),
-                      child: Text('Retry'),
+                      child: Text(l10n.commonRetry),
                     ),
                   ],
                 ),
@@ -324,24 +326,25 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: null,
         onPressed: () async {
           final nameCtrl = TextEditingController();
           final String? workerName = await showDialog<String>(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text('Create New Worker'),
+              title: Text(l10n.workersCreateTitle),
               content: TextField(
                 controller: nameCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Worker Name',
-                  hintText: 'e.g. my-awesome-worker',
+                decoration: InputDecoration(
+                  labelText: l10n.workersCreateNameLabel,
+                  hintText: l10n.workersCreateNameHint,
                 ),
                 autofocus: true,
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('Cancel'),
+                  child: Text(l10n.commonCancel),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -349,7 +352,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                       Navigator.pop(context, nameCtrl.text);
                     }
                   },
-                  child: Text('Create'),
+                  child: Text(l10n.commonCreate),
                 ),
               ],
             ),
@@ -393,13 +396,13 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
               if (context.mounted) {
                 Navigator.pop(context); // pop loading
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error creating worker: $e')),
+                  SnackBar(content: Text(l10n.workersCreateError(e.toString()))),
                 );
               }
             }
           }
         },
-        tooltip: 'New Worker',
+        tooltip: l10n.workersNewTooltip,
         child: Icon(Icons.add),
       ),
     );

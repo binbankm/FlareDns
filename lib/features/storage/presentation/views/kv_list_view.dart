@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../../providers/storage_providers.dart';
 import '../../data/storage_repository.dart';
 
@@ -18,16 +19,16 @@ class KVListView extends ConsumerWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Edit KV Namespace'),
+          title: Text(AppLocalizations.of(context).storageEditKVTitle),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(hintText: 'Enter new title'),
+            decoration: InputDecoration(hintText: AppLocalizations.of(context).storageEditKVPrompt),
             autofocus: true,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: Text(AppLocalizations.of(context).commonCancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -36,6 +37,10 @@ class KVListView extends ConsumerWidget {
                   Navigator.pop(context);
                   return;
                 }
+                final l10n = AppLocalizations.of(context);
+                final successMsg = l10n.storageUpdateKVSuccess;
+                final errorMsg = l10n.commonError;
+                
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
                 try {
@@ -44,17 +49,17 @@ class KVListView extends ConsumerWidget {
                       .updateKVNamespace(id, title);
                   ref.invalidate(kvNamespacesProvider);
                   scaffoldMessenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('KV Namespace updated successfully!'),
+                    SnackBar(
+                      content: Text(successMsg),
                     ),
                   );
                 } catch (e) {
                   scaffoldMessenger.showSnackBar(
-                    SnackBar(content: Text('Error: $e')),
+                    SnackBar(content: Text(errorMsg(e.toString()))),
                   );
                 }
               },
-              child: Text('Save'),
+              child: Text(AppLocalizations.of(context).commonSave),
             ),
           ],
         );
@@ -72,18 +77,22 @@ class KVListView extends ConsumerWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Delete KV Namespace'),
+          title: Text(AppLocalizations.of(context).storageDeleteTitle(AppLocalizations.of(context).pageDashboardKV)),
           content: Text(
-            'Are you sure you want to delete "$title"? This action cannot be undone.',
+            AppLocalizations.of(context).storageDeleteContent(title),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: Text(AppLocalizations.of(context).commonCancel),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
               onPressed: () async {
+                final l10n = AppLocalizations.of(context);
+                final successMsg = l10n.storageDeleteSuccess(l10n.pageDashboardKV);
+                final errorMsg = l10n.commonError;
+
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
                 try {
@@ -92,18 +101,18 @@ class KVListView extends ConsumerWidget {
                       .deleteKVNamespace(id);
                   ref.invalidate(kvNamespacesProvider);
                   scaffoldMessenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('KV Namespace deleted successfully!'),
+                    SnackBar(
+                      content: Text(successMsg),
                     ),
                   );
                 } catch (e) {
                   scaffoldMessenger.showSnackBar(
-                    SnackBar(content: Text('Error: $e')),
+                    SnackBar(content: Text(errorMsg(e.toString()))),
                   );
                 }
               },
               child: Text(
-                'Delete',
+                AppLocalizations.of(context).commonDelete,
                 
               ),
             ),
@@ -132,7 +141,7 @@ class KVListView extends ConsumerWidget {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'No KV Namespaces found',
+                  AppLocalizations.of(context).storageNoItems(AppLocalizations.of(context).pageDashboardKV),
                   style: TextStyle(
                     color: colorScheme.onSurfaceVariant,
                     fontSize: 16,
@@ -181,8 +190,8 @@ class KVListView extends ConsumerWidget {
                                 ClipboardData(text: namespace.id),
                               );
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('ID copied to clipboard'),
+                                SnackBar(
+                                  content: Text(AppLocalizations.of(context).storageCopyId),
                                 ),
                               );
                             },
@@ -226,7 +235,7 @@ class KVListView extends ConsumerWidget {
                             children: [
                               Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary),
                               SizedBox(width: 12),
-                              Text('Rename'),
+                              Text(AppLocalizations.of(context).storageRename),
                             ],
                           ),
                         ),
@@ -237,7 +246,7 @@ class KVListView extends ConsumerWidget {
                               Icon(Icons.delete, size: 20, color: Theme.of(context).colorScheme.error),
                               SizedBox(width: 12),
                               Text(
-                                'Delete',
+                                AppLocalizations.of(context).commonDelete,
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       color: Theme.of(
@@ -266,11 +275,11 @@ class KVListView extends ConsumerWidget {
             children: [
               Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error, size: 48),
               SizedBox(height: 16),
-              Text('Error: $error', textAlign: TextAlign.center),
+              Text(AppLocalizations.of(context).commonError(error.toString()), textAlign: TextAlign.center),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(kvNamespacesProvider),
-                child: Text('Retry'),
+                child: Text(AppLocalizations.of(context).commonRetry),
               ),
             ],
           ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../../../core/theme/theme_provider.dart';
+import '../../../core/locale/locale_provider.dart';
 import '../../auth/providers/auth_provider.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -10,9 +12,11 @@ class SettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
     final accountAsync = ref.watch(authProvider);
+    final currentLocale = ref.watch(localeProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Settings'), centerTitle: true),
+      appBar: AppBar(title: Text(l10n.settingsTitle), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         children: [
@@ -20,7 +24,7 @@ class SettingsPage extends ConsumerWidget {
           Padding(
             padding: EdgeInsets.only(left: 8.0, bottom: 8.0, top: 8.0),
             child: Text(
-              'ACCOUNT',
+              l10n.settingsSectionAccount,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
@@ -48,7 +52,7 @@ class SettingsPage extends ConsumerWidget {
                   Expanded(
                     child: accountAsync.when(
                       data: (account) {
-                        if (account == null) return Text('Not logged in');
+                        if (account == null) return Text(l10n.settingsNotLoggedIn);
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -62,7 +66,7 @@ class SettingsPage extends ConsumerWidget {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              'Cloudflare Global API Key',
+                              l10n.settingsCloudflareApiKey,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Theme.of(context).colorScheme.outline,
@@ -72,7 +76,7 @@ class SettingsPage extends ConsumerWidget {
                         );
                       },
                       loading: () => const CircularProgressIndicator(),
-                      error: (err, stack) => Text('Error: $err'),
+                      error: (err, stack) => Text(AppLocalizations.of(context).commonError(err.toString())),
                     ),
                   ),
                 ],
@@ -86,7 +90,7 @@ class SettingsPage extends ConsumerWidget {
           Padding(
             padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
             child: Text(
-              'APPEARANCE',
+              l10n.settingsSectionAppearance,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
@@ -101,27 +105,27 @@ class SettingsPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Theme',
+                    l10n.settingsTheme,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                   SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
                     child: SegmentedButton<ThemeMode>(
-                      segments: const [
+                      segments: [
                         ButtonSegment(
                           value: ThemeMode.system,
-                          label: Text('System'),
+                          label: Text(l10n.settingsThemeSystem),
                           icon: Icon(Icons.brightness_auto),
                         ),
                         ButtonSegment(
                           value: ThemeMode.light,
-                          label: Text('Light'),
+                          label: Text(l10n.settingsThemeLight),
                           icon: Icon(Icons.light_mode),
                         ),
                         ButtonSegment(
                           value: ThemeMode.dark,
-                          label: Text('Dark'),
+                          label: Text(l10n.settingsThemeDark),
                           icon: Icon(Icons.dark_mode),
                         ),
                       ],
@@ -140,11 +144,64 @@ class SettingsPage extends ConsumerWidget {
 
           SizedBox(height: 24),
 
+          // Language Section
+          Padding(
+            padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
+            child: Text(
+              l10n.settingsSectionLanguage,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.outline,
+              ),
+            ),
+          ),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: SegmentedButton<String>(
+                  segments: [
+                    ButtonSegment(
+                      value: 'system',
+                      label: Text(l10n.settingsLanguageSystem),
+                      icon: Icon(Icons.language),
+                    ),
+                    ButtonSegment(
+                      value: 'zh',
+                      label: Text(l10n.settingsLanguageChinese),
+                      icon: Icon(Icons.translate),
+                    ),
+                    ButtonSegment(
+                      value: 'en',
+                      label: Text(l10n.settingsLanguageEnglish),
+                      icon: Icon(Icons.abc),
+                    ),
+                  ],
+                  selected: {
+                    currentLocale == null
+                        ? 'system'
+                        : currentLocale.languageCode,
+                  },
+                  onSelectionChanged: (Set<String> newSelection) {
+                    final code = newSelection.first;
+                    ref.read(localeProvider.notifier).setLocale(
+                      code == 'system' ? null : Locale(code),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 24),
+
           // About Section
           Padding(
             padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
             child: Text(
-              'ABOUT',
+              l10n.settingsSectionAbout,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
@@ -157,7 +214,7 @@ class SettingsPage extends ConsumerWidget {
               children: [
                 ListTile(
                   leading: Icon(Icons.info_outline),
-                  title: Text('Version'),
+                  title: Text(l10n.settingsVersion),
                   trailing: Text(
                     '1.0.0',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -168,7 +225,7 @@ class SettingsPage extends ConsumerWidget {
                 const Divider(height: 1, indent: 56),
                 ListTile(
                   leading: Icon(Icons.code),
-                  title: Text('Source Code'),
+                  title: Text(l10n.settingsSourceCode),
                   trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.outline),
                   onTap: () {
                     // Open github link
@@ -191,19 +248,19 @@ class SettingsPage extends ConsumerWidget {
               ),
               icon: Icon(Icons.logout),
               label: Text(
-                'Logout',
+                l10n.settingsLogout,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               onPressed: () {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text('Logout'),
-                    content: Text('Are you sure you want to logout?'),
+                    title: Text(l10n.settingsLogoutConfirmTitle),
+                    content: Text(l10n.settingsLogoutConfirmContent),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: Text('Cancel'),
+                        child: Text(l10n.commonCancel),
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -213,10 +270,7 @@ class SettingsPage extends ConsumerWidget {
                           Navigator.pop(context);
                           ref.read(authProvider.notifier).logout();
                         },
-                        child: Text(
-                          'Logout',
-                          
-                        ),
+                        child: Text(l10n.settingsLogoutConfirm),
                       ),
                     ],
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../data/security_repository.dart';
 import '../providers/security_provider.dart';
 
@@ -24,12 +25,13 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
       await repo.setDevelopmentMode(widget.zoneId, newValue ? 'on' : 'off');
       ref.invalidate(devModeProvider(widget.zoneId));
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               newValue
-                  ? 'Development Mode Enabled'
-                  : 'Development Mode Disabled',
+                  ? l10n.securityDevModeEnabled
+                  : l10n.securityDevModeDisabled,
             ),
           ),
         );
@@ -38,7 +40,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).commonError(e.toString()))));
       }
     } finally {
       if (mounted) setState(() => _isSavingDevMode = false);
@@ -52,15 +54,16 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
       await repo.setSecurityLevel(widget.zoneId, newLevel);
       ref.invalidate(securityLevelProvider(widget.zoneId));
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Security Level updated to $newLevel')),
+          SnackBar(content: Text(l10n.securityLevelUpdated(newLevel))),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).commonError(e.toString()))));
       }
     } finally {
       if (mounted) setState(() => _isSavingSecLevel = false);
@@ -71,9 +74,10 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
   Widget build(BuildContext context) {
     final devModeAsync = ref.watch(devModeProvider(widget.zoneId));
     final secLevelAsync = ref.watch(securityLevelProvider(widget.zoneId));
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Security: ${widget.zoneName}')),
+      appBar: AppBar(title: Text(l10n.securityTitle(widget.zoneName))),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
@@ -94,7 +98,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                       ),
                       SizedBox(width: 12),
                       Text(
-                        'I\'m Under Attack Mode',
+                        l10n.securityUnderAttackTitle,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: Theme.of(context).colorScheme.onErrorContainer,
                         ),
@@ -103,7 +107,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    'Defend against DDoS attacks. Visitors will see a JavaScript challenge.',
+                    l10n.securityUnderAttackDesc,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onErrorContainer,
                     ),
@@ -140,15 +144,15 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                                 )
                               : Text(
                                   isUnderAttack
-                                      ? 'TURN OFF'
-                                      : 'ENABLE UNDER ATTACK MODE',
+                                      ? l10n.securityUnderAttackTurnOff
+                                      : l10n.securityUnderAttackEnable,
                                 ),
                         ),
                       );
                     },
                     loading: () =>
                         Center(child: CircularProgressIndicator()),
-                    error: (e, s) => Text('Error loading status: $e'),
+                    error: (e, s) => Text(l10n.securityErrorLoading(e.toString())),
                   ),
                 ],
               ),
@@ -164,11 +168,11 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Security Level',
+                    l10n.securityLevelTitle,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   SizedBox(height: 8),
-                  Text('Adjust your website\'s security profile.'),
+                  Text(l10n.securityLevelDesc),
                   SizedBox(height: 16),
                   secLevelAsync.when(
                     data: (level) {
@@ -176,7 +180,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                         return Padding(
                           padding: EdgeInsets.symmetric(vertical: 16.0),
                           child: Text(
-                            'Under Attack mode is enabled. To change the level, please turn it off first.',
+                            l10n.securityLevelUnderAttackNote,
                             style: TextStyle(fontStyle: FontStyle.italic),
                           ),
                         );
@@ -185,17 +189,17 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                       return DropdownButtonFormField<String>(
                         initialValue: level,
                         decoration: const InputDecoration(),
-                        items: const [
+                        items: [
                           DropdownMenuItem(
                             value: 'essentially_off',
-                            child: Text('Essentially Off'),
+                            child: Text(l10n.securityLevelEssentiallyOff),
                           ),
-                          DropdownMenuItem(value: 'low', child: Text('Low')),
+                          DropdownMenuItem(value: 'low', child: Text(l10n.securityLevelLow)),
                           DropdownMenuItem(
                             value: 'medium',
-                            child: Text('Medium'),
+                            child: Text(l10n.securityLevelMedium),
                           ),
-                          DropdownMenuItem(value: 'high', child: Text('High')),
+                          DropdownMenuItem(value: 'high', child: Text(l10n.securityLevelHigh)),
                         ],
                         onChanged: _isSavingSecLevel
                             ? null
@@ -208,7 +212,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                     },
                     loading: () =>
                         Center(child: CircularProgressIndicator()),
-                    error: (e, s) => Text('Error loading status: $e'),
+                    error: (e, s) => Text(l10n.securityErrorLoading(e.toString())),
                   ),
                 ],
               ),
@@ -232,21 +236,21 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                       ),
                       SizedBox(width: 12),
                       Text(
-                        'Development Mode',
+                        l10n.securityDevModeTitle,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ],
                   ),
                   SizedBox(height: 12),
                   Text(
-                    'Temporarily bypass our cache. Allows you to see changes to your origin server in real-time. Automatically turns off after 3 hours.',
+                    l10n.securityDevModeDesc,
                   ),
                   SizedBox(height: 16),
                   devModeAsync.when(
                     data: (isDevMode) {
                       return SwitchListTile(
                         title: Text(
-                          isDevMode ? 'Active (Bypassing Cache)' : 'Off',
+                          isDevMode ? l10n.securityDevModeActive : l10n.securityDevModeOff,
                         ),
                         value: isDevMode,
                         onChanged: _isSavingDevMode
@@ -257,7 +261,7 @@ class _SecurityPageState extends ConsumerState<SecurityPage> {
                     },
                     loading: () =>
                         Center(child: CircularProgressIndicator()),
-                    error: (e, s) => Text('Error loading status: $e'),
+                    error: (e, s) => Text(l10n.securityErrorLoading(e.toString())),
                   ),
                 ],
               ),

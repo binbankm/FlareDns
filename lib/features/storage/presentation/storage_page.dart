@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import 'views/kv_list_view.dart';
 import 'views/d1_list_view.dart';
 import 'views/r2_list_view.dart';
@@ -34,25 +35,26 @@ class _StoragePageState extends ConsumerState<StoragePage>
 
   void _showCreateDialog() {
     final index = _tabController.index;
+    final l10n = AppLocalizations.of(context);
     final title = index == 0
-        ? 'KV Namespace'
-        : (index == 1 ? 'D1 Database' : 'R2 Bucket');
+        ? l10n.storageCreateKV
+        : (index == 1 ? l10n.storageCreateD1 : l10n.storageCreateR2);
     final controller = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Create $title'),
+          title: Text(title),
           content: TextField(
             controller: controller,
-            decoration: InputDecoration(hintText: 'Enter name'),
+            decoration: InputDecoration(hintText: l10n.storageCreateHint),
             autofocus: true,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: Text(l10n.commonCancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -75,15 +77,15 @@ class _StoragePageState extends ConsumerState<StoragePage>
                     ref.invalidate(r2BucketsProvider);
                   }
                   scaffoldMessenger.showSnackBar(
-                    SnackBar(content: Text('$title created successfully!')),
+                    SnackBar(content: Text(l10n.storageCreateSuccess(title))),
                   );
                 } catch (e) {
                   scaffoldMessenger.showSnackBar(
-                    SnackBar(content: Text('Error: $e')),
+                    SnackBar(content: Text(l10n.commonError(e.toString()))),
                   );
                 }
               },
-              child: Text('Create'),
+              child: Text(l10n.commonCreate),
             ),
           ],
         );
@@ -93,9 +95,10 @@ class _StoragePageState extends ConsumerState<StoragePage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Storage'),
+        title: Text(l10n.storageTitle),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -110,6 +113,7 @@ class _StoragePageState extends ConsumerState<StoragePage>
         children: const [KVListView(), D1ListView(), R2ListView()],
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: null,
         onPressed: _showCreateDialog,
         child: Icon(Icons.add),
       ),

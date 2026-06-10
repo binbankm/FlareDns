@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flare_dns/l10n/app_localizations.dart';
 import '../../providers/storage_providers.dart';
 import '../../data/storage_repository.dart';
 
@@ -11,18 +12,22 @@ class R2ListView extends ConsumerWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Delete R2 Bucket'),
+          title: Text(AppLocalizations.of(context).storageDeleteTitle(AppLocalizations.of(context).pageDashboardR2)),
           content: Text(
-            'Are you sure you want to delete "$name"? This action cannot be undone.',
+            AppLocalizations.of(context).storageDeleteContent(name),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: Text(AppLocalizations.of(context).commonCancel),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
               onPressed: () async {
+                final l10n = AppLocalizations.of(context);
+                final successMsg = l10n.storageDeleteSuccess(l10n.pageDashboardR2);
+                final errorMsg = l10n.commonError;
+
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
                 try {
@@ -31,18 +36,18 @@ class R2ListView extends ConsumerWidget {
                       .deleteR2Bucket(name);
                   ref.invalidate(r2BucketsProvider);
                   scaffoldMessenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('R2 Bucket deleted successfully!'),
+                    SnackBar(
+                      content: Text(successMsg),
                     ),
                   );
                 } catch (e) {
                   scaffoldMessenger.showSnackBar(
-                    SnackBar(content: Text('Error: $e')),
+                    SnackBar(content: Text(errorMsg(e.toString()))),
                   );
                 }
               },
               child: Text(
-                'Delete',
+                AppLocalizations.of(context).commonDelete,
                 
               ),
             ),
@@ -71,7 +76,7 @@ class R2ListView extends ConsumerWidget {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'No R2 Buckets found',
+                  AppLocalizations.of(context).storageNoItems(AppLocalizations.of(context).pageDashboardR2),
                   style: TextStyle(
                     color: colorScheme.onSurfaceVariant,
                     fontSize: 16,
@@ -116,7 +121,7 @@ class R2ListView extends ConsumerWidget {
                           if (bucket.creationDate != null) ...[
                             SizedBox(height: 4),
                             Text(
-                              'Created: ${bucket.creationDate}',
+                              AppLocalizations.of(context).storageCreated(bucket.creationDate!),
                               style: TextStyle(
                                 color: colorScheme.outline,
                                 fontSize: 12,
@@ -144,7 +149,7 @@ class R2ListView extends ConsumerWidget {
                               Icon(Icons.delete, size: 20, color: Theme.of(context).colorScheme.error),
                               SizedBox(width: 12),
                               Text(
-                                'Delete',
+                                AppLocalizations.of(context).commonDelete,
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
                                       color: Theme.of(
@@ -173,11 +178,11 @@ class R2ListView extends ConsumerWidget {
             children: [
               Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error, size: 48),
               SizedBox(height: 16),
-              Text('Error: $error', textAlign: TextAlign.center),
+              Text(AppLocalizations.of(context).commonError(error.toString()), textAlign: TextAlign.center),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(r2BucketsProvider),
-                child: Text('Retry'),
+                child: Text(AppLocalizations.of(context).commonRetry),
               ),
             ],
           ),

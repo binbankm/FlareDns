@@ -4,6 +4,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../domain/page.dart';
 import '../providers/pages_provider.dart';
 import '../data/pages_repository.dart';
+import '../../zones/data/zones_repository.dart';
+import '../../dns/data/dns_repository.dart';
+import '../../dns/domain/dns_record.dart';
 
 class PageDashboardPage extends ConsumerWidget {
   final CloudflarePage page;
@@ -495,17 +498,60 @@ class _DomainsTab extends ConsumerWidget {
               Navigator.pop(ctx);
               final messenger = ScaffoldMessenger.of(context);
               try {
+                // 1. Add domain to Pages project
                 await ref
                     .read(pagesRepositoryProvider)
                     .addDomain(projectName, domain);
                 ref.invalidate(pageDomainsProvider(projectName));
-                messenger.showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Domain added! DNS verification may take a moment.',
+                
+                // 2. Attempt to Auto-configure DNS
+                bool autoDnsSuccess = false;
+                try {
+                  final zones = await ref.read(zonesRepositoryProvider).getZones();
+                  
+                  // Find the zone that matches the domain suffix
+                  dynamic matchedZone;
+                  for (final z in zones) {
+                    if (domain == z.name || domain.endsWith('.${z.name}')) {
+                      if (matchedZone == null || z.name.length > matchedZone.name.length) {
+                        matchedZone = z;
+                      }
+                    }
+                  }
+                  
+                  if (matchedZone != null) {
+                    final target = '$projectName.pages.dev';
+                    await ref.read(dnsRepositoryProvider).createDnsRecord(
+                      matchedZone.id,
+                      DnsRecord(
+                        id: '',
+                        name: domain,
+                        type: 'CNAME',
+                        content: target,
+                        proxied: true,
+                        ttl: 1, // Auto
+                      ),
+                    );
+                    autoDnsSuccess = true;
+                  }
+                } catch (dnsError) {
+                  debugPrint('Auto DNS failed: $dnsError');
+                }
+
+                if (autoDnsSuccess) {
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      content: Text('Domain added and CNAME auto-configured!'),
+                      backgroundColor: Colors.green,
                     ),
-                  ),
-                );
+                  );
+                } else {
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      content: Text('Domain added! Please add the CNAME manually.'),
+                    ),
+                  );
+                }
               } catch (e) {
                 messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
               }
@@ -719,7 +765,8 @@ class _BindingsTab extends ConsumerWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () => _showAddPageSecretDialog(context, ref, project),
+                    onPressed: () =>
+                        _showAddPageSecretDialog(context, ref, project),
                     icon: const Icon(Icons.lock_outline, size: 18),
                     label: const Text('Add Secret'),
                   ),
@@ -734,7 +781,11 @@ class _BindingsTab extends ConsumerWidget {
     );
   }
 
-  void _showAddPageSecretDialog(BuildContext context, WidgetRef ref, CloudflarePage project) {
+  void _showAddPageSecretDialog(
+    BuildContext context,
+    WidgetRef ref,
+    CloudflarePage project,
+  ) {
     final nameCtrl = TextEditingController();
     final valCtrl = TextEditingController();
 
@@ -747,7 +798,9 @@ class _BindingsTab extends ConsumerWidget {
           children: [
             TextField(
               controller: nameCtrl,
-              decoration: const InputDecoration(labelText: 'Secret Name (e.g. API_KEY)'),
+              decoration: const InputDecoration(
+                labelText: 'Secret Name (e.g. API_KEY)',
+              ),
             ),
             const SizedBox(height: 8),
             TextField(
@@ -770,7 +823,9 @@ class _BindingsTab extends ConsumerWidget {
               Navigator.pop(ctx);
               final messenger = ScaffoldMessenger.of(context);
               try {
-                final updated = Map<String, dynamic>.from(project.productionEnvVars);
+                final updated = Map<String, dynamic>.from(
+                  project.productionEnvVars,
+                );
                 updated[name] = {'type': 'secret_text', 'value': val};
                 await ref.read(pagesRepositoryProvider).updateProjectBindings(
                   project.name,
@@ -780,7 +835,9 @@ class _BindingsTab extends ConsumerWidget {
                   },
                 );
                 ref.invalidate(pageProjectProvider(project.name));
-                messenger.showSnackBar(const SnackBar(content: Text('Secret added.')));
+                messenger.showSnackBar(
+                  const SnackBar(content: Text('Secret added.')),
+                );
               } catch (e) {
                 messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
               }
@@ -957,9 +1014,6 @@ class _BindingsTab extends ConsumerWidget {
       messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
-
-
-
 }
 
 class AddPageBindingDialog extends ConsumerStatefulWidget {
@@ -968,7 +1022,8 @@ class AddPageBindingDialog extends ConsumerStatefulWidget {
   const AddPageBindingDialog({super.key, required this.project});
 
   @override
-  ConsumerState<AddPageBindingDialog> createState() => _AddPageBindingDialogState();
+  ConsumerState<AddPageBindingDialog> createState() =>
+      _AddPageBindingDialogState();
 }
 
 class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
@@ -989,8 +1044,14 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
               initialValue: _selectedType,
               decoration: const InputDecoration(labelText: 'Binding Type'),
               items: const [
-                DropdownMenuItem(value: 'plain_text', child: Text('Plain Text (Env Var)')),
-                DropdownMenuItem(value: 'kv_namespace', child: Text('KV Namespace')),
+                DropdownMenuItem(
+                  value: 'plain_text',
+                  child: Text('Plain Text (Env Var)'),
+                ),
+                DropdownMenuItem(
+                  value: 'kv_namespace',
+                  child: Text('KV Namespace'),
+                ),
                 DropdownMenuItem(value: 'd1', child: Text('D1 Database')),
               ],
               onChanged: (val) {
@@ -1000,7 +1061,9 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
             const SizedBox(height: 8),
             TextField(
               controller: _nameCtrl,
-              decoration: const InputDecoration(labelText: 'Binding Name (e.g. DB, MY_KV, API_URL)'),
+              decoration: const InputDecoration(
+                labelText: 'Binding Name (e.g. DB, MY_KV, API_URL)',
+              ),
             ),
             const SizedBox(height: 8),
             if (_selectedType == 'plain_text')
@@ -1035,30 +1098,35 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
             final messenger = ScaffoldMessenger.of(context);
             try {
               Map<String, dynamic> updatedConfig = {};
-              
+
               if (_selectedType == 'plain_text') {
-                final updated = Map<String, dynamic>.from(widget.project.productionEnvVars);
+                final updated = Map<String, dynamic>.from(
+                  widget.project.productionEnvVars,
+                );
                 updated[name] = {'type': 'plain_text', 'value': detail};
                 updatedConfig = {'env_vars': updated};
               } else if (_selectedType == 'kv_namespace') {
-                final updated = Map<String, dynamic>.from(widget.project.kvNamespaces);
+                final updated = Map<String, dynamic>.from(
+                  widget.project.kvNamespaces,
+                );
                 updated[name] = {'namespace_id': detail};
                 updatedConfig = {'kv_namespaces': updated};
               } else if (_selectedType == 'd1') {
-                final updated = Map<String, dynamic>.from(widget.project.d1Databases);
+                final updated = Map<String, dynamic>.from(
+                  widget.project.d1Databases,
+                );
                 updated[name] = {'id': detail};
                 updatedConfig = {'d1_databases': updated};
               }
 
               await ref.read(pagesRepositoryProvider).updateProjectBindings(
                 widget.project.name,
-                {
-                  'production': updatedConfig,
-                  'preview': updatedConfig,
-                },
+                {'production': updatedConfig, 'preview': updatedConfig},
               );
               ref.invalidate(pageProjectProvider(widget.project.name));
-              messenger.showSnackBar(const SnackBar(content: Text('Binding added.')));
+              messenger.showSnackBar(
+                const SnackBar(content: Text('Binding added.')),
+              );
             } catch (e) {
               messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
             }

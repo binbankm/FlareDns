@@ -17,17 +17,17 @@ class D1ListView extends ConsumerWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Delete D1 Database'),
+          title: Text('Delete D1 Database'),
           content: Text(
             'Are you sure you want to delete "$name"? This action cannot be undone.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text('Cancel'),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
               onPressed: () async {
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
@@ -47,9 +47,9 @@ class D1ListView extends ConsumerWidget {
                   );
                 }
               },
-              child: const Text(
+              child: Text(
                 'Delete',
-                style: TextStyle(color: Colors.white),
+                
               ),
             ),
           ],
@@ -75,7 +75,7 @@ class D1ListView extends ConsumerWidget {
                   size: 64,
                   color: colorScheme.outlineVariant,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   'No D1 Databases found',
                   style: TextStyle(
@@ -102,24 +102,24 @@ class D1ListView extends ConsumerWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: Colors.green.withValues(alpha: 0.1),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.dataset, color: Colors.green),
+                      child: Icon(Icons.dataset, color: Theme.of(context).colorScheme.primary),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             database.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           GestureDetector(
                             onTap: () {
                               Clipboard.setData(
@@ -141,7 +141,7 @@ class D1ListView extends ConsumerWidget {
                             ),
                           ),
                           if (database.createdAt != null) ...[
-                            const SizedBox(height: 4),
+                            SizedBox(height: 4),
                             Text(
                               'Created: ${database.createdAt}',
                               style: TextStyle(
@@ -169,15 +169,20 @@ class D1ListView extends ConsumerWidget {
                         }
                       },
                       itemBuilder: (context) => [
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'delete',
                           child: Row(
                             children: [
-                              Icon(Icons.delete, size: 20, color: Colors.red),
+                              Icon(Icons.delete, size: 20, color: Theme.of(context).colorScheme.error),
                               SizedBox(width: 12),
                               Text(
                                 'Delete',
-                                style: TextStyle(color: Colors.red),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
                               ),
                             ],
                           ),
@@ -191,20 +196,20 @@ class D1ListView extends ConsumerWidget {
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, color: Colors.red, size: 48),
-              const SizedBox(height: 16),
+              Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error, size: 48),
+              SizedBox(height: 16),
               Text('Error: $error', textAlign: TextAlign.center),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(d1DatabasesProvider),
-                child: const Text('Retry'),
+                child: Text('Retry'),
               ),
             ],
           ),

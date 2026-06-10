@@ -70,14 +70,14 @@ class AnalyticsPage extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.all(16.0),
               children: [
-                const Text(
+                Text(
                   'Last 30 Days Summary',
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: Theme.of(context).colorScheme.outline,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Requests
                 _buildStatCard(
@@ -85,21 +85,21 @@ class AnalyticsPage extends ConsumerWidget {
                   title: 'Total Requests',
                   value: _formatNumber(reqAll),
                   icon: Icons.sync_alt,
-                  color: Colors.blue,
+                  color: Theme.of(context).colorScheme.primary,
                   details: [
                     _DetailRow(
                       'Cached',
                       _formatNumber(reqCached),
-                      Colors.green,
+                      Theme.of(context).colorScheme.primary,
                     ),
                     _DetailRow(
                       'Uncached',
                       _formatNumber(reqUncached),
-                      Colors.orange,
+                      Theme.of(context).colorScheme.tertiary,
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Bandwidth
                 _buildStatCard(
@@ -107,17 +107,17 @@ class AnalyticsPage extends ConsumerWidget {
                   title: 'Total Bandwidth',
                   value: _formatBytes(bwAll),
                   icon: Icons.data_usage,
-                  color: Colors.purple,
+                  color: Theme.of(context).colorScheme.secondary,
                   details: [
-                    _DetailRow('Cached', _formatBytes(bwCached), Colors.green),
+                    _DetailRow('Cached', _formatBytes(bwCached), Theme.of(context).colorScheme.primary),
                     _DetailRow(
                       'Uncached',
                       _formatBytes(bwUncached),
-                      Colors.orange,
+                      Theme.of(context).colorScheme.tertiary,
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
 
                 // Unique Visitors
                 Row(
@@ -128,17 +128,17 @@ class AnalyticsPage extends ConsumerWidget {
                         title: 'Unique Visitors',
                         value: _formatNumber(uniques['all'] as num? ?? 0),
                         icon: Icons.people,
-                        color: Colors.teal,
+                        color: Theme.of(context).colorScheme.primaryContainer,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16),
                     Expanded(
                       child: _buildMiniCard(
                         context,
                         title: 'Page Views',
                         value: _formatNumber(pageviews['all'] as num? ?? 0),
                         icon: Icons.visibility,
-                        color: Colors.indigo,
+                        color: Theme.of(context).colorScheme.tertiaryContainer,
                       ),
                     ),
                   ],
@@ -147,34 +147,36 @@ class AnalyticsPage extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(child: CircularProgressIndicator()),
         error: (e, s) => Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.analytics_outlined,
                   size: 48,
-                  color: Colors.grey,
+                  color: Theme.of(context).colorScheme.outline,
                 ),
-                const SizedBox(height: 16),
-                const Text(
+                SizedBox(height: 16),
+                Text(
                   'Analytics data is not available for this zone or plan.',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   'Details: $e',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(analyticsProvider(zoneId)),
-                  child: const Text('Retry'),
+                  child: Text('Retry'),
                 ),
               ],
             ),
@@ -201,20 +203,20 @@ class AnalyticsPage extends ConsumerWidget {
             Row(
               children: [
                 Icon(icon, color: color, size: 28),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Text(title, style: Theme.of(context).textTheme.titleMedium),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(
               value,
               style: Theme.of(
                 context,
               ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             const Divider(),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             ...details.map(
               (d) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -231,16 +233,23 @@ class AnalyticsPage extends ConsumerWidget {
                             shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Text(
                           d.label,
-                          style: const TextStyle(color: Colors.grey),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       ],
                     ),
                     Text(
                       d.value,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -266,17 +275,19 @@ class AnalyticsPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, color: color),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               value,
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4),
             Text(
               title,
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),

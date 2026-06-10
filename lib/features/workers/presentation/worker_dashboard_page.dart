@@ -98,13 +98,13 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
 
   Widget _buildHistoryTab() {
     if (widget.worker.id.startsWith('new-worker-')) {
-      return const Center(child: Text('No history for new worker.'));
+      return Center(child: Text('No history for new worker.'));
     }
     final historyAsync = ref.watch(workerDeploymentsProvider(widget.worker.id));
     return historyAsync.when(
       data: (deployments) {
         if (deployments.isEmpty) {
-          return const Center(child: Text('No deployment history.'));
+          return Center(child: Text('No deployment history.'));
         }
         return ListView.builder(
           padding: const EdgeInsets.all(16),
@@ -112,7 +112,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
           itemBuilder: (context, index) {
             final d = deployments[index];
             final isApi = d.source == 'api';
-            final color = isApi ? Colors.blue : Colors.orange;
+            final color = isApi ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.tertiary;
             final shortVer = d.versionId.length > 8
                 ? d.versionId.substring(0, 8)
                 : d.versionId;
@@ -147,28 +147,28 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                         size: 20,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.layers_outlined,
                                 size: 14,
-                                color: Colors.grey,
+                                color: Theme.of(context).colorScheme.outline,
                               ),
-                              const SizedBox(width: 4),
+                              SizedBox(width: 4),
                               Text(
                                 shortVer,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: 'monospace',
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 6,
@@ -176,7 +176,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: color.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(4),
+                                  borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
                                   d.source.toUpperCase(),
@@ -189,41 +189,41 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.person_outline,
                                 size: 12,
-                                color: Colors.grey,
+                                color: Theme.of(context).colorScheme.outline,
                               ),
-                              const SizedBox(width: 4),
+                              SizedBox(width: 4),
                               Expanded(
                                 child: Text(
                                   d.authorEmail,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 11,
-                                    color: Colors.grey,
+                                    color: Theme.of(context).colorScheme.outline,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.access_time,
                                 size: 12,
-                                color: Colors.grey,
+                                color: Theme.of(context).colorScheme.outline,
                               ),
-                              const SizedBox(width: 4),
+                              SizedBox(width: 4),
                               Text(
                                 displayDate,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 11,
-                                  color: Colors.grey,
+                                  color: Theme.of(context).colorScheme.outline,
                                 ),
                               ),
                             ],
@@ -238,11 +238,11 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (e, s) {
         if (e.toString().contains('10007') ||
             e.toString().contains('not found')) {
-          return const Center(child: Text('No history for new worker.'));
+          return Center(child: Text('No history for new worker.'));
         }
         return Center(child: Text('Error: $e'));
       },
@@ -251,7 +251,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
 
   Widget _buildBindingsTab() {
     if (widget.worker.id.startsWith('new-worker-')) {
-      return const Center(
+      return Center(
         child: Text('Please deploy the worker first to configure bindings.'),
       );
     }
@@ -267,37 +267,37 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
               padding: const EdgeInsets.all(16),
               children: [
                 if (bindings.isNotEmpty) ...[
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
                       'Bindings',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
-                        color: Colors.grey,
+                        color: Theme.of(context).colorScheme.outline,
                       ),
                     ),
                   ),
-                  ...bindings.map((item) => _buildBindingCard(item, bindings)),
-                  const SizedBox(height: 16),
+                  ...bindings.map((item) => _buildBindingCard(context, item, bindings)),
+                  SizedBox(height: 16),
                 ],
                 if (secrets.isNotEmpty) ...[
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
                       'Secrets',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
-                        color: Colors.grey,
+                        color: Theme.of(context).colorScheme.outline,
                       ),
                     ),
                   ),
                   ...secrets.map((item) => _buildSecretCard(item)),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                 ],
                 if (allItems.isEmpty)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(vertical: 40),
                     child: Center(
                       child: Text('No bindings or secrets configured.'),
@@ -314,16 +314,16 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                             currentBindings: bindings,
                           ),
                         ),
-                        icon: const Icon(Icons.add_link, size: 18),
-                        label: const Text('Add Binding'),
+                        icon: Icon(Icons.add_link, size: 18),
+                        label: Text('Add Binding'),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: () => _showAddSecretDialog(),
-                        icon: const Icon(Icons.lock_outline, size: 18),
-                        label: const Text('Add Secret'),
+                        icon: Icon(Icons.lock_outline, size: 18),
+                        label: Text('Add Secret'),
                       ),
                     ),
                   ],
@@ -331,11 +331,11 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
               ],
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => Center(child: CircularProgressIndicator()),
           error: (e, s) {
             if (e.toString().contains('10007') ||
                 e.toString().contains('not found')) {
-              return const Center(
+              return Center(
                 child: Text(
                   'Please deploy the worker first to configure bindings.',
                 ),
@@ -345,11 +345,11 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (e, s) {
         if (e.toString().contains('10007') ||
             e.toString().contains('not found')) {
-          return const Center(
+          return Center(
             child: Text(
               'Please deploy the worker first to configure bindings.',
             ),
@@ -364,16 +364,21 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Secret?'),
+        title: Text('Delete Secret?'),
         content: Text('Are you sure you want to delete the secret "$name"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
           ),
         ],
       ),
@@ -393,29 +398,30 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
   }
 
   // Returns (icon, color, label) for a binding type
-  (IconData, Color, String) _bindingTypeStyle(String type) {
+  (IconData, Color, String) _bindingTypeStyle(BuildContext context, String type) {
+    final colorScheme = Theme.of(context).colorScheme;
     switch (type) {
       case 'd1':
-        return (Icons.dataset, Colors.blue, 'D1 Database');
+        return (Icons.dataset, colorScheme.primary, 'D1 Database');
       case 'kv_namespace':
-        return (Icons.storage, Colors.green, 'KV Namespace');
+        return (Icons.storage, colorScheme.secondary, 'KV Namespace');
       case 'plain_text':
-        return (Icons.text_fields, Colors.orange, 'Plain Text');
+        return (Icons.text_fields, colorScheme.tertiary, 'Plain Text');
       case 'r2_bucket':
-        return (Icons.folder, Colors.purple, 'R2 Bucket');
+        return (Icons.folder, colorScheme.primary, 'R2 Bucket');
       case 'analytics_engine':
-        return (Icons.bar_chart, Colors.teal, 'Analytics');
+        return (Icons.bar_chart, colorScheme.secondary, 'Analytics');
       case 'queue':
-        return (Icons.queue, Colors.indigo, 'Queue');
+        return (Icons.queue, colorScheme.tertiary, 'Queue');
       case 'service':
-        return (Icons.hub, Colors.cyan, 'Service');
+        return (Icons.hub, colorScheme.secondary, 'Service');
       default:
-        return (Icons.settings, Colors.grey, type);
+        return (Icons.settings, colorScheme.outline, type);
     }
   }
 
-  Widget _buildBindingCard(WorkerBinding item, List<WorkerBinding> bindings) {
-    final (icon, color, label) = _bindingTypeStyle(item.type);
+  Widget _buildBindingCard(BuildContext context, WorkerBinding item, List<WorkerBinding> bindings) {
+    final (icon, color, label) = _bindingTypeStyle(context, item.type);
     final detail = item.detail ?? '';
     // Truncate long UUIDs to first 8 chars
     final displayDetail = detail.length > 36
@@ -436,19 +442,19 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
               ),
               child: Icon(icon, color: color, size: 20),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     item.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Row(
                     children: [
                       Container(
@@ -470,13 +476,13 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                         ),
                       ),
                       if (displayDetail.isNotEmpty) ...[
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             displayDetail,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey,
+                              color: Theme.of(context).colorScheme.outline,
                               fontFamily: 'monospace',
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -508,9 +514,9 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.delete_outline,
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.error,
                     size: 20,
                   ),
                   padding: EdgeInsets.zero,
@@ -538,24 +544,24 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
+                color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.lock, color: Colors.red, size: 20),
+              child: Icon(Icons.lock, color: Theme.of(context).colorScheme.error, size: 20),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     item.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Row(
                     children: [
                       Container(
@@ -564,24 +570,24 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.red.withValues(alpha: 0.1),
+                          color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Secret',
                           style: TextStyle(
                             fontSize: 11,
-                            color: Colors.red,
+                            color: Theme.of(context).colorScheme.error,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      const Text(
+                      SizedBox(width: 8),
+                      Text(
                         '••••••••••••',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.outline,
                           letterSpacing: 2,
                         ),
                       ),
@@ -594,9 +600,9 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.edit_outlined,
-                    color: Colors.blue,
+                    color: Theme.of(context).colorScheme.primary,
                     size: 20,
                   ),
                   padding: EdgeInsets.zero,
@@ -607,9 +613,9 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                   onPressed: () => _showAddSecretDialog(editName: item.name),
                 ),
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.delete_outline,
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.error,
                     size: 20,
                   ),
                   padding: EdgeInsets.zero,
@@ -634,18 +640,23 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Binding?'),
+        title: Text('Delete Binding?'),
         content: Text(
           'Are you sure you want to delete the binding "$nameToDelete"?\nThis will redeploy your code.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
           ),
         ],
       ),
@@ -689,7 +700,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
               enabled:
                   editName == null, // disable name editing if it's an update
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             TextField(
               controller: valCtrl,
               obscureText: true,
@@ -704,7 +715,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -736,7 +747,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
 
   Widget _buildTriggersTab() {
     if (widget.worker.id.startsWith('new-worker-')) {
-      return const Center(
+      return Center(
         child: Text('Please deploy the worker first to configure triggers.'),
       );
     }
@@ -764,11 +775,11 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                           height: 18,
                           margin: const EdgeInsets.only(right: 8),
                           decoration: BoxDecoration(
-                            color: Colors.green,
+                            color: Theme.of(context).colorScheme.primary,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        const Text(
+                        Text(
                           'Custom Domains / Routes',
                           style: TextStyle(
                             fontSize: 15,
@@ -779,33 +790,38 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                     ),
                     TextButton.icon(
                       onPressed: () => _showAddDomainDialog(),
-                      icon: const Icon(Icons.add, size: 16),
-                      label: const Text('Add'),
+                      icon: Icon(Icons.add, size: 16),
+                      label: Text('Add'),
                       style: TextButton.styleFrom(
-                        foregroundColor: Colors.green,
+                        foregroundColor: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 if (workerDomains.isEmpty)
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.08),
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
                         Icon(
                           Icons.language_outlined,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.outline,
                           size: 18,
                         ),
                         SizedBox(width: 8),
                         Text(
                           'No custom domains configured.',
-                          style: TextStyle(color: Colors.grey),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       ],
                     ),
@@ -824,44 +840,44 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                               width: 36,
                               height: 36,
                               decoration: BoxDecoration(
-                                color: Colors.green.withValues(alpha: 0.12),
+                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.language,
-                                color: Colors.green,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 18,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     d.hostname,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                     ),
                                   ),
-                                  const SizedBox(height: 2),
+                                  SizedBox(height: 2),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 6,
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.green.withValues(
+                                      color: Theme.of(context).colorScheme.primary.withValues(
                                         alpha: 0.1,
                                       ),
-                                      borderRadius: BorderRadius.circular(4),
+                                      borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
                                       d.environment,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 11,
-                                        color: Colors.green,
+                                        color: Theme.of(context).colorScheme.primary,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -870,10 +886,10 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.open_in_new,
                                 size: 18,
-                                color: Colors.green,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(
@@ -894,10 +910,10 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                               },
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.delete_outline,
                                 size: 18,
-                                color: Colors.red,
+                                color: Theme.of(context).colorScheme.error,
                               ),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(
@@ -912,7 +928,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                     ),
                   ),
 
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
 
                 // Section: Cron Schedules
                 Row(
@@ -925,11 +941,11 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                           height: 18,
                           margin: const EdgeInsets.only(right: 8),
                           decoration: BoxDecoration(
-                            color: Colors.purple,
+                            color: Theme.of(context).colorScheme.secondary,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        const Text(
+                        Text(
                           'Cron Schedules',
                           style: TextStyle(
                             fontSize: 15,
@@ -942,33 +958,38 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                       onPressed: () => _showAddScheduleDialog(
                         schedules.map((e) => e.cron).toList(),
                       ),
-                      icon: const Icon(Icons.add, size: 16),
-                      label: const Text('Add'),
+                      icon: Icon(Icons.add, size: 16),
+                      label: Text('Add'),
                       style: TextButton.styleFrom(
-                        foregroundColor: Colors.purple,
+                        foregroundColor: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 if (schedules.isEmpty)
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.grey.withValues(alpha: 0.08),
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
                         Icon(
                           Icons.schedule_outlined,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.outline,
                           size: 18,
                         ),
                         SizedBox(width: 8),
                         Text(
                           'No cron schedules configured.',
-                          style: TextStyle(color: Colors.grey),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       ],
                     ),
@@ -987,44 +1008,44 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                               width: 36,
                               height: 36,
                               decoration: BoxDecoration(
-                                color: Colors.purple.withValues(alpha: 0.12),
+                                color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.schedule,
-                                color: Colors.purple,
+                                color: Theme.of(context).colorScheme.secondary,
                                 size: 18,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     s.cron,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontFamily: 'monospace',
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                     ),
                                   ),
-                                  const SizedBox(height: 2),
+                                  SizedBox(height: 2),
                                   Text(
                                     _describeCron(s.cron),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 11,
-                                      color: Colors.grey,
+                                      color: Theme.of(context).colorScheme.outline,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.edit_outlined,
                                 size: 18,
-                                color: Colors.blue,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(
@@ -1037,10 +1058,10 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.delete_outline,
                                 size: 18,
-                                color: Colors.red,
+                                color: Theme.of(context).colorScheme.error,
                               ),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(
@@ -1060,11 +1081,11 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
               ],
             );
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => Center(child: CircularProgressIndicator()),
           error: (e, s) {
             if (e.toString().contains('10007') ||
                 e.toString().contains('not found')) {
-              return const Center(
+              return Center(
                 child: Text(
                   'Please deploy the worker first to configure triggers.',
                 ),
@@ -1074,11 +1095,11 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (e, s) {
         if (e.toString().contains('10007') ||
             e.toString().contains('not found')) {
-          return const Center(
+          return Center(
             child: Text(
               'Please deploy the worker first to configure triggers.',
             ),
@@ -1111,18 +1132,23 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Schedule?'),
+        title: Text('Delete Schedule?'),
         content: Text(
           'Are you sure you want to delete the schedule "$cronToDelete"?',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
           ),
         ],
       ),
@@ -1165,52 +1191,52 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                   hintText: 'e.g. * * * * * or */5 * * * *',
                 ),
               ),
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: 16),
+              Text(
                 'Common Presets',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.grey,
+                  color: Theme.of(context).colorScheme.outline,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: [
                   ActionChip(
-                    label: const Text('1 min'),
+                    label: Text('1 min'),
                     onPressed: () => cronCtrl.text = '* * * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: const Text('5 mins'),
+                    label: Text('5 mins'),
                     onPressed: () => cronCtrl.text = '*/5 * * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: const Text('15 mins'),
+                    label: Text('15 mins'),
                     onPressed: () => cronCtrl.text = '*/15 * * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: const Text('30 mins'),
+                    label: Text('30 mins'),
                     onPressed: () => cronCtrl.text = '*/30 * * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: const Text('Hourly'),
+                    label: Text('Hourly'),
                     onPressed: () => cronCtrl.text = '0 * * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: const Text('Daily'),
+                    label: Text('Daily'),
                     onPressed: () => cronCtrl.text = '0 0 * * *',
                     visualDensity: VisualDensity.compact,
                   ),
                   ActionChip(
-                    label: const Text('Weekly'),
+                    label: Text('Weekly'),
                     onPressed: () => cronCtrl.text = '0 0 * * 0',
                     visualDensity: VisualDensity.compact,
                   ),
@@ -1222,7 +1248,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1265,18 +1291,23 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Domain?'),
+        title: Text('Delete Domain?'),
         content: Text(
           'Are you sure you want to delete the domain "$hostname"?',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
           ),
         ],
       ),
@@ -1298,7 +1329,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Add Custom Domain'),
+        title: Text('Add Custom Domain'),
         content: TextField(
           controller: hostnameCtrl,
           decoration: const InputDecoration(
@@ -1310,7 +1341,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1329,7 +1360,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                 messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
               }
             },
-            child: const Text('Add'),
+            child: Text('Add'),
           ),
         ],
       ),
@@ -1356,7 +1387,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
         }
         return _buildEditorUI();
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (e, s) {
         if (e.toString().contains('10007') ||
             e.toString().contains('not found')) {
@@ -1379,15 +1410,15 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          color: Colors.amber.withValues(alpha: 0.1),
-          child: const Row(
+          color: Theme.of(context).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+          child: Row(
             children: [
-              Icon(Icons.warning_amber_rounded, color: Colors.amber),
+              Icon(Icons.warning_amber_rounded, color: Theme.of(context).colorScheme.secondaryContainer),
               SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'Deploying from App overrides bindings (KV/D1). Use carefully for simple scripts only.',
-                  style: TextStyle(fontSize: 12, color: Colors.amber),
+                  style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.secondaryContainer),
                 ),
               ),
             ],
@@ -1398,7 +1429,7 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
             controller: _codeController,
             maxLines: null,
             expands: true,
-            style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+            style: TextStyle(fontFamily: 'monospace', fontSize: 13),
             decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.all(16),
@@ -1414,13 +1445,13 @@ class _WorkerDashboardPageState extends ConsumerState<WorkerDashboardPage> {
                   ? null
                   : () => _deployCode(_codeController.text),
               icon: _isDeploying
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Icon(Icons.cloud_upload),
-              label: const Text('Deploy Code'),
+                  : Icon(Icons.cloud_upload),
+              label: Text('Deploy Code'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               ),
@@ -1505,7 +1536,7 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
                     }
                   : null, // Disable type change on edit
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             TextField(
               controller: _nameCtrl,
               decoration: const InputDecoration(
@@ -1513,7 +1544,7 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
               ),
               enabled: widget.editBinding == null,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             if (_selectedType == 'plain_text')
               TextField(
                 controller: _detailCtrl,
@@ -1537,7 +1568,9 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
                 loading: () => const CircularProgressIndicator(),
                 error: (e, s) => Text(
                   'Error loading KVs: $e',
-                  style: const TextStyle(color: Colors.red),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                 ),
               )
             else if (_selectedType == 'd1')
@@ -1560,7 +1593,9 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
                 loading: () => const CircularProgressIndicator(),
                 error: (e, s) => Text(
                   'Error loading D1s: $e',
-                  style: const TextStyle(color: Colors.red),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                 ),
               ),
           ],
@@ -1569,12 +1604,12 @@ class _AddBindingDialogState extends ConsumerState<AddBindingDialog> {
       actions: [
         TextButton(
           onPressed: _isSaving ? null : () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text('Cancel'),
         ),
         ElevatedButton(
           onPressed: _isSaving ? null : _save,
           child: _isSaving
-              ? const SizedBox(
+              ? SizedBox(
                   width: 16,
                   height: 16,
                   child: CircularProgressIndicator(strokeWidth: 2),

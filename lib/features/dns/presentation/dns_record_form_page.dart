@@ -201,9 +201,7 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
               // Type Selection
               DropdownButtonFormField<String>(
                 initialValue: _type,
-                decoration: const InputDecoration(
-                  labelText: 'Type',
-                ),
+                decoration: const InputDecoration(labelText: 'Type'),
                 items: _supportedTypes
                     .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                     .toList(),
@@ -221,7 +219,7 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
                   }
                 },
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
 
               // Name Field with @ helper
               Row(
@@ -239,7 +237,7 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
                           : 'Name is required',
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Padding(
                     padding: const EdgeInsets.only(top: 4.0),
                     child: FilledButton.tonal(
@@ -248,12 +246,12 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
                           _nameController.text = '@';
                         });
                       },
-                      child: const Text('@'),
+                      child: Text('@'),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
 
               // Priority Field (Conditional)
               if (requiresPriority) ...[
@@ -274,7 +272,7 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
               ],
 
               // Content Field
@@ -287,7 +285,7 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
                 maxLines: _type == 'TXT' ? 3 : 1,
                 validator: _validateContent,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
 
               // TTL Dropdown
               DropdownButtonFormField<int>(
@@ -311,25 +309,24 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
                           });
                         }
                       },
-                hint: _proxied ? const Text('Auto (Enforced by Proxy)') : null,
+                hint: _proxied ? Text('Auto (Enforced by Proxy)') : null,
               ),
               if (_proxied)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(top: 4.0, left: 12.0),
                   child: Text(
                     'TTL is locked to Auto when proxied',
-                    style: TextStyle(fontSize: 12, color: Colors.orange),
+                    style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.tertiary),
                   ),
                 ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
 
               // Proxy Switch
               if (canProxy)
                 SwitchListTile(
-                  title: const Text('Proxied'),
-                  subtitle: const Text('Route traffic through Cloudflare'),
+                  title: Text('Proxied'),
+                  subtitle: Text('Route traffic through Cloudflare'),
                   value: _proxied,
-                  activeThumbColor: Colors.orange,
                   onChanged: (val) {
                     setState(() {
                       _proxied = val;
@@ -340,14 +337,14 @@ class _DnsRecordFormPageState extends ConsumerState<DnsRecordFormPage> {
                   },
                   contentPadding: EdgeInsets.zero,
                 ),
-              const SizedBox(height: 32),
+              SizedBox(height: 32),
 
               // Save Button
               FilledButton(
                 onPressed: _isSaving ? null : _save,
 
                 child: _isSaving
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(strokeWidth: 2),

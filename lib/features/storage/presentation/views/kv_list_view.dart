@@ -18,7 +18,7 @@ class KVListView extends ConsumerWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Edit KV Namespace'),
+          title: Text('Edit KV Namespace'),
           content: TextField(
             controller: controller,
             decoration: const InputDecoration(hintText: 'Enter new title'),
@@ -27,7 +27,7 @@ class KVListView extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -54,7 +54,7 @@ class KVListView extends ConsumerWidget {
                   );
                 }
               },
-              child: const Text('Save'),
+              child: Text('Save'),
             ),
           ],
         );
@@ -72,17 +72,17 @@ class KVListView extends ConsumerWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Delete KV Namespace'),
+          title: Text('Delete KV Namespace'),
           content: Text(
             'Are you sure you want to delete "$title"? This action cannot be undone.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text('Cancel'),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
               onPressed: () async {
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
@@ -102,9 +102,9 @@ class KVListView extends ConsumerWidget {
                   );
                 }
               },
-              child: const Text(
+              child: Text(
                 'Delete',
-                style: TextStyle(color: Colors.white),
+                
               ),
             ),
           ],
@@ -130,7 +130,7 @@ class KVListView extends ConsumerWidget {
                   size: 64,
                   color: colorScheme.outlineVariant,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   'No KV Namespaces found',
                   style: TextStyle(
@@ -157,24 +157,24 @@ class KVListView extends ConsumerWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: Colors.blue.withValues(alpha: 0.1),
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.storage, color: Colors.blue),
+                      child: Icon(Icons.storage, color: Theme.of(context).colorScheme.primary),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             namespace.title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           GestureDetector(
                             onTap: () {
                               Clipboard.setData(
@@ -220,25 +220,30 @@ class KVListView extends ConsumerWidget {
                         }
                       },
                       itemBuilder: (context) => [
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'edit',
                           child: Row(
                             children: [
-                              Icon(Icons.edit, size: 20, color: Colors.blue),
+                              Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary),
                               SizedBox(width: 12),
                               Text('Rename'),
                             ],
                           ),
                         ),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'delete',
                           child: Row(
                             children: [
-                              Icon(Icons.delete, size: 20, color: Colors.red),
+                              Icon(Icons.delete, size: 20, color: Theme.of(context).colorScheme.error),
                               SizedBox(width: 12),
                               Text(
                                 'Delete',
-                                style: TextStyle(color: Colors.red),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
                               ),
                             ],
                           ),
@@ -252,20 +257,20 @@ class KVListView extends ConsumerWidget {
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, color: Colors.red, size: 48),
-              const SizedBox(height: 16),
+              Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error, size: 48),
+              SizedBox(height: 16),
               Text('Error: $error', textAlign: TextAlign.center),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(kvNamespacesProvider),
-                child: const Text('Retry'),
+                child: Text('Retry'),
               ),
             ],
           ),

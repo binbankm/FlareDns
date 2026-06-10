@@ -19,10 +19,10 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Domains'),
+        title: Text('Domains'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             onPressed: () {
               ref.invalidate(zonesProvider);
             },
@@ -54,7 +54,7 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
             child: zonesAsyncValue.when(
               data: (zones) {
                 if (zones.isEmpty) {
-                  return const Center(child: Text('No zones found.'));
+                  return Center(child: Text('No zones found.'));
                 }
 
                 final filtered = zones.where((z) {
@@ -62,7 +62,7 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
                 }).toList();
 
                 if (filtered.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text('No domains match your search.'),
                   );
                 }
@@ -80,7 +80,7 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
                         final zone = filtered[index];
                         final isActive = zone.status == 'active';
                         final statusColor = isActive
-                            ? Colors.green
+                            ? Theme.of(context).colorScheme.primary
                             : Colors.red;
                         final colorScheme = Theme.of(context).colorScheme;
 
@@ -114,7 +114,7 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
                                       size: 22,
                                     ),
                                   ),
-                                  const SizedBox(width: 14),
+                                  SizedBox(width: 14),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -125,7 +125,7 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
                                             Expanded(
                                               child: Text(
                                                 zone.name,
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 15,
                                                 ),
@@ -133,7 +133,7 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
                                               ),
                                             ),
                                             if (zone.planName != null) ...[
-                                              const SizedBox(width: 8),
+                                              SizedBox(width: 8),
                                               Container(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -159,7 +159,7 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
                                             ],
                                           ],
                                         ),
-                                        const SizedBox(height: 5),
+                                        SizedBox(height: 5),
                                         Row(
                                           children: [
                                             Container(
@@ -187,24 +187,24 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
                                           ],
                                         ),
                                         if (zone.nameServers.isNotEmpty) ...[
-                                          const SizedBox(height: 5),
+                                          SizedBox(height: 5),
                                           ...zone.nameServers
                                               .take(2)
                                               .map(
                                                 (ns) => Row(
                                                   children: [
-                                                    const Icon(
+                                                    Icon(
                                                       Icons.dns_outlined,
                                                       size: 11,
-                                                      color: Colors.grey,
+                                                      color: Theme.of(context).colorScheme.outline,
                                                     ),
-                                                    const SizedBox(width: 4),
+                                                    SizedBox(width: 4),
                                                     Expanded(
                                                       child: Text(
                                                         ns,
-                                                        style: const TextStyle(
+                                                        style: TextStyle(
                                                           fontSize: 11,
-                                                          color: Colors.grey,
+                                                          color: Theme.of(context).colorScheme.outline,
                                                         ),
                                                         overflow: TextOverflow
                                                             .ellipsis,
@@ -232,22 +232,22 @@ class _ZonesListPageState extends ConsumerState<ZonesListPage> {
                   ),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline,
                       size: 48,
-                      color: Colors.red,
+                      color: Theme.of(context).colorScheme.error,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Text('Error: $error', textAlign: TextAlign.center),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(zonesProvider),
-                      child: const Text('Retry'),
+                      child: Text('Retry'),
                     ),
                   ],
                 ),

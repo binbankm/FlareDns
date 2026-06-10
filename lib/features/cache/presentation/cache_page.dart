@@ -19,19 +19,19 @@ class _CachePageState extends ConsumerState<CachePage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Purge Everything?'),
-        content: const Text(
+        title: Text('Purge Everything?'),
+        content: Text(
           'This will clear all cached resources for this zone. It may temporarily increase load on your origin server. Are you sure?',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Purge'),
+            style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
+            child: Text('Purge'),
           ),
         ],
       ),
@@ -47,7 +47,7 @@ class _CachePageState extends ConsumerState<CachePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Cache successfully purged!'),
-            backgroundColor: Colors.green,
+            
           ),
         );
       }
@@ -82,35 +82,35 @@ class _CachePageState extends ConsumerState<CachePage> {
                         color: Theme.of(context).colorScheme.primary,
                         size: 28,
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Text(
                         'Purge Cache',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  const Text(
+                  SizedBox(height: 12),
+                  Text(
                     'Clear cached files to force Cloudflare to fetch a fresh version of those files from your web server.',
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton.icon(
                       onPressed: _isPurging ? null : _purgeAll,
                       icon: _isPurging
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Icon(Icons.warning),
+                          : Icon(Icons.warning),
                       label: Text(
                         _isPurging ? 'Purging...' : 'Purge Everything',
                       ),
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                        
                       ),
                     ),
                   ),

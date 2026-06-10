@@ -47,7 +47,7 @@ class _SslPageState extends ConsumerState<SslPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('SSL/TLS mode updated!'),
-            backgroundColor: Colors.green,
+            
           ),
         );
       }
@@ -90,24 +90,27 @@ class _SslPageState extends ConsumerState<SslPage> {
                             color: Theme.of(context).colorScheme.primary,
                             size: 28,
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12),
                           Text(
                             'Encryption Mode',
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
-                      const Text(
+                      SizedBox(height: 12),
+                      Text(
                         'Choose how Cloudflare connects to your origin server.',
-                        style: TextStyle(color: Colors.grey),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24),
                       ..._modes.map((mode) {
                         return RadioListTile<String>(
                           title: Text(
                             mode['title']!,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(mode['desc']!),
                           value: mode['value']!,
@@ -125,7 +128,7 @@ class _SslPageState extends ConsumerState<SslPage> {
                         );
                       }),
                       if (_isSaving)
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(top: 16.0),
                           child: Center(child: CircularProgressIndicator()),
                         ),
@@ -133,7 +136,7 @@ class _SslPageState extends ConsumerState<SslPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -144,26 +147,28 @@ class _SslPageState extends ConsumerState<SslPage> {
                         children: [
                           Icon(
                             Icons.badge,
-                            color: Colors.purpleAccent,
+                            color: Theme.of(context).colorScheme.tertiary,
                             size: 28,
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12),
                           Text(
                             'Edge Certificates',
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
-                      const Text(
+                      SizedBox(height: 12),
+                      Text(
                         'Active certificates protecting your domain.',
-                        style: TextStyle(color: Colors.grey),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       certsAsync.when(
                         data: (certs) {
                           if (certs.isEmpty) {
-                            return const Padding(
+                            return Padding(
                               padding: EdgeInsets.symmetric(vertical: 16),
                               child: Text('No edge certificates found.'),
                             );
@@ -177,17 +182,17 @@ class _SslPageState extends ConsumerState<SslPage> {
                               final status = cert['status'] ?? 'unknown';
                               final type = cert['type'] ?? 'universal';
                               final color = status == 'active'
-                                  ? Colors.green
-                                  : Colors.orange;
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.tertiary;
 
                               return Container(
                                 margin: const EdgeInsets.only(bottom: 12),
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Colors.black12,
+                                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.05),
+                                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
                                   ),
                                 ),
                                 child: Column(
@@ -199,7 +204,7 @@ class _SslPageState extends ConsumerState<SslPage> {
                                       children: [
                                         Text(
                                           type.toString().toUpperCase(),
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             letterSpacing: 1.2,
                                           ),
@@ -214,7 +219,7 @@ class _SslPageState extends ConsumerState<SslPage> {
                                               alpha: 0.12,
                                             ),
                                             borderRadius: BorderRadius.circular(
-                                              4,
+                                              6,
                                             ),
                                           ),
                                           child: Text(
@@ -228,15 +233,15 @@ class _SslPageState extends ConsumerState<SslPage> {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 8),
-                                    const Text(
+                                    SizedBox(height: 8),
+                                    Text(
                                       'Hosts:',
                                       style: TextStyle(
-                                        color: Colors.grey,
+                                        color: Theme.of(context).colorScheme.outline,
                                         fontSize: 12,
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
+                                    SizedBox(height: 4),
                                     Wrap(
                                       spacing: 6,
                                       runSpacing: 6,
@@ -249,19 +254,19 @@ class _SslPageState extends ConsumerState<SslPage> {
                                                     vertical: 4,
                                                   ),
                                               decoration: BoxDecoration(
-                                                color: Colors.white.withValues(
+                                                color: Theme.of(context).colorScheme.onPrimary.withValues(
                                                   alpha: 0.05,
                                                 ),
                                                 borderRadius:
-                                                    BorderRadius.circular(4),
+                                                    BorderRadius.circular(6),
                                                 border: Border.all(
-                                                  color: Colors.white
+                                                  color: Theme.of(context).colorScheme.onPrimary
                                                       .withValues(alpha: 0.1),
                                                 ),
                                               ),
                                               child: Text(
                                                 h,
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 13,
                                                   fontFamily: 'monospace',
                                                 ),
@@ -276,7 +281,7 @@ class _SslPageState extends ConsumerState<SslPage> {
                             }).toList(),
                           );
                         },
-                        loading: () => const Center(
+                        loading: () => Center(
                           child: Padding(
                             padding: EdgeInsets.all(16.0),
                             child: CircularProgressIndicator(),
@@ -286,7 +291,10 @@ class _SslPageState extends ConsumerState<SslPage> {
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
                             'Error loading certificates: $err',
-                            style: const TextStyle(color: Colors.red),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
                           ),
                         ),
                       ),
@@ -297,18 +305,18 @@ class _SslPageState extends ConsumerState<SslPage> {
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
+              Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
+              SizedBox(height: 16),
               Text('Error: $err', textAlign: TextAlign.center),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(sslModeProvider(widget.zoneId)),
-                child: const Text('Retry'),
+                child: Text('Retry'),
               ),
             ],
           ),

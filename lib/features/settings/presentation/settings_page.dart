@@ -12,19 +12,19 @@ class SettingsPage extends ConsumerWidget {
     final accountAsync = ref.watch(authProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings'), centerTitle: true),
+      appBar: AppBar(title: Text('Settings'), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         children: [
           // Account Section
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(left: 8.0, bottom: 8.0, top: 8.0),
             child: Text(
               'ACCOUNT',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: Theme.of(context).colorScheme.outline,
               ),
             ),
           ),
@@ -44,28 +44,28 @@ class SettingsPage extends ConsumerWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16),
                   Expanded(
                     child: accountAsync.when(
                       data: (account) {
-                        if (account == null) return const Text('Not logged in');
+                        if (account == null) return Text('Not logged in');
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               account.email,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 4),
-                            const Text(
+                            SizedBox(height: 4),
+                            Text(
                               'Cloudflare Global API Key',
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Colors.grey,
+                                color: Theme.of(context).colorScheme.outline,
                               ),
                             ),
                           ],
@@ -80,17 +80,17 @@ class SettingsPage extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
 
           // Appearance Section
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
             child: Text(
               'APPEARANCE',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: Theme.of(context).colorScheme.outline,
               ),
             ),
           ),
@@ -100,11 +100,11 @@ class SettingsPage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Theme',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
                     child: SegmentedButton<ThemeMode>(
@@ -138,17 +138,17 @@ class SettingsPage extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
 
           // About Section
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
             child: Text(
               'ABOUT',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: Theme.of(context).colorScheme.outline,
               ),
             ),
           ),
@@ -156,18 +156,20 @@ class SettingsPage extends ConsumerWidget {
             child: Column(
               children: [
                 ListTile(
-                  leading: const Icon(Icons.info_outline),
-                  title: const Text('Version'),
-                  trailing: const Text(
+                  leading: Icon(Icons.info_outline),
+                  title: Text('Version'),
+                  trailing: Text(
                     '1.0.0',
-                    style: TextStyle(color: Colors.grey),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
                 const Divider(height: 1, indent: 56),
                 ListTile(
-                  leading: const Icon(Icons.code),
-                  title: const Text('Source Code'),
-                  trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+                  leading: Icon(Icons.code),
+                  title: Text('Source Code'),
+                  trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.outline),
                   onTap: () {
                     // Open github link
                   },
@@ -176,7 +178,7 @@ class SettingsPage extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
 
           // Logout Button
           SizedBox(
@@ -187,8 +189,8 @@ class SettingsPage extends ConsumerWidget {
                 backgroundColor: Theme.of(context).colorScheme.errorContainer,
                 foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
               ),
-              icon: const Icon(Icons.logout),
-              label: const Text(
+              icon: Icon(Icons.logout),
+              label: Text(
                 'Logout',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
@@ -196,24 +198,24 @@ class SettingsPage extends ConsumerWidget {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: const Text('Logout'),
-                    content: const Text('Are you sure you want to logout?'),
+                    title: Text('Logout'),
+                    content: Text('Are you sure you want to logout?'),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
+                        child: Text('Cancel'),
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
+                          backgroundColor: Theme.of(context).colorScheme.error,
                         ),
                         onPressed: () {
                           Navigator.pop(context);
                           ref.read(authProvider.notifier).logout();
                         },
-                        child: const Text(
+                        child: Text(
                           'Logout',
-                          style: TextStyle(color: Colors.white),
+                          
                         ),
                       ),
                     ],
@@ -222,7 +224,7 @@ class SettingsPage extends ConsumerWidget {
               },
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24),
         ],
       ),
     );

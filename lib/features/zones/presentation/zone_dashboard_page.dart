@@ -23,7 +23,7 @@ class ZoneDashboardPage extends ConsumerWidget {
           _buildFeatureCard(
             context,
             icon: Icons.dns,
-            color: Colors.orange,
+            color: Theme.of(context).colorScheme.tertiary,
             title: 'DNS',
             subtitle: 'Manage DNS records',
             onTap: () => context.push(
@@ -33,7 +33,7 @@ class ZoneDashboardPage extends ConsumerWidget {
           _buildFeatureCard(
             context,
             icon: Icons.security_update_warning,
-            color: Colors.redAccent,
+            color: Theme.of(context).colorScheme.error,
             title: 'Security',
             subtitle: 'Under attack mode & Dev mode',
             onTap: () => context.push(
@@ -43,7 +43,7 @@ class ZoneDashboardPage extends ConsumerWidget {
           _buildFeatureCard(
             context,
             icon: Icons.analytics,
-            color: Colors.blueAccent,
+            color: Theme.of(context).colorScheme.primary,
             title: 'Analytics',
             subtitle: 'Web traffic & usage metrics',
             onTap: () => context.push(
@@ -53,7 +53,7 @@ class ZoneDashboardPage extends ConsumerWidget {
           _buildFeatureCard(
             context,
             icon: Icons.speed,
-            color: Colors.teal,
+            color: Theme.of(context).colorScheme.primaryContainer,
             title: 'Caching',
             subtitle: 'Purge cache & settings',
             onTap: () => context.push(
@@ -69,11 +69,11 @@ class ZoneDashboardPage extends ConsumerWidget {
   Widget _buildSslCard(BuildContext context, WidgetRef ref) {
     final sslAsync = ref.watch(zoneSslCertificatesProvider(zoneId));
 
-    Widget trailingWidget = const Icon(Icons.chevron_right, color: Colors.grey);
+    Widget trailingWidget = Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.outline);
     String subtitleText = 'Manage encryption mode';
 
     if (sslAsync.isLoading) {
-      trailingWidget = const SizedBox(
+      trailingWidget = SizedBox(
         width: 16,
         height: 16,
         child: CircularProgressIndicator(strokeWidth: 2),
@@ -82,7 +82,7 @@ class ZoneDashboardPage extends ConsumerWidget {
       trailingWidget = Expanded(
         child: Text(
           'API Error: ${sslAsync.error}',
-          style: const TextStyle(color: Colors.red, fontSize: 10),
+          style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 10),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
@@ -95,7 +95,7 @@ class ZoneDashboardPage extends ConsumerWidget {
         final type = cert['type'] ?? 'universal';
         subtitleText = 'Manage encryption mode & certificates';
 
-        final color = status == 'active' ? Colors.green : Colors.orange;
+        final color = status == 'active' ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.tertiary;
 
         trailingWidget = Row(
           mainAxisSize: MainAxisSize.min,
@@ -115,15 +115,15 @@ class ZoneDashboardPage extends ConsumerWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
-            const Icon(Icons.chevron_right, color: Colors.grey),
+            SizedBox(width: 8),
+            Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.outline),
           ],
         );
       } else {
-        trailingWidget = const Text(
+        trailingWidget = Text(
           'NO CERTS FOUND',
           style: TextStyle(
-            color: Colors.grey,
+            color: Theme.of(context).colorScheme.outline,
             fontSize: 10,
             fontWeight: FontWeight.bold,
           ),
@@ -145,31 +145,31 @@ class ZoneDashboardPage extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.purpleAccent.withValues(alpha: 0.12),
+                  color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.security,
-                  color: Colors.purpleAccent,
+                  color: Theme.of(context).colorScheme.tertiary,
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'SSL/TLS',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2),
                     Text(
                       subtitleText,
-                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                      style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.outline),
                     ),
                   ],
                 ),
@@ -207,27 +207,27 @@ class ZoneDashboardPage extends ConsumerWidget {
                 ),
                 child: Icon(icon, color: color, size: 20),
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                      style: TextStyle(fontSize: 13, color: Theme.of(context).colorScheme.outline),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: Colors.grey),
+              Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.outline),
             ],
           ),
         ),

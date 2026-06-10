@@ -20,10 +20,10 @@ class _PagesListPageState extends ConsumerState<PagesListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pages'),
+        title: Text('Pages'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             onPressed: () => ref.invalidate(pagesProvider),
           ),
         ],
@@ -50,13 +50,13 @@ class _PagesListPageState extends ConsumerState<PagesListPage> {
             child: pagesAsync.when(
               data: (pages) {
                 if (pages.isEmpty) {
-                  return const Center(child: Text('No Pages projects found.'));
+                  return Center(child: Text('No Pages projects found.'));
                 }
                 final filtered = pages
                     .where((p) => p.name.toLowerCase().contains(_searchQuery))
                     .toList();
                 if (filtered.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text('No projects match your search.'),
                   );
                 }
@@ -74,7 +74,7 @@ class _PagesListPageState extends ConsumerState<PagesListPage> {
                   ),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(child: CircularProgressIndicator()),
               error: (e, s) => Center(child: Text('Error: $e')),
             ),
           ),
@@ -94,10 +94,10 @@ class _PageCard extends StatelessWidget {
     final isGithub = page.source == 'github';
     final isGitlab = page.source == 'gitlab';
     final sourceColor = isGithub
-        ? Colors.indigo
+        ? colorScheme.primary
         : isGitlab
-        ? Colors.orange
-        : Colors.blue;
+        ? colorScheme.tertiary
+        : colorScheme.secondary;
     final sourceIcon = isGithub
         ? Icons.code
         : isGitlab
@@ -126,20 +126,20 @@ class _PageCard extends StatelessWidget {
                 ),
                 child: Icon(sourceIcon, color: sourceColor, size: 22),
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       page.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       page.subdomain,
                       style: TextStyle(
@@ -148,7 +148,7 @@ class _PageCard extends StatelessWidget {
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: 6),
                     Wrap(
                       spacing: 6,
                       children: [
@@ -160,7 +160,7 @@ class _PageCard extends StatelessWidget {
                         _InfoChip(
                           icon: Icons.call_split,
                           label: page.productionBranch,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.outline,
                         ),
                       ],
                     ),
@@ -198,7 +198,7 @@ class _InfoChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 11, color: color),
-          const SizedBox(width: 3),
+          SizedBox(width: 3),
           Text(
             label,
             style: TextStyle(

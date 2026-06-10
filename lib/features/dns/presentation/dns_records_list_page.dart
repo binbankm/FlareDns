@@ -37,7 +37,7 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
         title: Text('DNS: ${widget.zoneName}'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             onPressed: () {
               ref.invalidate(dnsRecordsProvider(widget.zoneId));
             },
@@ -69,7 +69,7 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
             child: dnsRecordsAsyncValue.when(
               data: (records) {
                 if (records.isEmpty) {
-                  return const Center(child: Text('No DNS records found.'));
+                  return Center(child: Text('No DNS records found.'));
                 }
 
                 final filtered = records.where((r) {
@@ -85,7 +85,7 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                 });
 
                 if (filtered.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text('No records match your search.'),
                   );
                 }
@@ -143,11 +143,11 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
+                                      SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
                                           record.name,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
                                           ),
@@ -156,17 +156,17 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 6),
+                                  SizedBox(height: 6),
                                   Text(
                                     record.content,
-                                    style: const TextStyle(
-                                      color: Colors.grey,
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.outline,
                                       fontSize: 13,
                                     ),
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  const SizedBox(height: 6),
+                                  SizedBox(height: 6),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -179,21 +179,23 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                               vertical: 2,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: Colors.grey.withValues(
-                                                alpha: 0.2,
-                                              ),
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surfaceContainerHighest,
                                               borderRadius:
-                                                  BorderRadius.circular(4),
+                                                  BorderRadius.circular(6),
                                             ),
                                             child: Text(
                                               _formatTtl(record.ttl),
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 10,
-                                                color: Colors.grey,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(width: 6),
+                                          SizedBox(width: 6),
                                           if (record.priority != null)
                                             Container(
                                               padding:
@@ -202,17 +204,19 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                                     vertical: 2,
                                                   ),
                                               decoration: BoxDecoration(
-                                                color: Colors.blue.withValues(
-                                                  alpha: 0.2,
-                                                ),
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primaryContainer,
                                                 borderRadius:
-                                                    BorderRadius.circular(4),
+                                                    BorderRadius.circular(6),
                                               ),
                                               child: Text(
                                                 'Pri: ${record.priority}',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 10,
-                                                  color: Colors.blue,
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.primary,
                                                 ),
                                               ),
                                             ),
@@ -230,7 +234,6 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                               height: 20,
                                               child: Switch(
                                                 value: record.proxied,
-                                                activeThumbColor: Colors.orange,
                                                 onChanged: (val) {
                                                   ref
                                                       .read(dnsMutationProvider)
@@ -255,22 +258,22 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                                 },
                                               ),
                                             ),
-                                          const SizedBox(width: 4),
+                                          SizedBox(width: 4),
                                           SizedBox(
                                             width: 28,
                                             height: 28,
                                             child: IconButton(
                                               padding: EdgeInsets.zero,
-                                              icon: const Icon(
+                                              icon: Icon(
                                                 Icons.delete_outline,
-                                                color: Colors.red,
+                                                color: Theme.of(context).colorScheme.error,
                                                 size: 18,
                                               ),
                                               onPressed: () async {
                                                 final confirm = await showDialog<bool>(
                                                   context: context,
                                                   builder: (context) => AlertDialog(
-                                                    title: const Text(
+                                                    title: Text(
                                                       'Delete Record',
                                                     ),
                                                     content: Text(
@@ -280,17 +283,17 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                                                       TextButton(
                                                         onPressed: () =>
                                                             context.pop(false),
-                                                        child: const Text(
+                                                        child: Text(
                                                           'Cancel',
                                                         ),
                                                       ),
                                                       TextButton(
                                                         onPressed: () =>
                                                             context.pop(true),
-                                                        child: const Text(
+                                                        child: Text(
                                                           'Delete',
                                                           style: TextStyle(
-                                                            color: Colors.red,
+                                                            color: Theme.of(context).colorScheme.error,
                                                           ),
                                                         ),
                                                       ),
@@ -339,23 +342,23 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
                   ),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline,
                       size: 48,
-                      color: Colors.red,
+                      color: Theme.of(context).colorScheme.error,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Text('Error: $error', textAlign: TextAlign.center),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () =>
                           ref.invalidate(dnsRecordsProvider(widget.zoneId)),
-                      child: const Text('Retry'),
+                      child: Text('Retry'),
                     ),
                   ],
                 ),
@@ -368,7 +371,7 @@ class _DnsRecordsListPageState extends ConsumerState<DnsRecordsListPage> {
         onPressed: () {
           context.push('/zone/${widget.zoneId}/dns/form');
         },
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add),
       ),
     );
   }

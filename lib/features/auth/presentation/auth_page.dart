@@ -45,8 +45,8 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.cloud, size: 80, color: Colors.orange),
-                  const SizedBox(height: 16),
+                  Icon(Icons.cloud, size: 80, color: Theme.of(context).colorScheme.tertiary),
+                  SizedBox(height: 16),
                   Text(
                     'Welcome to FlareDns',
                     textAlign: TextAlign.center,
@@ -54,15 +54,15 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Text(
                     'Sign in with your Cloudflare Global API Key',
                     textAlign: TextAlign.center,
                     style: Theme.of(
                       context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                    ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.outline),
                   ),
-                  const SizedBox(height: 48),
+                  SizedBox(height: 48),
                   TextFormField(
                     controller: _emailController,
                     decoration: const InputDecoration(
@@ -73,7 +73,7 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                     validator: (val) =>
                         val != null && val.isNotEmpty ? null : 'Required',
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   TextFormField(
                     controller: _apiKeyController,
                     decoration: const InputDecoration(
@@ -84,16 +84,16 @@ class _AuthPageState extends ConsumerState<AuthPage> {
                     validator: (val) =>
                         val != null && val.isNotEmpty ? null : 'Required',
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24),
                   FilledButton(
                     onPressed: authState.isLoading ? null : _submit,
                     child: authState.isLoading
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 24,
                             height: 24,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Login'),
+                        : Text('Login'),
                   ),
                 ],
               ),

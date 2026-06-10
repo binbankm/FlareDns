@@ -52,7 +52,7 @@ class _StoragePageState extends ConsumerState<StoragePage>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -83,7 +83,7 @@ class _StoragePageState extends ConsumerState<StoragePage>
                   );
                 }
               },
-              child: const Text('Create'),
+              child: Text('Create'),
             ),
           ],
         );
@@ -95,7 +95,7 @@ class _StoragePageState extends ConsumerState<StoragePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Storage'),
+        title: Text('Storage'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -111,7 +111,7 @@ class _StoragePageState extends ConsumerState<StoragePage>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showCreateDialog,
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add),
       ),
     );
   }

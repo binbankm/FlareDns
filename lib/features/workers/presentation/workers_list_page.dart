@@ -25,22 +25,23 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
   }
 
   /// Returns (icon, color) for a given handler type
-  (IconData, Color) _handlerStyle(String handler) {
+  (IconData, Color) _handlerStyle(BuildContext context, String handler) {
+    final colorScheme = Theme.of(context).colorScheme;
     switch (handler) {
       case 'fetch':
-        return (Icons.http_rounded, Colors.blue);
+        return (Icons.http_rounded, colorScheme.primary);
       case 'scheduled':
-        return (Icons.schedule, Colors.purple);
+        return (Icons.schedule, colorScheme.secondary);
       case 'queue':
-        return (Icons.queue, Colors.orange);
+        return (Icons.queue, colorScheme.tertiary);
       case 'tail':
-        return (Icons.receipt_long, Colors.teal);
+        return (Icons.receipt_long, colorScheme.primary);
       case 'email':
-        return (Icons.email, Colors.red);
+        return (Icons.email, colorScheme.error);
       case 'rpc':
-        return (Icons.hub, Colors.indigo);
+        return (Icons.hub, colorScheme.secondary);
       default:
-        return (Icons.bolt, Colors.amber);
+        return (Icons.bolt, colorScheme.tertiary);
     }
   }
 
@@ -51,10 +52,10 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Workers'),
+        title: Text('Workers'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: Icon(Icons.refresh),
             onPressed: () => ref.invalidate(workersProvider),
           ),
         ],
@@ -81,7 +82,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
             child: workersAsyncValue.when(
               data: (workers) {
                 if (workers.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text('No Workers found in your account.'),
                   );
                 }
@@ -91,7 +92,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                     .toList();
 
                 if (filtered.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text('No workers match your search.'),
                   );
                 }
@@ -110,7 +111,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                         final primaryHandler = worker.handlers.isNotEmpty
                             ? worker.handlers.first
                             : 'fetch';
-                        final (icon, iconColor) = _handlerStyle(primaryHandler);
+                        final (icon, iconColor) = _handlerStyle(context, primaryHandler);
                         final isStandard = worker.usageModel == 'standard';
 
                         return Card(
@@ -141,7 +142,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                                       size: 22,
                                     ),
                                   ),
-                                  const SizedBox(width: 14),
+                                  SizedBox(width: 14),
                                   // Info
                                   Expanded(
                                     child: Column(
@@ -150,13 +151,13 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                                       children: [
                                         Text(
                                           worker.id,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 15,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        const SizedBox(height: 6),
+                                        SizedBox(height: 6),
                                         // Handler chips
                                         Wrap(
                                           spacing: 6,
@@ -164,7 +165,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                                           children: [
                                             ...worker.handlers.map((h) {
                                               final (hIcon, hColor) =
-                                                  _handlerStyle(h);
+                                                  _handlerStyle(context, h);
                                               return _Chip(
                                                 icon: hIcon,
                                                 label: h,
@@ -177,25 +178,25 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                                                   : Icons.flash_on,
                                               label: worker.usageModel,
                                               color: isStandard
-                                                  ? Colors.amber
-                                                  : Colors.green,
+                                                  ? Theme.of(context).colorScheme.secondaryContainer
+                                                  : Theme.of(context).colorScheme.primary,
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 6),
+                                        SizedBox(height: 6),
                                         Row(
                                           children: [
-                                            const Icon(
+                                            Icon(
                                               Icons.update,
                                               size: 12,
-                                              color: Colors.grey,
+                                              color: Theme.of(context).colorScheme.outline,
                                             ),
-                                            const SizedBox(width: 4),
+                                            SizedBox(width: 4),
                                             Text(
                                               _formatDate(worker.modifiedOn),
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 11,
-                                                color: Colors.grey,
+                                                color: Theme.of(context).colorScheme.outline,
                                               ),
                                             ),
                                           ],
@@ -209,9 +210,9 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       IconButton(
-                                        icon: const Icon(
+                                        icon: Icon(
                                           Icons.delete_outline,
-                                          color: Colors.red,
+                                          color: Theme.of(context).colorScheme.error,
                                           size: 20,
                                         ),
                                         padding: EdgeInsets.zero,
@@ -221,7 +222,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                                           final confirm = await showDialog<bool>(
                                             context: context,
                                             builder: (context) => AlertDialog(
-                                              title: const Text(
+                                              title: Text(
                                                 'Delete Worker',
                                               ),
                                               content: Text(
@@ -231,15 +232,15 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                                                 TextButton(
                                                   onPressed: () =>
                                                       context.pop(false),
-                                                  child: const Text('Cancel'),
+                                                  child: Text('Cancel'),
                                                 ),
                                                 TextButton(
                                                   onPressed: () =>
                                                       context.pop(true),
-                                                  child: const Text(
+                                                  child: Text(
                                                     'Delete',
                                                     style: TextStyle(
-                                                      color: Colors.red,
+                                                      color: Theme.of(context).colorScheme.error,
                                                     ),
                                                   ),
                                                 ),
@@ -280,7 +281,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                                           }
                                         },
                                       ),
-                                      const SizedBox(height: 8),
+                                      SizedBox(height: 8),
                                       Icon(
                                         Icons.chevron_right,
                                         color: colorScheme.outline,
@@ -298,22 +299,22 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                   ),
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline,
                       size: 48,
-                      color: Colors.red,
+                      color: Theme.of(context).colorScheme.error,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Text('Error: $error', textAlign: TextAlign.center),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () => ref.invalidate(workersProvider),
-                      child: const Text('Retry'),
+                      child: Text('Retry'),
                     ),
                   ],
                 ),
@@ -328,7 +329,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
           final String? workerName = await showDialog<String>(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('Create New Worker'),
+              title: Text('Create New Worker'),
               content: TextField(
                 controller: nameCtrl,
                 decoration: const InputDecoration(
@@ -340,7 +341,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: Text('Cancel'),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -348,7 +349,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
                       Navigator.pop(context, nameCtrl.text);
                     }
                   },
-                  child: const Text('Create'),
+                  child: Text('Create'),
                 ),
               ],
             ),
@@ -359,7 +360,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
               context: context,
               barrierDismissible: false,
               builder: (context) =>
-                  const Center(child: CircularProgressIndicator()),
+                  Center(child: CircularProgressIndicator()),
             );
 
             try {
@@ -399,7 +400,7 @@ class _WorkersListPageState extends ConsumerState<WorkersListPage> {
           }
         },
         tooltip: 'New Worker',
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add),
       ),
     );
   }
@@ -424,7 +425,7 @@ class _Chip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 11, color: color),
-          const SizedBox(width: 3),
+          SizedBox(width: 3),
           Text(
             label,
             style: TextStyle(

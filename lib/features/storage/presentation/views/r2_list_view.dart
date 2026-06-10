@@ -11,17 +11,17 @@ class R2ListView extends ConsumerWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Delete R2 Bucket'),
+          title: Text('Delete R2 Bucket'),
           content: Text(
             'Are you sure you want to delete "$name"? This action cannot be undone.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text('Cancel'),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
               onPressed: () async {
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 Navigator.pop(context);
@@ -41,9 +41,9 @@ class R2ListView extends ConsumerWidget {
                   );
                 }
               },
-              child: const Text(
+              child: Text(
                 'Delete',
-                style: TextStyle(color: Colors.white),
+                
               ),
             ),
           ],
@@ -69,7 +69,7 @@ class R2ListView extends ConsumerWidget {
                   size: 64,
                   color: colorScheme.outlineVariant,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   'No R2 Buckets found',
                   style: TextStyle(
@@ -96,25 +96,25 @@ class R2ListView extends ConsumerWidget {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: Colors.orange.withValues(alpha: 0.1),
+                        color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.cloud, color: Colors.orange),
+                      child: Icon(Icons.cloud, color: Theme.of(context).colorScheme.tertiary),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             bucket.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
                           ),
                           if (bucket.creationDate != null) ...[
-                            const SizedBox(height: 4),
+                            SizedBox(height: 4),
                             Text(
                               'Created: ${bucket.creationDate}',
                               style: TextStyle(
@@ -137,15 +137,20 @@ class R2ListView extends ConsumerWidget {
                         }
                       },
                       itemBuilder: (context) => [
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'delete',
                           child: Row(
                             children: [
-                              Icon(Icons.delete, size: 20, color: Colors.red),
+                              Icon(Icons.delete, size: 20, color: Theme.of(context).colorScheme.error),
                               SizedBox(width: 12),
                               Text(
                                 'Delete',
-                                style: TextStyle(color: Colors.red),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
                               ),
                             ],
                           ),
@@ -159,20 +164,20 @@ class R2ListView extends ConsumerWidget {
           },
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, color: Colors.red, size: 48),
-              const SizedBox(height: 16),
+              Icon(Icons.error_outline, color: Theme.of(context).colorScheme.error, size: 48),
+              SizedBox(height: 16),
               Text('Error: $error', textAlign: TextAlign.center),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(r2BucketsProvider),
-                child: const Text('Retry'),
+                child: Text('Retry'),
               ),
             ],
           ),

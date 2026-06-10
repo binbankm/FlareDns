@@ -24,20 +24,22 @@ class PageDashboardPage extends ConsumerWidget {
             children: [
               Text(
                 page.name,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 page.subdomain,
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.open_in_new, size: 20),
+              icon: Icon(Icons.open_in_new, size: 20),
               tooltip: 'Open site',
               onPressed: () async {
                 final uri = Uri.tryParse('https://${page.subdomain}');
@@ -47,7 +49,7 @@ class PageDashboardPage extends ConsumerWidget {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.refresh),
+              icon: Icon(Icons.refresh),
               onPressed: () {
                 ref.invalidate(pageDeploymentsProvider(page.name));
                 ref.invalidate(pageDomainsProvider(page.name));
@@ -82,16 +84,17 @@ class _DeploymentsTab extends ConsumerWidget {
   final String projectName;
   const _DeploymentsTab({required this.projectName});
 
-  Color _statusColor(String status) {
+  Color _statusColor(BuildContext context, String status) {
+    final colorScheme = Theme.of(context).colorScheme;
     switch (status) {
       case 'success':
-        return Colors.green;
+        return colorScheme.primary;
       case 'failure':
-        return Colors.red;
+        return colorScheme.error;
       case 'idle':
-        return Colors.grey;
+        return colorScheme.outline;
       default:
-        return Colors.orange;
+        return colorScheme.tertiary;
     }
   }
 
@@ -115,7 +118,7 @@ class _DeploymentsTab extends ConsumerWidget {
     return deploymentsAsync.when(
       data: (deployments) {
         if (deployments.isEmpty) {
-          return const Center(child: Text('No deployments found.'));
+          return Center(child: Text('No deployments found.'));
         }
 
         final production = deployments
@@ -129,20 +132,20 @@ class _DeploymentsTab extends ConsumerWidget {
           padding: const EdgeInsets.all(16),
           children: [
             if (production.isNotEmpty) ...[
-              _sectionHeader('Production', Colors.green),
-              const SizedBox(height: 8),
+              _sectionHeader('Production', Theme.of(context).colorScheme.primary),
+              SizedBox(height: 8),
               ...production.map((d) => _buildCard(context, d)),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
             ],
             if (preview.isNotEmpty) ...[
-              _sectionHeader('Preview', Colors.orange),
-              const SizedBox(height: 8),
+              _sectionHeader('Preview', Theme.of(context).colorScheme.tertiary),
+              SizedBox(height: 8),
               ...preview.map((d) => _buildCard(context, d)),
             ],
           ],
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (e, s) => Center(child: Text('Error: $e')),
     );
   }
@@ -172,7 +175,7 @@ class _DeploymentsTab extends ConsumerWidget {
   }
 
   Widget _buildCard(BuildContext context, PageDeployment d) {
-    final color = _statusColor(d.status);
+    final color = _statusColor(context, d.status);
     final hasCommit = d.commitHash.isNotEmpty;
     String displayDate = d.createdOn;
     try {
@@ -196,7 +199,7 @@ class _DeploymentsTab extends ConsumerWidget {
               ),
               child: Icon(_statusIcon(d.status), color: color, size: 20),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,24 +207,27 @@ class _DeploymentsTab extends ConsumerWidget {
                   Row(
                     children: [
                       if (hasCommit) ...[
-                        const Icon(
+                        Icon(
                           Icons.call_split,
                           size: 12,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.outline,
                         ),
-                        const SizedBox(width: 3),
-                        Text(
-                          d.branch,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey,
-                            fontFamily: 'monospace',
+                        SizedBox(width: 3),
+                        Flexible(
+                          child: Text(
+                            d.branch,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Theme.of(context).colorScheme.outline,
+                              fontFamily: 'monospace',
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6),
                         Text(
                           d.commitHash,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'monospace',
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
@@ -230,13 +236,13 @@ class _DeploymentsTab extends ConsumerWidget {
                       ] else
                         Text(
                           d.shortId,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'monospace',
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
                           ),
                         ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 6,
@@ -244,7 +250,7 @@ class _DeploymentsTab extends ConsumerWidget {
                         ),
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           d.status.toUpperCase(),
@@ -258,28 +264,30 @@ class _DeploymentsTab extends ConsumerWidget {
                     ],
                   ),
                   if (hasCommit && d.commitMessage.isNotEmpty) ...[
-                    const SizedBox(height: 3),
+                    SizedBox(height: 3),
                     Text(
                       d.commitMessage,
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3),
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.access_time,
                         size: 11,
-                        color: Colors.grey,
+                        color: Theme.of(context).colorScheme.outline,
                       ),
-                      const SizedBox(width: 3),
+                      SizedBox(width: 3),
                       Text(
                         displayDate,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
-                          color: Colors.grey,
+                          color: Theme.of(context).colorScheme.outline,
                         ),
                       ),
                     ],
@@ -289,7 +297,7 @@ class _DeploymentsTab extends ConsumerWidget {
             ),
             if (d.url.isNotEmpty)
               IconButton(
-                icon: const Icon(Icons.open_in_new, size: 18),
+                icon: Icon(Icons.open_in_new, size: 18),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                 onPressed: () async {
@@ -313,16 +321,17 @@ class _DomainsTab extends ConsumerWidget {
   final String projectName;
   const _DomainsTab({required this.projectName});
 
-  Color _domainStatusColor(String status) {
+  Color _domainStatusColor(BuildContext context, String status) {
+    final colorScheme = Theme.of(context).colorScheme;
     switch (status) {
       case 'active':
-        return Colors.green;
+        return colorScheme.primary;
       case 'blocked':
-        return Colors.red;
+        return colorScheme.error;
       case 'pending':
-        return Colors.orange;
+        return colorScheme.tertiary;
       default:
-        return Colors.grey;
+        return colorScheme.outline;
     }
   }
 
@@ -339,23 +348,25 @@ class _DomainsTab extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.08),
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.language_outlined, color: Colors.grey, size: 18),
+                    Icon(Icons.language_outlined, color: Theme.of(context).colorScheme.outline, size: 18),
                     SizedBox(width: 8),
                     Text(
                       'No custom domains configured.',
-                      style: TextStyle(color: Colors.grey),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
               )
             else
               ...domains.map((d) {
-                final color = _domainStatusColor(d.status);
+                final color = _domainStatusColor(context, d.status);
                 return Card(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -373,19 +384,19 @@ class _DomainsTab extends ConsumerWidget {
                           ),
                           child: Icon(Icons.language, color: color, size: 20),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 d.name,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
                                 ),
                               ),
-                              const SizedBox(height: 3),
+                              SizedBox(height: 3),
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 6,
@@ -408,10 +419,10 @@ class _DomainsTab extends ConsumerWidget {
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.open_in_new,
                             size: 18,
-                            color: Colors.blue,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(
@@ -429,10 +440,10 @@ class _DomainsTab extends ConsumerWidget {
                           },
                         ),
                         IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.delete_outline,
                             size: 18,
-                            color: Colors.red,
+                            color: Theme.of(context).colorScheme.error,
                           ),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(
@@ -446,16 +457,16 @@ class _DomainsTab extends ConsumerWidget {
                   ),
                 );
               }),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             OutlinedButton.icon(
               onPressed: () => _showAddDomainDialog(context, ref),
-              icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add Custom Domain'),
+              icon: Icon(Icons.add, size: 18),
+              label: Text('Add Custom Domain'),
             ),
           ],
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (e, s) => Center(child: Text('Error: $e')),
     );
   }
@@ -465,7 +476,7 @@ class _DomainsTab extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Add Custom Domain'),
+        title: Text('Add Custom Domain'),
         content: TextField(
           controller: ctrl,
           decoration: const InputDecoration(
@@ -477,7 +488,7 @@ class _DomainsTab extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -535,7 +546,7 @@ class _DomainsTab extends ConsumerWidget {
                   messenger.showSnackBar(
                     const SnackBar(
                       content: Text('Domain added and CNAME auto-configured!'),
-                      backgroundColor: Colors.green,
+                      
                     ),
                   );
                 } else {
@@ -551,7 +562,7 @@ class _DomainsTab extends ConsumerWidget {
                 messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
               }
             },
-            child: const Text('Add'),
+            child: Text('Add'),
           ),
         ],
       ),
@@ -566,16 +577,21 @@ class _DomainsTab extends ConsumerWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Remove Domain?'),
+        title: Text('Remove Domain?'),
         content: Text('Remove "${domain.name}" from this project?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Remove', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Remove',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
           ),
         ],
       ),
@@ -601,22 +617,23 @@ class _BindingsTab extends ConsumerWidget {
   final CloudflarePage page;
   const _BindingsTab({required this.page});
 
-  (IconData, Color, String) _bindingStyle(String type) {
+  (IconData, Color, String) _bindingStyle(BuildContext context, String type) {
+    final colorScheme = Theme.of(context).colorScheme;
     switch (type) {
       case 'kv':
-        return (Icons.storage, Colors.green, 'KV Namespace');
+        return (Icons.storage, colorScheme.primary, 'KV Namespace');
       case 'd1':
-        return (Icons.dataset, Colors.blue, 'D1 Database');
+        return (Icons.dataset, colorScheme.secondary, 'D1 Database');
       case 'r2':
-        return (Icons.folder, Colors.purple, 'R2 Bucket');
+        return (Icons.folder, colorScheme.tertiary, 'R2 Bucket');
       case 'service':
-        return (Icons.hub, Colors.cyan, 'Service');
+        return (Icons.hub, colorScheme.primary, 'Service');
       case 'env':
-        return (Icons.text_fields, Colors.orange, 'Env Var');
+        return (Icons.text_fields, colorScheme.tertiary, 'Env Var');
       case 'secret':
-        return (Icons.lock, Colors.red, 'Secret');
+        return (Icons.lock, colorScheme.error, 'Secret');
       default:
-        return (Icons.settings, Colors.grey, type);
+        return (Icons.settings, colorScheme.outline, type);
     }
   }
 
@@ -691,54 +708,56 @@ class _BindingsTab extends ConsumerWidget {
           children: [
             // ── Bindings section ──
             if (bindingEntries.isNotEmpty) ...[
-              const Padding(
+              Padding(
                 padding: EdgeInsets.only(bottom: 10),
                 child: Text(
                   'Bindings',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
-                    color: Colors.grey,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
                 ),
               ),
               ...bindingEntries.map(
                 (e) => _buildCard(context, ref, e, project),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
             ],
 
             // ── Env Vars / Secrets section ──
             if (envEntries.isNotEmpty) ...[
-              const Padding(
+              Padding(
                 padding: EdgeInsets.only(bottom: 10),
                 child: Text(
                   'Environment Variables',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
-                    color: Colors.grey,
+                    color: Theme.of(context).colorScheme.outline,
                   ),
                 ),
               ),
               ...envEntries.map((e) => _buildCard(context, ref, e, project)),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
             ],
 
             if (hasAll)
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.grey.withValues(alpha: 0.08),
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.link_off, color: Colors.grey, size: 18),
+                    Icon(Icons.link_off, color: Theme.of(context).colorScheme.outline, size: 18),
                     SizedBox(width: 8),
                     Text(
                       'No bindings configured.',
-                      style: TextStyle(color: Colors.grey),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -753,17 +772,17 @@ class _BindingsTab extends ConsumerWidget {
                       context: context,
                       builder: (ctx) => AddPageBindingDialog(project: project),
                     ),
-                    icon: const Icon(Icons.add_link, size: 18),
-                    label: const Text('Add Binding'),
+                    icon: Icon(Icons.add_link, size: 18),
+                    label: Text('Add Binding'),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () =>
                         _showAddPageSecretDialog(context, ref, project),
-                    icon: const Icon(Icons.lock_outline, size: 18),
-                    label: const Text('Add Secret'),
+                    icon: Icon(Icons.lock_outline, size: 18),
+                    label: Text('Add Secret'),
                   ),
                 ),
               ],
@@ -771,7 +790,7 @@ class _BindingsTab extends ConsumerWidget {
           ],
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (e, s) => Center(child: Text('Error: $e')),
     );
   }
@@ -787,7 +806,7 @@ class _BindingsTab extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Add Secret'),
+        title: Text('Add Secret'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -797,7 +816,7 @@ class _BindingsTab extends ConsumerWidget {
                 labelText: 'Secret Name (e.g. API_KEY)',
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             TextField(
               controller: valCtrl,
               obscureText: true,
@@ -808,7 +827,7 @@ class _BindingsTab extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -837,7 +856,7 @@ class _BindingsTab extends ConsumerWidget {
                 messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
               }
             },
-            child: const Text('Add'),
+            child: Text('Add'),
           ),
         ],
       ),
@@ -850,7 +869,7 @@ class _BindingsTab extends ConsumerWidget {
     _BindingEntry entry,
     CloudflarePage project,
   ) {
-    final (icon, color, label) = _bindingStyle(entry.type);
+    final (icon, color, label) = _bindingStyle(context, entry.type);
     final displayDetail = entry.detail.length > 36
         ? '${entry.detail.substring(0, 16)}...'
         : entry.detail;
@@ -869,19 +888,19 @@ class _BindingsTab extends ConsumerWidget {
               ),
               child: Icon(icon, color: color, size: 20),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     entry.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Row(
                     children: [
                       Container(
@@ -903,13 +922,13 @@ class _BindingsTab extends ConsumerWidget {
                         ),
                       ),
                       if (displayDetail.isNotEmpty) ...[
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             entry.isSecret ? '••••••••••••' : displayDetail,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey,
+                              color: Theme.of(context).colorScheme.outline,
                               fontFamily: 'monospace',
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -923,9 +942,9 @@ class _BindingsTab extends ConsumerWidget {
             ),
             // Delete button
             IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.delete_outline,
-                color: Colors.red,
+                color: Theme.of(context).colorScheme.error,
                 size: 20,
               ),
               padding: EdgeInsets.zero,
@@ -947,16 +966,21 @@ class _BindingsTab extends ConsumerWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Binding?'),
+        title: Text('Delete Binding?'),
         content: Text('Are you sure you want to delete "${entry.name}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(
+              'Delete',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
           ),
         ],
       ),
@@ -1023,7 +1047,7 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Binding'),
+      title: Text('Add Binding'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1047,14 +1071,14 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
                 setState(() => _selectedType = val!);
               },
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             TextField(
               controller: _nameCtrl,
               decoration: const InputDecoration(
                 labelText: 'Binding Name (e.g. DB, MY_KV, API_URL)',
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             if (_selectedType == 'plain_text')
               TextField(
                 controller: _detailCtrl,
@@ -1076,7 +1100,7 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text('Cancel'),
         ),
         ElevatedButton(
           onPressed: () async {
@@ -1120,7 +1144,7 @@ class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
               messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
             }
           },
-          child: const Text('Add'),
+          child: Text('Add'),
         ),
       ],
     );

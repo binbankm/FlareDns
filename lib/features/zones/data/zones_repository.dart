@@ -38,4 +38,14 @@ class ZonesRepository {
 
     return allZones;
   }
+
+  Future<List<dynamic>> getSslCertificates(String zoneId) async {
+    final response = await _dio.get('/zones/$zoneId/ssl/certificate_packs');
+    final data = response.data;
+    if (data['success'] == true) {
+      return data['result'] as List<dynamic>;
+    } else {
+      throw Exception('Failed to fetch SSL certificates: ${data['errors']}');
+    }
+  }
 }

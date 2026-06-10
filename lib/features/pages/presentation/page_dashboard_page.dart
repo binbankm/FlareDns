@@ -708,26 +708,20 @@ class _BindingsTab extends ConsumerWidget {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () =>
-                        _showAddEnvVarDialog(context, ref, project),
-                    icon: const Icon(Icons.text_fields, size: 16),
-                    label: const Text('Env Var'),
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (ctx) => AddPageBindingDialog(project: project),
+                    ),
+                    icon: const Icon(Icons.add_link, size: 18),
+                    label: const Text('Add Binding'),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () => _showAddKvDialog(context, ref, project),
-                    icon: const Icon(Icons.storage, size: 16),
-                    label: const Text('KV'),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _showAddD1Dialog(context, ref, project),
-                    icon: const Icon(Icons.dataset, size: 16),
-                    label: const Text('D1'),
+                    onPressed: () => _showAddPageSecretDialog(context, ref, project),
+                    icon: const Icon(Icons.lock_outline, size: 18),
+                    label: const Text('Add Secret'),
                   ),
                 ),
               ],
@@ -737,6 +731,64 @@ class _BindingsTab extends ConsumerWidget {
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, s) => Center(child: Text('Error: $e')),
+    );
+  }
+
+  void _showAddPageSecretDialog(BuildContext context, WidgetRef ref, CloudflarePage project) {
+    final nameCtrl = TextEditingController();
+    final valCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Add Secret'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameCtrl,
+              decoration: const InputDecoration(labelText: 'Secret Name (e.g. API_KEY)'),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: valCtrl,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: 'Secret Value'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final name = nameCtrl.text.trim();
+              final val = valCtrl.text;
+              if (name.isEmpty || val.isEmpty) return;
+              Navigator.pop(ctx);
+              final messenger = ScaffoldMessenger.of(context);
+              try {
+                final updated = Map<String, dynamic>.from(project.productionEnvVars);
+                updated[name] = {'type': 'secret_text', 'value': val};
+                await ref.read(pagesRepositoryProvider).updateProjectBindings(
+                  project.name,
+                  {
+                    'production': {'env_vars': updated},
+                    'preview': {'env_vars': updated},
+                  },
+                );
+                ref.invalidate(pageProjectProvider(project.name));
+                messenger.showSnackBar(const SnackBar(content: Text('Secret added.')));
+              } catch (e) {
+                messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+              }
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -906,218 +958,114 @@ class _BindingsTab extends ConsumerWidget {
     }
   }
 
-  void _showAddEnvVarDialog(
-    BuildContext context,
-    WidgetRef ref,
-    CloudflarePage project,
-  ) {
-    final nameCtrl = TextEditingController();
-    final valCtrl = TextEditingController();
-    bool isSecret = false;
 
-    showDialog(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setState) => AlertDialog(
-          title: const Text('Add Environment Variable'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Variable name',
-                  hintText: 'e.g. API_KEY',
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: valCtrl,
-                obscureText: isSecret,
-                decoration: const InputDecoration(labelText: 'Value'),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Checkbox(
-                    value: isSecret,
-                    onChanged: (v) => setState(() => isSecret = v ?? false),
-                  ),
-                  const Text('Mark as Secret (encrypted)'),
-                ],
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final name = nameCtrl.text.trim();
-                final val = valCtrl.text;
-                if (name.isEmpty || val.isEmpty) return;
-                Navigator.pop(ctx);
-                final messenger = ScaffoldMessenger.of(context);
-                try {
-                  final updated = Map<String, dynamic>.from(
-                    project.productionEnvVars,
-                  );
-                  updated[name] = {
-                    'type': isSecret ? 'secret_text' : 'plain_text',
-                    'value': val,
-                  };
-                  await ref.read(pagesRepositoryProvider).updateProjectBindings(
-                    project.name,
-                    {
-                      'production': {'env_vars': updated},
-                      'preview': {'env_vars': updated},
-                    },
-                  );
-                  ref.invalidate(pageProjectProvider(project.name));
-                  messenger.showSnackBar(
-                    const SnackBar(content: Text('Variable added.')),
-                  );
-                } catch (e) {
-                  messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
-                }
+
+}
+
+class AddPageBindingDialog extends ConsumerStatefulWidget {
+  final CloudflarePage project;
+
+  const AddPageBindingDialog({super.key, required this.project});
+
+  @override
+  ConsumerState<AddPageBindingDialog> createState() => _AddPageBindingDialogState();
+}
+
+class _AddPageBindingDialogState extends ConsumerState<AddPageBindingDialog> {
+  String _selectedType = 'plain_text';
+  final _nameCtrl = TextEditingController();
+  final _detailCtrl = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add Binding'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DropdownButtonFormField<String>(
+              initialValue: _selectedType,
+              decoration: const InputDecoration(labelText: 'Binding Type'),
+              items: const [
+                DropdownMenuItem(value: 'plain_text', child: Text('Plain Text (Env Var)')),
+                DropdownMenuItem(value: 'kv_namespace', child: Text('KV Namespace')),
+                DropdownMenuItem(value: 'd1', child: Text('D1 Database')),
+              ],
+              onChanged: (val) {
+                setState(() => _selectedType = val!);
               },
-              child: const Text('Add'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showAddKvDialog(
-    BuildContext context,
-    WidgetRef ref,
-    CloudflarePage project,
-  ) {
-    final nameCtrl = TextEditingController();
-    final idCtrl = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Add KV Namespace'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Binding name',
-                hintText: 'e.g. SITE_CONFIG',
-              ),
             ),
             const SizedBox(height: 8),
             TextField(
-              controller: idCtrl,
-              decoration: const InputDecoration(labelText: 'KV Namespace ID'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final name = nameCtrl.text.trim();
-              final id = idCtrl.text.trim();
-              if (name.isEmpty || id.isEmpty) return;
-              Navigator.pop(ctx);
-              final messenger = ScaffoldMessenger.of(context);
-              try {
-                final updated = Map<String, dynamic>.from(project.kvNamespaces);
-                updated[name] = {'namespace_id': id};
-                await ref.read(pagesRepositoryProvider).updateProjectBindings(
-                  project.name,
-                  {
-                    'production': {'kv_namespaces': updated},
-                    'preview': {'kv_namespaces': updated},
-                  },
-                );
-                ref.invalidate(pageProjectProvider(project.name));
-                messenger.showSnackBar(
-                  const SnackBar(content: Text('KV binding added.')),
-                );
-              } catch (e) {
-                messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
-              }
-            },
-            child: const Text('Add'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showAddD1Dialog(
-    BuildContext context,
-    WidgetRef ref,
-    CloudflarePage project,
-  ) {
-    final nameCtrl = TextEditingController();
-    final idCtrl = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Add D1 Database'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Binding name',
-                hintText: 'e.g. DB',
-              ),
+              controller: _nameCtrl,
+              decoration: const InputDecoration(labelText: 'Binding Name (e.g. DB, MY_KV, API_URL)'),
             ),
             const SizedBox(height: 8),
-            TextField(
-              controller: idCtrl,
-              decoration: const InputDecoration(labelText: 'D1 Database ID'),
-            ),
+            if (_selectedType == 'plain_text')
+              TextField(
+                controller: _detailCtrl,
+                decoration: const InputDecoration(labelText: 'Value'),
+              )
+            else if (_selectedType == 'kv_namespace')
+              TextField(
+                controller: _detailCtrl,
+                decoration: const InputDecoration(labelText: 'KV Namespace ID'),
+              )
+            else if (_selectedType == 'd1')
+              TextField(
+                controller: _detailCtrl,
+                decoration: const InputDecoration(labelText: 'D1 Database ID'),
+              ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final name = nameCtrl.text.trim();
-              final id = idCtrl.text.trim();
-              if (name.isEmpty || id.isEmpty) return;
-              Navigator.pop(ctx);
-              final messenger = ScaffoldMessenger.of(context);
-              try {
-                final updated = Map<String, dynamic>.from(project.d1Databases);
-                updated[name] = {'id': id};
-                await ref.read(pagesRepositoryProvider).updateProjectBindings(
-                  project.name,
-                  {
-                    'production': {'d1_databases': updated},
-                    'preview': {'d1_databases': updated},
-                  },
-                );
-                ref.invalidate(pageProjectProvider(project.name));
-                messenger.showSnackBar(
-                  const SnackBar(content: Text('D1 binding added.')),
-                );
-              } catch (e) {
-                messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
-              }
-            },
-            child: const Text('Add'),
-          ),
-        ],
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            final name = _nameCtrl.text.trim();
+            final detail = _detailCtrl.text.trim();
+            if (name.isEmpty || detail.isEmpty) return;
+            Navigator.pop(context);
+            final messenger = ScaffoldMessenger.of(context);
+            try {
+              Map<String, dynamic> updatedConfig = {};
+              
+              if (_selectedType == 'plain_text') {
+                final updated = Map<String, dynamic>.from(widget.project.productionEnvVars);
+                updated[name] = {'type': 'plain_text', 'value': detail};
+                updatedConfig = {'env_vars': updated};
+              } else if (_selectedType == 'kv_namespace') {
+                final updated = Map<String, dynamic>.from(widget.project.kvNamespaces);
+                updated[name] = {'namespace_id': detail};
+                updatedConfig = {'kv_namespaces': updated};
+              } else if (_selectedType == 'd1') {
+                final updated = Map<String, dynamic>.from(widget.project.d1Databases);
+                updated[name] = {'id': detail};
+                updatedConfig = {'d1_databases': updated};
+              }
+
+              await ref.read(pagesRepositoryProvider).updateProjectBindings(
+                widget.project.name,
+                {
+                  'production': updatedConfig,
+                  'preview': updatedConfig,
+                },
+              );
+              ref.invalidate(pageProjectProvider(widget.project.name));
+              messenger.showSnackBar(const SnackBar(content: Text('Binding added.')));
+            } catch (e) {
+              messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+            }
+          },
+          child: const Text('Add'),
+        ),
+      ],
     );
   }
 }
